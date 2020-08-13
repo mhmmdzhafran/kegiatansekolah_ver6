@@ -4512,8 +4512,8 @@ input[type="button"].btn-block {
     column-count: 3;
     -moz-column-gap: 1.25rem;
     column-gap: 1.25rem;
-    /* orphans: 1;
-    widows: 1; */
+    orphans: 1;
+    widows: 1;
   }
   .card-columns .card {
     display: inline-block;
@@ -5410,8 +5410,8 @@ a.close.disabled {
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
-  /* -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px); */
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   opacity: 0;
   border-radius: 0.25rem;
 }
@@ -7288,7 +7288,7 @@ button.bg-dark:focus {
 
 .position-sticky {
   position: -webkit-sticky !important;
-  /* position: sticky !important; */
+  position: sticky !important;
 }
 
 .fixed-top {
@@ -7310,7 +7310,7 @@ button.bg-dark:focus {
 @supports ((position: -webkit-sticky) or (position: sticky)) {
   .sticky-top {
     position: -webkit-sticky;
-    /* position: sticky; */
+    position: sticky;
     top: 0;
     z-index: 1020;
   }
@@ -9499,7 +9499,7 @@ a.text-dark:hover, a.text-dark:focus {
   img {
     page-break-inside: avoid;
   }
-  /* p,
+  p,
   h2,
   h3 {
     orphans: 3;
@@ -9508,7 +9508,7 @@ a.text-dark:hover, a.text-dark:focus {
   h2,
   h3 {
     page-break-after: avoid;
-  } */
+  }
   @page {
     size: a3;
   }
@@ -10584,14 +10584,12 @@ a:focus {
 }
 
 .bg-login-image {
-  /* background: url("https://source.unsplash.com/K4mSJ7kc0As/600x800"); */
+  background: url("https://source.unsplash.com/K4mSJ7kc0As/600x800");
   background-position: center;
-  /* background-size: cover; */
-  background-size: 250px;
-  background-repeat: no-repeat;
+  background-size: cover;
 }
 
-/* .bg-register-image {
+.bg-register-image {
   background: url("https://source.unsplash.com/Mv9hjnEUHR4/600x800");
   background-position: center;
   background-size: cover;
@@ -10601,7 +10599,7 @@ a:focus {
   background: url("https://source.unsplash.com/oWTW-jNGl9I/600x800");
   background-position: center;
   background-size: cover;
-} */
+}
 
 form.user .custom-checkbox.small label {
   line-height: 1.5rem;
@@ -11161,7 +11159,7 @@ body.sidebar-toggled footer.sticky-footer {
 :root .fa-flip-horizontal,
 :root .fa-flip-vertical,
 :root .fa-flip-both {
-  /* -webkit-filter: none; */
+  -webkit-filter: none;
           filter: none; }
 
 .fa-stack {

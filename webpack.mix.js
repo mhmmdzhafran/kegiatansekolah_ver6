@@ -30,5 +30,6 @@ mix.scripts([
     // 'resources/assets/js/dropzone.js',
     'resources/assets/js/jquery.dataTables.js',
     'resources/assets/js/dataTables.bootstrap4.js',
-    'resources/assets/js/sweetalert2.all.min.js'
+    'resources/assets/js/sweetalert2.all.min.js',
+    'resources/assets/js/bootstrap-notify.js',
 ], 'public/js/libs.js');
