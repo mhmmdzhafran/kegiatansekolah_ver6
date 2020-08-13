@@ -71,7 +71,7 @@
 
 @section('script')
 <script>    
-    var url = "";
+    // var url = "";
     var url_form = "";
     $('#asesmen-table').DataTable({
         processing: true,
@@ -151,7 +151,7 @@
         var id = $(this).attr('id');
         var value_asesmen = $(this).attr('value');
         if (value_asesmen === "asesmen") {
-             url = '{{route("kepsek.asesmen.edit", "id")}}';   
+             let url = '{{route("kepsek.asesmen.edit", "id")}}';   
              url = url.replace('id', id);
              $.ajax({
                 url: url,
@@ -178,8 +178,9 @@
                 }
              });
         } else if(value_asesmen === "lihat_table") {
-             url = '{{route("kepsek.asesmen.show" , "id")}}';
+             let url = '{{route("kepsek.asesmen.show" , "id")}}';
              url = url.replace('id', id);
+             console.log(url);
              $.ajax({
                 url: url,
                 type: 'GET',

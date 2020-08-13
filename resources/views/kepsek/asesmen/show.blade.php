@@ -143,7 +143,7 @@
             url = url.replace('ids', id_asesmen);
             url = url.replace('id_indikator_asesmen' , id);
             url = url.replace('skor_asesmen' , skor_asesmen);
-            var url_load = "{{route('kepsek.asesmen.edit', ['id_asesmen' => 'id'])}}";
+            var url_load = "{{route('kepsek.asesmen.edit', ['asesmen_ppk' => 'id'])}}";
             url_load = url_load.replace('id', id_asesmen);
             $.ajax({
                 url: url,

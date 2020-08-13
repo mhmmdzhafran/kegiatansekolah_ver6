@@ -8,6 +8,8 @@ use App\Http\Requests\PengajuanDokumentasiBaruRequest;
 use App\Http\Requests\PengajuanDokumentasiKegiatanRequest;
 use App\Http\Requests\PengajuanKegiatanUlangValidationRequest;
 use App\Http\Requests\PengajuanKegiatanValidationRequest;
+use App\Http\Requests\uploadDokumenDokumentasiBaruValidationRequest;
+use App\Http\Requests\uploadEditedDokumenDokumentasiValidationRequest;
 use App\PengajuanKegiatan;
 use App\StatusKegiatan;
 use Carbon\Carbon;
@@ -16,6 +18,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class PJMengelolaKegiatanController extends Controller
 {
@@ -33,7 +36,8 @@ class PJMengelolaKegiatanController extends Controller
     public function index()
     {
         //
-        $pengajuan_kegiatan = PengajuanKegiatan::with('statusKegiatan')->select('pengajuan_kegiatans.*');        
+        $user_id = Auth::user()->id;
+        $pengajuan_kegiatan = PengajuanKegiatan::with('statusKegiatan')->select('pengajuan_kegiatans.*')->where("user_id" , "=" , $user_id);        
         if (request()->ajax()) {        
             return datatables()->eloquent($pengajuan_kegiatan)->addColumn('statusKegiatan', function(PengajuanKegiatan $post){
                 $status = $post->StatusKegiatan->pluck('nama')->implode('<br>');
@@ -114,7 +118,7 @@ class PJMengelolaKegiatanController extends Controller
         $dateMulai = Carbon::parse($request->mulai_kegiatan);
         $dateAkhir = Carbon::parse($request->akhir_kegiatan);
         if($dateAkhir < $dateMulai){
-            return Response::json(['errors' => ['Tanggal Akhir Kegiatan Sudah Masa Lampau, Silahkan Masukkan Kembali']], 422);
+            return Response::json(['errors' => ['Tanggal Akhir Kegiatan Lampau Dibandingkan Tanggal Mulai Kegiatan, Silahkan Masukkan Kembali']], 422);
         }
         else{
             $input = $request->all();                
@@ -266,7 +270,7 @@ class PJMengelolaKegiatanController extends Controller
             $statusSebelumnya = $status->pivot->status_kegiatan_id;
         }
         if($dateAkhir < $dateMulai){
-            return response()->json(['errors' => ['Tanggal Akhir Kegiatan Sudah Masa Lampau, Silahkan Masukkan Kembali']], 422);
+            return response()->json(['errors' => ['Tanggal Akhir Kegiatan Lampau Dibandingkan Tanggal Mulai Kegiatan, Silahkan Masukkan Kembali']], 422);
         }
         else{
                 $dokumen_lama = json_decode($pengajuan_ulang->dokumen_kegiatan);
@@ -327,9 +331,8 @@ class PJMengelolaKegiatanController extends Controller
 
     public function indexDokumentasi(){
 
-        $dokumentasi_kegiatan = DokumentasiKegiatan::with('statusKegiatan')->select('dokumentasi_kegiatans.*');     
-        // return $dokumentasi_kegiatan;
-        
+        $user_id = Auth::user()->id;
+        $dokumentasi_kegiatan = DokumentasiKegiatan::with('statusKegiatan')->select('dokumentasi_kegiatans.*')->where('user_id' , '=' , $user_id);     
         if (request()->ajax()) {
             return datatables()->eloquent($dokumentasi_kegiatan)->addColumn('statusKegiatan', function(DokumentasiKegiatan $dokumentasi_kegiatan){
                 $status =  $dokumentasi_kegiatan->statusKegiatan->pluck('nama')->implode('<br>');
@@ -429,8 +432,8 @@ class PJMengelolaKegiatanController extends Controller
                 return Response::json(['messages' => $th->getMessage() ], 404);
             }
             $nilai_ppk_kegiatan = json_decode($dokumentasi_kegiatan->nilai_ppk);
-            $dokumen = $dokumentasi_kegiatan->dokumenKegiatan()->get();
-            // $dokumen_baru = $dokumentasi_kegiatan->dokumenKegiatan()->where("status_unggah_dokumen" , "=" , "Dokumentasi")->get();
+            $dokumen = $dokumentasi_kegiatan->dokumenKegiatan()->where("status_unggah_dokumen" , "=" , "Pengajuan")->get();
+            $dokumen_baru = $dokumentasi_kegiatan->dokumenKegiatan()->where("status_unggah_dokumen" , "=" , "Dokumentasi")->get();
             // $file_dokumen = [];
             // foreach ($dokumen as $item) {
             //     if ($item->status_unggah_dokumen == "Pengajuan") {
@@ -440,11 +443,11 @@ class PJMengelolaKegiatanController extends Controller
             foreach($dokumentasi_kegiatan->statusKegiatan as $status){
                 $status_kegiatan  = $status->pivot->status_kegiatan_id;
             }
-            // if (count($dokumen_baru) > 0) {
-            //     return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'dokumentasi_baru' => $dokumen_baru, 'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan], 200);
-            // } else{
-                return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan], 200);   
-            // }
+            if (count($dokumen_baru) > 0) {
+                return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'dokumentasi_baru' => $dokumen_baru, 'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan], 200);
+            } else{
+                return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan, 'dokumentasi_baru' => $dokumen_baru], 200);   
+            }
         }
 
     }
@@ -459,14 +462,13 @@ class PJMengelolaKegiatanController extends Controller
             return Response::json(['errors' => ['File Tidak Diunggah, Silahkan Unggah Dokumentasi Kegiatan dengan ekstensi .pdf']], 422);
         }
         if ($dateAkhir < $dateMulai) {
-            return Response::json(['errors' => ['Tanggal Akhir Kegiatan Sudah Masa Lampau, Silahkan Masukkan Kembali ']], 422);
+            return Response::json(['errors' => ['Tanggal Akhir Kegiatan Lampau Dibandingkan Tanggal Mulai Kegiatan, Silahkan Masukkan Kembali']], 422);
         }
         $isFileSize = $this->getFileUploadSize($file);
         if ($isFileSize > 5120000) {
             $fileSizeAllDokumen = round(($isFileSize / 1000) / 1000, 2);
             return Response::json(['errors' => ['Total File Size melebihi kapasitas yang sudah ditetapkan (Total Max: 5MB), Total File Ada: '.$fileSizeAllDokumen." MB"]], 422);
         }
-        elseif($file){
             $id_nilai_ppk = 1;
             for ($i=0; $i < count($request->nilai_ppk) ; $i++) { 
                 $json_ppk[] = array(
@@ -496,31 +498,39 @@ class PJMengelolaKegiatanController extends Controller
                 ])->first();
                 foreach ($file as $dokumen_file) {
                     $nama_dokumen = $request->mulai_kegiatan."_".$request->nama_kegiatan."_Dokumentasi_".$dokumen_file->getClientOriginalName();
-                    $kumpulan_dokumen [] = $nama_dokumen;
                     $dokumen_create = new DokumenKegiatan([
                     "dokumentasi_kegiatan_id" => $cari_dokumentasi->id,
                     "nama_dokumen" => $nama_dokumen,
                     "status_unggah_dokumen" => "Pengajuan"
                     ]);
                     if(file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_dokumen))){
+                        $update_docs = $cari_dokumentasi->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $cari_dokumentasi->id, "nama_dokumen" => $nama_dokumen, "status_unggah_dokumen" => "Pengajuan"])->update([
+                            "nama_dokumen" => $nama_dokumen
+                        ]);
+                        if (!$update_docs) {
+                            return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
+                        }
                         unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_dokumen));
-                        //find dokumen yang pernah diupload jika gagaal
-                        $cari_dokumentasi->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $cari_dokumentasi->id, "nama_dokumen" => $nama_dokumen, "status_unggah_dokumen" => "Pengajuan"])->delete();
-                    }
+                        $dokumen_file->move('kegiatan/dokumentasi_kegiatan' , $nama_dokumen);
+                        $kumpulan_dokumen = [];
+                        continue;
+                    } else {
+                    $kumpulan_dokumen [] = $nama_dokumen;
                     $file_uploaded = $dokumen_file->move('kegiatan/dokumentasi_kegiatan/', $nama_dokumen);
                     $dokumen_final =  $cari_dokumentasi->dokumenKegiatan()->save($dokumen_create);
-                    if ($file_uploaded && $dokumen_final) {
-                        continue;
-                    }
-                    else{
-                        //delete dokumen
-                        foreach ($kumpulan_dokumen as $nama_delete_dokumen) {
-                            unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_delete_dokumen));
-                            $cari_dokumentasi->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $cari_dokumentasi->id, "nama_dokumen" => $nama_dokumen, "status_unggah_dokumen" => "Pengajuan"])->delete();
+                        if ($file_uploaded && $dokumen_final) {
+                            continue;
                         }
-                        //dokumentasi delete
-                        $dokumentasi_kegiatan_baru->delete();
-                        return Response::json(['errors' => ['Terjadi Kegagalan Dalam Menyimpan Dokumen, Silahkan Dicoba Kembali']], 422);
+                        else{
+                            //delete dokumen
+                            foreach ($kumpulan_dokumen as $nama_delete_dokumen) {
+                                unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_delete_dokumen));
+                                $cari_dokumentasi->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $cari_dokumentasi->id, "nama_dokumen" => $nama_dokumen, "status_unggah_dokumen" => "Pengajuan"])->delete();
+                            }
+                            //dokumentasi delete
+                            $dokumentasi_kegiatan_baru->delete();
+                            return Response::json(['errors' => ['Terjadi Kegagalan Dalam Menyimpan Dokumen, Silahkan Dicoba Kembali']], 422);
+                        }
                     }
                 }
                 $statusDefault = StatusKegiatan::findOrFail(6);
@@ -539,7 +549,6 @@ class PJMengelolaKegiatanController extends Controller
             } else {
                 return Response::json(['errors' => ['Tidak Berhasil Membentuk Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
             }
-        }
     }
 
     public function uploadDokumentasi(PengajuanDokumentasiKegiatanRequest $request, $id){
@@ -552,50 +561,54 @@ class PJMengelolaKegiatanController extends Controller
         }
         $kumpulan_dokumen = [];
         $file = $request->file('dokumentasi_kegiatan_ppk');
+        if (is_null($file)) {
+            return Response::json(['errors' => ['Tidak Terdapat Unggahan Dokumen Dokumentasi Kegiatan, Silahkan Unggah Dokumen Dokumentasi dengan ekstensi .pdf dan Total File Tidak Melebihi 5MB']], 422);
+        }
         $isFileSize = $this->getFileUploadSize($file);
         if ($isFileSize > 5120000) {
             $sizeFileToMB = round(($isFileSize / 1000) / 1000 , 2);
             return Response::json(['errors' => ['Total File Size melebihi kapasitas yang sudah ditetapkan (Total Max: 5MB), Total File Ada: '.$sizeFileToMB." MB"]], 422);
         }        
-        if (is_null($request->file('dokumentasi_kegiatan_ppk'))) {
-            return Response::json(['errors' => ['Tidak ada Unggahan Dokumentasi, Silahkan Unggah Dokumen Dokumentasi dengan ekstensi .pdf!']], 422);
-        }
-        // $dateMulai = $dokumentasi_kegiatan->mulai_kegiatan;
-        // $dateAkhir = Carbon::parse($request->akhir_kegiatan);
-        // if($dateAkhir < $dateMulai){
-        //     return Response::json(['errors' => ['Tanggal Akhir Kegiatan Sudah Masa Lampau, Silahkan Masukkan Kembali']], 422);
-        // }
-        elseif($file){
+        // elseif($file){
             foreach ($dokumentasi_kegiatan->statusKegiatan as $status) {
                 $statusSebelumnya = $status->pivot->status_kegiatan_id;
             }
                 foreach ($file as $dokumentasi) {
                     $dokumen_name = $dokumentasi->getClientOriginalName();
                     $new_dokumen_name = $request->mulai_kegiatan."_".$dokumentasi_kegiatan->nama_kegiatan."_Dokumentasi_".$dokumen_name;
-                    $kumpulan_dokumen [] = $new_dokumen_name;
                      //jika ada file yang sama, unlink dan lanjut diganti menjadi yang baru
                     if(file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name))){
-                        unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name));
                         //find dokumen yang pernah diupload jika gagaal
-                        $dokumentasi_kegiatan->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $id, "nama_dokumen" => $new_dokumen_name, "status_unggah_dokumen" => "Pengajuan"])->delete();
-                    }
-                    $dokumen_create = new DokumenKegiatan([
-                        "dokumentasi_kegiatan_id" => $id,
-                        "nama_dokumen" => $new_dokumen_name,
-                        "status_unggah_dokumen" => "Pengajuan"
-                    ]);
-                    $dokumen_final =  $dokumentasi_kegiatan->dokumenKegiatan()->save($dokumen_create);
-                    $file_uploaded = $dokumentasi->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
-                    if ($file_uploaded && $dokumen_final) {
-                        continue;
-                    }
-                    else{
-                        //delete dokumen
-                        foreach ($kumpulan_dokumen as $nama_delete_dokumen) {
-                            unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_delete_dokumen));
-                            $dokumentasi_kegiatan->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $id, "nama_dokumen" => $nama_delete_dokumen, "status_unggah_dokumen" => 'Pengajuan'])->delete();
+                        $update_dokumen = $dokumentasi_kegiatan->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $id, "nama_dokumen" => $new_dokumen_name, "status_unggah_dokumen" => "Pengajuan"])->update([
+                            "nama_dokumen" => $new_dokumen_name
+                        ]);
+                        if (!$update_dokumen) {
+                            return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
                         }
-                        return Response::json(['errors' => ['Terjadi Kegagalan Dalam Menyimpan Dokumen, Silahkan Dicoba Kembali']], 422);
+                        unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name));
+                        $dokumentasi->move('kegiatan/dokumentasi_kegiatan/' , $new_dokumen_name);
+                        $kumpulan_dokumen = [];
+                        continue;
+                    } else {
+                        $kumpulan_dokumen [] = $new_dokumen_name;
+                        $dokumen_create = new DokumenKegiatan([
+                            "dokumentasi_kegiatan_id" => $id,
+                            "nama_dokumen" => $new_dokumen_name,
+                            "status_unggah_dokumen" => "Pengajuan"
+                        ]);
+                        $dokumen_final =  $dokumentasi_kegiatan->dokumenKegiatan()->save($dokumen_create);
+                        $file_uploaded = $dokumentasi->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+                        if ($file_uploaded && $dokumen_final) {
+                            continue;
+                        }
+                        else{
+                            //delete dokumen
+                            foreach ($kumpulan_dokumen as $nama_delete_dokumen) {
+                                unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_delete_dokumen));
+                                $dokumentasi_kegiatan->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $id, "nama_dokumen" => $nama_delete_dokumen, "status_unggah_dokumen" => 'Pengajuan'])->delete();
+                            }
+                            return Response::json(['errors' => ['Terjadi Kegagalan Dalam Menyimpan Dokumen, Silahkan Dicoba Kembali']], 422);
+                        }
                     }
                 }
                 //update tidak perlu, lgsg saja ke update statusKegiatan
@@ -613,10 +626,161 @@ class PJMengelolaKegiatanController extends Controller
                         return Response::json(['errors' => ['sistem tidak dapat memproseskan data, silahkan dicoba kembali']], 422);
                     }
                     return Response::json(['message' => 'data is valid', 'notification' => 'Berhasil Mengunggah Dokumentasi Kegiatan'], 200);
-        }
+        // }
 
     }
 
+    public function uploadDokumenDokumentasiBaru(uploadDokumenDokumentasiBaruValidationRequest $request, $id){
+        //strictly for dokumentasi => status unggahnya
+        try{
+            $dokumentasi_kegiatan = DokumentasiKegiatan::findOrFail($id);
+        } catch(\Throwable $th){
+            return response()->json(['messages' => $th->getMessage() ], 422);
+        } catch(ModelNotFoundException $evt){
+            return response()->json(['messages' => $evt->getMessage() ], 404);
+        }
+        $file = $request->file('dokumen_dokumentasi_baru');
+        $kumpulan_docs = [];
+        if (is_null($file)) {
+            return response()->json(['errors' => ['Lol']], 422);
+        }
+        $isFileSize = $this->getFileUploadSize($file);
+        if ($isFileSize > 5120000) {
+            return response()->json(['errors' =>['Lol Kegedean']],422);
+        }
+       foreach ($file as $docs_file) {
+            $nama_docs = $dokumentasi_kegiatan->mulai_kegiatan."_".$dokumentasi_kegiatan->nama_kegiatan."_Dokumentasi-Baru_".$docs_file->getClientOriginalName();
+            if (file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_docs))) {
+                $update_dokumen = $dokumentasi_kegiatan->dokumenKegiatan()->where([
+                    ['nama_dokumen' , '=' , $nama_docs],
+                    ['status_unggah_dokumen', '=' , 'Dokumentasi']
+                ])->update(
+                    ['nama_dokumen' => $nama_docs],
+                    ['status_unggah_dokumen' => 'Dokumentasi']
+                );
+                if ($update_dokumen) {
+                    unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_docs));
+                    $docs_file->move('kegiatan/dokumentasi_kegiatan', $nama_docs);
+                    $kumpulan_docs = [];
+                    continue;
+                } else {
+                    //unlink kumpulan docs and add response
+                    foreach ($kumpulan_docs as $failed_docs) {
+                        unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$failed_docs));
+                        $dokumentasi_kegiatan->dokumenKegiatan()->where([['nama_dokumen' , '=', $failed_docs],
+                         ['status_unggah_dokumen', '=' , 'Dokumentasi']])->delete();
+                    }
+                    return Response::json(['errors' => ['']], 422);
+                }
+            } else {
+                $kumpulan_docs [] = $nama_docs;
+                $added_new_dokumen = new DokumenKegiatan([
+                    'dokumentasi_kegiatan_id' => $id,
+                    'nama_dokumen' => $nama_docs,
+                    'status_unggah_dokumen' => 'Dokumentasi',
+                ]);
+                $save_dokumen = $dokumentasi_kegiatan->dokumenKegiatan()->save($added_new_dokumen);
+                $move_file = $docs_file->move('kegiatan/dokumentasi_kegiatan' , $nama_docs);
+                if ($save_dokumen && $move_file) {
+                    continue;
+                } else {
+                    foreach ($kumpulan_docs as $failed_docs) {
+                        unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$failed_docs));
+                        $dokumentasi_kegiatan->dokumenKegiatan()->where([['nama_dokumen' , '=', $failed_docs],
+                         ['status_unggah_dokumen', '=' , 'Dokumentasi']])->delete();
+                    }
+                    return Response::json(['errors' => ['']], 422);
+                }
+            }
+       }
+       return Response::json(['data' => 'data is valid'], 200);
+    }
+
+    public function uploadDokumenDokumentasiEdit(uploadEditedDokumenDokumentasiValidationRequest $request , $status_unggah , $id, $id_docs) {
+        //edit dokumen yang sudah diupload (antara status unggah pengajuan / dokumentasi)
+        //only one
+        try{
+            $dokumentasi_kegiatan = DokumentasiKegiatan::findOrFail($id);
+        } catch(\Throwable $th){
+            return response()->json(['messages' => $th->getMessage() ], 422);
+        } catch(ModelNotFoundException $evt){
+            return response()->json(['messages' => $evt->getMessage() ], 404);
+        }
+        $file = $request->file('edited_dokumen');
+        $search_file = $dokumentasi_kegiatan->dokumenKegiatan()->where([
+            ["dokumentasi_kegiatan_id" , "=" , $id]
+        ])->get();
+        $file_deleted = $dokumentasi_kegiatan->dokumenKegiatan()->where([
+            ["id" , "=" , $id_docs],
+            ["dokumentasi_kegiatan_id" , "=" , $id],
+            ["status_unggah_dokumen" , "=" , $status_unggah]
+        ])->first();
+        $nama_file = $dokumentasi_kegiatan->mulai_kegiatan."_".$dokumentasi_kegiatan->nama_kegiatan."_Dokumentasi_".$file->getClientOriginalName();
+        //check if file is already uploaded and exists on server
+        if (file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$nama_file))) {
+            foreach ($search_file as $item_dokumen) {
+                if ($item_dokumen->nama_dokumen == $nama_file) {
+                    $updated_file = $dokumentasi_kegiatan->dokumenKegiatan()->where([
+                        ['id', '=' , $id_docs] ,
+                        ["nama_dokumen", '=' , $item_dokumen->nama_dokumen],
+                        ['status_unggah_dokumen' , '=' , $status_unggah],
+                    ])->update([
+                        "id" => $id_docs,
+                        "nama_dokumen" => $nama_file,
+                        "status_unggah_dokumen" => $status_unggah
+                    ]);
+                    if (!$updated_file) {
+                        return Response::json(['errors' => ['']],422);
+                    }
+                    unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$item_dokumen->nama_dokumen));
+                    $file->move('kegiatan/dokumentasi_kegiatan' , $nama_file);
+                    return Response::json(['message' => 'data is valid'], 200);
+                }
+            }
+        }
+        $updated_file = $dokumentasi_kegiatan->dokumenKegiatan()->where([
+            ['id', '=' , $id_docs] ,
+            ['status_unggah_dokumen' , '=' , $status_unggah],
+        ])->update([
+            "id" => $id_docs,
+            "nama_dokumen" => $nama_file,
+            "status_unggah_dokumen" => $status_unggah
+        ]);
+        if (!$updated_file) {
+            return Response::json(['errors' => ['']],422);
+        }
+        unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$file_deleted->nama_dokumen));
+        $file->move('kegiatan/dokumentasi_kegiatan' , $nama_file);
+        return Response::json(['message' => 'data is valid'], 200);
+    }
+
+    public function deleteDokumenDokumentasi($status_unggah , $id , $id_docs){
+        //delete dokumen yang sudah diupload (antara status unggah pengajuan / dokumentasi)
+        //only one
+        try{
+            $dokumentasi_kegiatan = DokumentasiKegiatan::findOrFail($id);
+        } catch(\Throwable $th){
+            return response()->json(['messages' => $th->getMessage() ], 422);
+        } catch(ModelNotFoundException $evt){
+            return response()->json(['messages' => $evt->getMessage() ], 404);
+        }
+        $search_file = $dokumentasi_kegiatan->dokumenKegiatan()->where([
+            ['id', '=' , $id_docs],
+            ['status_unggah_dokumen' , '=' , $status_unggah]
+        ])->first();
+        $deleted_file = $dokumentasi_kegiatan->dokumenKegiatan()->where([
+            ['id', '=' , $id_docs],
+            ['nama_dokumen' , '=' , $search_file->nama_dokumen],
+            ['status_unggah_dokumen' , '=' , $status_unggah]
+        ])->delete();
+        if (!$deleted_file) {
+            return Response::json(['errors' => ['Gagal Menghapus Dokumen, Silahkan Coba Kembali']], 422);
+        }
+        unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$search_file->nama_dokumen));
+        return Response::json(['message' => 'data is valid'], 200);
+    }
+
+    
     // public function uploadDokumentasiUlang(PengajuanDokumentasiKegiatanRequest $request, $id){
     //     //jika dokumentasi dinyatakan pengajuan ulang
     //     //unlink dokumentasi yang terdahulu dan update json dokumentasinya => not tested yet

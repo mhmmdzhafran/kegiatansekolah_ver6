@@ -11,6 +11,7 @@
 |
 */
 
+// use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,8 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/', 'Auth\LoginController@showLoginForm');
+// Route::put('/forget_password', 'Auth\LoginController@showLoginForm');
+Route::post('/password-users/resets', 'Auth\ForgotPasswordController@changeUserPassword')->name('password.changeTempPass');
 
 Auth::routes();
 
@@ -76,27 +79,43 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
     Route::get('/penanggung-jawab/unggah-dokumentasi-kegiatan/dokumentasi/{dokumentasi_kegiatan}', 'PJMengelolaKegiatanController@showDokumentasi')
     ->name('pj.dokumentasi_kegiatan.show');
 
+    Route::post('/penanggung-jawab/dokumentasi-kegiatan/upload-dokumen-baru/{id_dokumentasi}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiBaru')->name('pj.dokumentasi_kegiatan.uploadDokumenBaru');
+    Route::post('/penanggung-jawab/dokumentasi-kegiatan/edit-dokumen-dokumentasi/{status_dokumen}/{id}/{id_dokumen}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiEdit')->name('pj.dokumentasi_kegiatan.editDokumenDokumentasi');
+    Route::delete('/penanggung-jawab/dokumentasi-kegiatan/delete-dokumen-dokumentasi/{status_dokumen}/{id}/{id_dokumen}', 'PJMengelolaKegiatanController@deleteDokumenDokumentasi')->name('pj.dokumentasi_kegiatan.deleteDokumenDokumentasi');
+
+    Route::resource('/penanggung-jawab/user-profile', 'UserProfileController', ['names' => [
+        'index' => 'userprofile.pj.index',
+        'edit' => 'userprofile.pj.edit',
+    ]]);
+
+    Route::post('/penanggung-jawab/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('pj.userprofile.check');
+    Route::post('/penanggung-jawab/user-profile/change-pass' , 'UserProfileController@update')->name('pj.userprofile.update');
+
+    /**
+     * Commented Routes => For uses later
+     */
+
     //Unggah Dokumentasi Ulang
     // Route::put('/penanggung-jawab/mengelola-kegiatan/dokumentasi-kegiatan-ulang/{dokumentasi_kegiatan}', 'PJMengelolaKegiatanController@uploadDokumentasiUlang');
 
     // Route::post('/penanggung-jawab/mengelola-kegiatan/delete', 'PJMengelolaKegiatanController@destroy');
 
-    Route::resource('/penanggung-jawab/dokumentasi-kegiatan', 'PJDokumentasiController', ['names' => [
-        'index' => 'pj.kelola_dokumentasi.index',
-        'show' => 'pj.kelola_dokumentasi.show',
-    ]]);
+    // Route::resource('/penanggung-jawab/dokumentasi-kegiatan', 'PJDokumentasiController', ['names' => [
+    //     'index' => 'pj.kelola_dokumentasi.index',
+    //     'show' => 'pj.kelola_dokumentasi.show',
+    // ]]);
 
-    Route::delete('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{id_documentation}', 'PJDokumentasiController@destroy')->name('pj.kelola_dokumentasi.destroy');
+    // Route::delete('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{id_documentation}', 'PJDokumentasiController@destroy')->name('pj.kelola_dokumentasi.destroy');
     
-    Route::get('/penanggung-jawab/dokumentasi-kegiatan/dokumen/{id_doc}/edit/{id_documentation}', 'PJDokumentasiController@edit')->name('pj.kelola_dokumentasi.edit');
+    // Route::get('/penanggung-jawab/dokumentasi-kegiatan/dokumen/{id_doc}/edit/{id_documentation}', 'PJDokumentasiController@edit')->name('pj.kelola_dokumentasi.edit');
 
-    Route::put('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{dokumen_id}', 'PJDokumentasiController@update')->name('pj.kelola_dokumentasi.update');
+    // Route::put('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{dokumen_id}', 'PJDokumentasiController@update')->name('pj.kelola_dokumentasi.update');
 
-    Route::get('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/create', 'PJDokumentasiController@create')->name('pj.kelola_dokumentasi.create');
+    // Route::get('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/create', 'PJDokumentasiController@create')->name('pj.kelola_dokumentasi.create');
 
-    Route::post('/penanggung-jawab/dokumentasi-kegiatan/{date_now}/{id_doc}', 'PJDokumentasiController@store')->name('pj.kelola_dokumentasi.store');
+    // Route::post('/penanggung-jawab/dokumentasi-kegiatan/{date_now}/{id_doc}', 'PJDokumentasiController@store')->name('pj.kelola_dokumentasi.store');
 
-    Route::post('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{file_name}/delete', 'PJDokumentasiController@delete_file');
+    // Route::post('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{file_name}/delete', 'PJDokumentasiController@delete_file');
 });
 
 Route::group(['middleware' => 'KepalaSekolah'], function(){
@@ -125,12 +144,15 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     //route for showdokumentasi => alias sudahnya Acc/Not dokumentasi kegiatan, menunggu keputusan dari pj
     Route::get('/kepala-sekolah/dokumentasi-kegiatan/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@showDokumentasi')
     ->name('kepsek.pengajuan_dokumentasi_kegiatan.show');
+
+    // Route::get('/kepala-sekolah/dokumentasi-kegiatan/getDataDokumen/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@getDokumenDokumentasiPJ')
+    // ->name('kepsek.pengajuan_dokumentasi_kegiatan.getDataDokumen');
     
     Route::resource('/kepala-sekolah/asesmen-ppk', 'KepalaSekolahAssessmenController' , ['names' => [
         'index' => 'kepsek.asesmen.index',
         'create' => 'kepsek.asesmen.create',
         'show' => 'kepsek.asesmen.show',
-        'edit' => 'kepsek.asesmen.edit',
+        'edit' => 'kepsek.asesmen.edit'
     ]]);
     
     Route::post('/kepala-sekolah/asesmen-ppk/store', 'KepalaSekolahAssessmenController@store')->name('kepsek.asesmen.store');
@@ -141,6 +163,17 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     Route::put('/kepala-sekolah/asesmen-ppk/update_dokumen/{file_name}/{id_indikator}/{id_asesmen}', 'KepalaSekolahAssessmenController@updateDokumen')->name('kepsek.asesmen.updateDoc');
     Route::post('/kepala-sekolah/asesmen-ppk/delete/{file_name}/{id_indikator}/{id_asesmen}', 'KepalaSekolahAssessmenController@destroy')->name('kepsek.asesmen.destroy');
 
+    Route::resource('/kepala-sekolah/user-profile', 'UserProfileController', ['names' => [
+        'index' => 'userprofile.kepsek.index',
+        'edit' => 'userprofile.kepsek.edit',
+    ]]);
+
+    Route::post('/kepala-sekolah/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('kepsek.userprofile.check');
+    Route::post('/kepala-sekolah/user-profile/change-pass' , 'UserProfileController@update')->name('kepsek.userprofile.update');
+
+    /**
+     * Commented Routes => For uses later
+     */
 
     //route for editdokumentasi => alias mengajukan acc/pengajuan ulang dokumentasi kegiatan dari pj
     // Route::get('/kepala-sekolah/mengelola-kegiatan/dokumentasi-kegiatan/{dokumentasi_kegiatan}/edit', 'KepalaSekolahMengelolaKegiatanController@editDokumentasi')

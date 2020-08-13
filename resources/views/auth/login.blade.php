@@ -123,15 +123,131 @@
             <button type="submit" class="btn btn-primary btn-user btn-block">
                 {{ __('Login') }}
             </button>
-
-            {{-- @if (Route::has('password.request'))
-                <a class="btn btn-link" href="{{ route('password.request') }}">
-                    {{ __('Forgot Your Password?') }}
-                </a>
-            @endif --}}
         {{-- </div> --}}
     </div>
 </form>
+    <div class="row">
+        <div class="col-sm-12 col-lg-12 text-center">
+            {{-- @if (Route::has('password.request'))
+            <a class="btn btn-link btn-sm" href="{{ route('password.request') }}">
+                {{ __('Lupa Password?') }}
+            </a>
+        @endif --}}
+        {{-- @if (Route::has('password.request')) --}}
+        <button class="btn btn-link" id="forget_password">
+            {{ __('Lupa Password?') }}
+        </button>
+    {{-- @endif --}}
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal_forget_pass" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+              <form action="{{ route('password.changeTempPass') }}" method="post" id="change_pass_form">
+                @csrf
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Form Password Sementara</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    {!! Form::label('user_id' , 'Masukkan Username Anda: ') !!}
+                    <input type="text" name="username_id_user" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Dapatkan Password Sementara</button>
+            </div>
+        </form>
+          </div>
+        </div>
+      </div>
+@endsection
+
+@section('scripts')
+    <script>
+        document.getElementById('forget_password').addEventListener('click', function(){
+            $("#modal_forget_pass").modal();
+        });
+        $("#change_pass_form").on('submit', function(e){
+            e.preventDefault();
+            let form_url = $(this).attr('action');
+            $.ajaxSetup({
+                headers:{
+                    'X-CSRF-TOKEN': $("[name= '_token']").val()
+                }
+            });
+            $.ajax({
+                url: form_url,
+                type: 'POST',
+                data: $("#change_pass_form").serialize(),
+                beforeSend: function(){
+                    loading_bar(true);
+                },
+                success: function(res){
+                    loading_bar(false);
+                    console.log(res);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses Mendapatkan Password Sementara',
+                        text: 'Password Anda: '+res.tempPass,
+                    }).then((result) => {
+                        location.reload(true);
+                    });
+                },
+                error: function(res){
+                    loading_bar(false);
+                    if (res.status === 422) {
+                        let errorValues = JSON.parse(res.responseText);                        
+                        errorNotifications(422, errorValues);
+                    } else {
+                        errorNotifications(res.status , res)
+                    }
+                }
+            });
+        });
+
+        function loading_bar(condition){
+        if (condition) {
+            Swal.fire({
+                title: 'Sedang Diproses',
+                html: '<div class="spinner-border" role="status" style="margin:25%"><span class="sr-only"></span></div>',    
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                showConfirmButton: false
+            });   
+        }
+        else{
+            Swal.close();
+        }
+    }
+
+    function errorNotifications(requestType, message){
+        if (requestType === 422) {
+            let messageType = "";
+            $.each(message.errors, function(key, value){
+                messageType = value;
+            });
+            Swal.fire({
+                icon: 'error',
+                title: 'Terdapat Error',
+                text: messageType
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'System Error Code: '+message.status+': '+message.statusText
+            });
+            console.log(message);
+        }
+    }
+    </script>
 @endsection
 
 {{-- @section('scripts') --}}

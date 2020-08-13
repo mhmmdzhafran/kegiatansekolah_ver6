@@ -83,6 +83,12 @@
         <span>Dokumentasi Kegiatan</span></a>
       </li>
 
+      <li class="nav-item {{(request()->segment(2) == 'user-profile') ? 'active' : ''}}">
+        <a class="nav-link" href="{{  route("userprofile.pj.index") }}">
+          <i class="fas fa-id-card-alt"></i>
+          <span>Profil Penanggung Jawab</span></a>
+        </li>
+
       <!-- Nav Item - Utilities Collapse Menu -->
     {{-- <li class="nav-item {{ (request()->segment(2) == 'dokumentasi-kegiatan') ? 'active' : ''}}">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities" aria-expanded="true" aria-controls="collapseUtilities">
@@ -181,6 +187,10 @@
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" href="{{ route("userprofile.pj.index") }}">
+                  <i class="fas fa-id-card-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout
@@ -255,6 +265,7 @@
   <!-- Custom scripts for all pages-->
   <script src="{{ asset('js/libs.js') }}"></script>
   @yield('script')
+  {{-- @stack('script') --}}
 </body>
 
 </html>

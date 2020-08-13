@@ -176,7 +176,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             $status_kegiatan  = $status;
         }
         $data_user = $pengajuan_kegiatan->user->name;
-        return view('kepsek.kelola_kegiatan.edit', compact('pengajuan_kegiatan', 'status_kegiatan', 'id', 'data_user'));
+        return view('kepsek.kelola_kegiatan.edit', compact('pengajuan_kegiatan', 'status_kegiatan', 'data_user', 'id'));
     }
 
     public function get_data_dan_dokumen_pengajuan($id){
@@ -439,7 +439,6 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             }
         }
     }   
-
     // public function editDokumentasi($id){
     //     //code here..
     //     //For acc sukses, pengajuan ulang => belum disetujui

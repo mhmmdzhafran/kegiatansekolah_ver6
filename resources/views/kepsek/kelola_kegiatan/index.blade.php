@@ -252,6 +252,7 @@
             } else if(value_btn === "belum_disetujui") {
                 var url = '{{route("kepsek.kelola_kegiatan.edit", "id")}}';
                 url = url.replace("id", id );
+                // console.log(url);
                 $.get(url, function(){
                     window.location = url;
                 }).fail(function(error){

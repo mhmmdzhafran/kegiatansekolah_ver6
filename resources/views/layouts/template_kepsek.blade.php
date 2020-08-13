@@ -100,6 +100,12 @@
         </div> --}}
       </li>
 
+      <li class="nav-item {{(request()->segment(2) == 'user-profile') ? 'active' : ''}}">
+        <a class="nav-link" href="{{  route("userprofile.kepsek.index") }}">
+          <i class="fas fa-id-card-alt"></i>
+          <span>Profil Kepala Sekolah</span></a>
+        </li>
+
       <!-- Divider -->
       <hr class="sidebar-divider">
 
@@ -194,6 +200,10 @@
                   Activity Log
                 </a>
                 <div class="dropdown-divider"></div> --}}
+                <a class="dropdown-item" href="{{ route("userprofile.kepsek.index") }}">
+                  <i class="fas fa-id-card-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Profile
+                </a>
                 <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
                   <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                   Logout

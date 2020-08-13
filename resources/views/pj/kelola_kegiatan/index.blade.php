@@ -249,14 +249,14 @@ $('#pengajuan-table').DataTable({
                     if (res.status_proposal.id === 5) {
                          if(element.no === 3){
                            if (element.keterangan_wajib === "" || element.keterangan_wajib === null) {
-                            $(".keterangan-show").append('<li><b>Tidak Ada Keterangan Menolak<b></li>');
+                            // $(".keterangan-show").append('<li><b>Tidak Ada Keterangan Menolak<b></li>');
                            } else {
                             $(".keterangan-show").append('<li><b>Keterangan Menolak: '+element.keterangan_wajib+'</b></li>');
                            }
                        }
                        else if(element.no === 2){
                             if (element.keterangan_wajib_ulang === "" || element.keterangan_wajib_ulang === null) {
-                                $(".keterangan-show").append('<li><b>Tidak Ada Keterangan Pengajuan Ulang<b></li>');
+                                // $(".keterangan-show").append('<li><b>Tidak Ada Keterangan Pengajuan Ulang<b></li>');
                             } else {
                                 $(".keterangan-show").append('<li><b>Keterangan Pengajuan Ulang: '+element.keterangan_wajib_ulang+'</b></li>');
                             }
@@ -287,7 +287,7 @@ $('#pengajuan-table').DataTable({
                            }
                        } else if(element.no === 2){
                             if (element.keterangan_wajib_ulang === "" || element.keterangan_wajib_ulang === null) {
-                                $(".keterangan-show").append('<li><b>Tidak Ada Keterangan Pengajuan Ulang<b></li>');
+                                // $(".keterangan-show").append('<li><b>Tidak Ada Keterangan Pengajuan Ulang<b></li>');
                             } else {
                                 $(".keterangan-show").append('<li><b>Keterangan Pengajuan Ulang: '+element.keterangan_wajib_ulang+'</b></li>');
                             }

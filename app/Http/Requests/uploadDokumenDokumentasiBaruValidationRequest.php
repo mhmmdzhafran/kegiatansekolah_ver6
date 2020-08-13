@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InformasiAssessmenInternalUpdateRequest extends FormRequest
+class uploadDokumenDokumentasiBaruValidationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,18 +25,16 @@ class InformasiAssessmenInternalUpdateRequest extends FormRequest
     {
         return [
             //
-            'indikator' => 'required',
-            'file.*' => 'required|mimes:pdf|max:5120',
+            "dokumen_dokumentasi_baru.*" => 'required|mimes:pdf|max:5120'
         ];
     }
 
     public function messages()
     {
-        return[
-            'indikator.required' => 'Skor Penilaian Wajib diisi! Silahkan Pilih Salah Satu Skor',
-            'file.*.mimes' => 'Sistem hanya menerima dokumen dengan ekstensi .pdf',
-            'file.*.max' => 'Dokumen Asesmen harap tidak melebihi 5MB',
-            'file.*.required' => 'Dokumen Asesmen Harap Diunggah'
+        return [
+            "dokumen_dokumentasi_baru.*.required" => 'Dokumen Dokumentasi Kegiatan harap diunggah',
+            "dokumen_dokumentasi_baru.*.mimes" => 'Sistem dapat menerima file dengan ekstensi .pdf',
+            "dokumen_dokumentasi_baru.*.max" => 'Sistem dapat menerima file sebesar 5MB'
         ];
     }
 }

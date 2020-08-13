@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class InformasiAssessmenInternalUpdateRequest extends FormRequest
+class TempPasswordValidationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,18 +25,14 @@ class InformasiAssessmenInternalUpdateRequest extends FormRequest
     {
         return [
             //
-            'indikator' => 'required',
-            'file.*' => 'required|mimes:pdf|max:5120',
+            'username_id_user' => 'required'
         ];
     }
 
     public function messages()
     {
-        return[
-            'indikator.required' => 'Skor Penilaian Wajib diisi! Silahkan Pilih Salah Satu Skor',
-            'file.*.mimes' => 'Sistem hanya menerima dokumen dengan ekstensi .pdf',
-            'file.*.max' => 'Dokumen Asesmen harap tidak melebihi 5MB',
-            'file.*.required' => 'Dokumen Asesmen Harap Diunggah'
+        return [
+            'username_id_user.required' => 'Masukkan Username Anda!'
         ];
     }
 }

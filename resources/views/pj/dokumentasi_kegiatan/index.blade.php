@@ -35,7 +35,7 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade lihat_dokumentasi" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+        <div class="modal fade lihat_dokumentasi" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
             <div class="modal-dialog modal-xl" role="document">
               <div class="modal-content">
                 <div class="modal-header">
@@ -45,9 +45,9 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                      {{-- <div class="button_kelola_dokumentasi">
+                      <div class="button_kelola_dokumentasi">
                         <a class="btn btn-warning btn-sm rounded-pill float float-right button_show_dokumentasi" href="#show_kelola_dokumentasi">Lakukan Pengelolaan Dokumentasi</a>
-                      </div> --}}
+                      </div>
                       <div class="form-group mt-3">
                         {!! Form::label('status_kegiatan', 'Status Dokumentasi Kegiatan:') !!}
                         <ul class="status_dokumentasi">                            
@@ -70,12 +70,12 @@
                         <br>
                         {!! Form::checkbox('nilai_ppk[]', 'Gotong Royong', null, ['class' => 'nilai_ppk', 'disabled']) !!} Gotong Royong
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         {!! Form::label('dokumen' , "Data Dokumen Kegiatan:") !!}
                         <ol class="dokumen_kegiatan">
 
                         </ol>
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                           {!! Form::label('kegiatan_berasis', 'Kegiatan Berbasis PPK:') !!}
                           {!! Form::select('kegiatan_berbasis', array('' => 'Choose Options', 'Berbasis Kelas' => 'Berbasis Kelas', 'Berbasis Budaya Sekolah' => 'Berbasis Budaya Sekolah', 'Berbasis Masyarakat' => 'Berbasis Masyarakat') ,null , ['class' => 'form-control kegiatan_berbasis_ppk', 'disabled'=>'disabled']) !!}
@@ -92,7 +92,7 @@
                             {!! Form::date('akhir_kegiatan', null , ['class' => 'form-control akhir_dari_kegiatan' , 'disabled' => 'disabled']) !!}
                         </div>
                     </div>
-                    {{-- <hr>
+                    <hr>
                     {!! Form::label('text_label_pengelolaan_dokumentasi' , 'Fungsi Pengelolaan Dokumentasi Kegiatan PPK') !!}
                     <div class="card shadow mb-4" id="show_kelola_dokumentasi">
                         
@@ -113,24 +113,27 @@
                             <ol class="kelola_dokumen_baru">
 
                             </ol>
-                            <hr>                            
+                            <hr>
+                            <ul class="error_notification_upload_baru" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>                            
                             <button class="btn btn-success btn-sm rounded-pill float float-right mb-3" id="add_new_dokumentasi">Tambah Dokumen</button>                            
-                            <div class="col-lg-6 col-sm-12">
-                                <form action="" method="POST" id="form-pengelolaan-kegiatan">
+                                <form action="" method="POST" class="form-pengelolaan-kegiatan">
                                     {{ csrf_field() }}
-                                    <h5 class="float float-left">Dokumentasi Baru Yang Ingin diupload</h5>                                
-                                    <input type="file"  name="dokumentasi_baru[]">
-                                    <div class="show_added_dokumentasi"></div>
-                                    <button type="submit" class="btn btn-primary btn-sm rounded-pill float float-left mb-2 mt-2">Submit Dokumen Baru</button>
+                                    <label for="dokumentasi_baru" style="font-size: 1.25rem" class="font-weight-bolder">Dokumentasi Baru Yang Ingin diupload</label>
+                                    <div class="col-sm-6 col-lg-6">
+                                        <input type="file"  name="dokumen_dokumentasi_baru[]">
+                                        <div class="show_added_dokumentasi"></div>
+                                    </div>
+                                    <div class="progress mb-3 mt-3" hidden>
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated myProgress" role="progressbar" style="width: 0%">0%</div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary submit_dokumentasi rounded-pill float float-left mb-3 mt-3">Submit Dokumen Baru</button>
                                 </form>
-                            </div>
                           </div>
                         </div>
-                      </div> --}}
-        
+                      </div>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Close</button>
                   </div>
               </div>
             </div>
@@ -290,9 +293,12 @@
             </div>
           </div>
           
-          {{-- <div class="modal modal_edit" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
-            <div class="modal-dialog" role="document">
+          <div class="modal modal_edit" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog modal-lg" role="document">
               <div class="modal-content">
+                <form action="" method="post" class="edited-dokumen-form" enctype="multipart/form-data">
+                @csrf
+                {{-- @method("PUT") --}}
                 <div class="modal-header">
                   <h5 class="modal-title">Modal title</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -300,22 +306,34 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <p>Modal body text goes here.</p>
-                    <div class="show_dokumen_edit">
-
+                    {!! Form::label('edit_dokumen_dokumentasi' , "Dokumen Dokumentasi Kegiatan Yang Ingin Diganti:" , ['class' => 'font-weight-bolder' , 'style' => 'font-size: 1.25rem']) !!}
+                    <div class="show_dokumen_edit"></div>
+                    <hr>
+                    <ul class="error_notification_upload_edit" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>                            
+                        <div class="form-group">
+                            {!! Form::label('Unggah Dokumen Pengganti(Berekstensi .pdf dan Ukuran File Tidak Lebih Dari 5MB)') !!}
+                            <input type="file" name="edited_dokumen">
+                        </div>
+                        <div class="progress" hidden>
+                            <div class="progress-bar progress-bar-striped progress-bar-animated myProgress" role="progressbar" style="width: 0%">0%</div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Kembali ke Data Dokumentasi</button>
+                            <button type="submit" class="btn btn-warning submit_dokumentasi">Unggah Dokumen Baru</button>
+                        </div> 
                     </div>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-primary">Unggah Dokumen Baru</button>
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali ke Data Dokumentasi</button>
-                </div>
+                </form>
               </div>
             </div>
-          </div> --}}
+          </div> 
 
-          {{-- <div class="modal modal_delete" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
+          <div class="modal modal_delete" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
+                  <form action="" class="delete-dokumen-dokumentasi" method="post">
+                      @csrf
+                      @method("DELETE")
+                  
                 <div class="modal-header">
                   <h5 class="modal-title">Modal title</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -329,12 +347,13 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-primary">Hapus Dokumen Ini</button>
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali ke Data Dokumentasi</button>
+                  <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Kembali ke Data Dokumentasi</button>
+                  <button type="submit" class="btn btn-danger submit_dokumentasi">Hapus Dokumen Ini</button>
                 </div>
+            </form>
               </div>
             </div>
-          </div> --}}
+          </div> 
 
     </div>
 @endsection
@@ -347,6 +366,8 @@
         var kegiatan_berbasis = "";
         var modalState = "";
         var id = "";
+        $(".form_unggah")[0].reset();
+        $(".form-pengelolaan-kegiatan")[0].reset();
         const modalStartLihatDokumentasi = ".lihat_dokumentasi";
         $("#dokumentasi_kegiatan").DataTable({
             processing: true,
@@ -371,9 +392,6 @@
             id = $(this).attr('id');
             if(btn_value === "sudah_unggah"){
                 //show modal
-                $(".dokumen_kegiatan").empty();
-                $(".kelola_dokumen_kegiatan").empty();
-                $(".kelola_dokumen_baru").empty();
                 getDataDokumentasiModal(id);
             }
             else if(btn_value === "unggah_dokumentasi"){
@@ -430,32 +448,55 @@
         });
         
         $("#unggah_baru").click(function(){
-            var url = '{{route("pj.dokumentasi_kegiatan.upload_baru")}}';
+            let url = '{{route("pj.dokumentasi_kegiatan.upload_baru")}}';
             $(".unggah_form_dokumentasi").attr('action', url);
             modalState = "#unggah_dokumentasi_baru";
             $("#unggah_dokumentasi_baru").modal();
         });
-        // document.getElementById('add_new_dokumentasi').addEventListener('click', function(){
-        //     doc_added_dokumentasi_baru++;
-        //     $(".show_added_dokumentasi").append('<input type="file" name="dokumentasi_baru[]" id="row_doc_baru'+doc_added_dokumentasi_baru+'" placeholder="Enter your Name" /><button type="button" name="remove" id="'+doc_added_dokumentasi_baru+'" class="btn btn-danger btn_remove_doc_baru mb-2">X</button>')
-        // });
+        document.getElementById('add_new_dokumentasi').addEventListener('click', function(){
+            doc_added_dokumentasi_baru++;
+            $(".show_added_dokumentasi").append('<input type="file" name="dokumen_dokumentasi_baru[]" id="row_doc_baru'+doc_added_dokumentasi_baru+'" placeholder="Enter your Name" /><button type="button" name="remove" id="'+doc_added_dokumentasi_baru+'" class="btn btn-danger btn_remove_doc_baru mb-2">X</button>')
+        });
 
         $(document).on('click', '.lihat_file', function(){
-            var asset_val = $(this).val();  
+            let asset_val = $(this).val();  
             window.open(asset_val);
         });
 
         $(document).on('click' , '.edit_file' , function(){
             $(".modal_edit").modal();
             $(modalState).modal('hide');
-            modalState = ".modal_edit";            
+            let fileAsset = $(this).attr('value');
+            let fileName = $(this).attr('data-target');
+            let fileStatus = $(this).attr('data-target2');
+            let fileID = $(this).attr('data-target3');
+            document.querySelector('.show_dokumen_edit').innerHTML = "<i class='fa fa-file-alt mr-2'></i>"+fileName+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+fileAsset+"'>Lihat File</button><a href='"+fileAsset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+fileName+"'>Unduh Dokumen</a></li>";
+            let url_edit_file = '{{route("pj.dokumentasi_kegiatan.editDokumenDokumentasi", ["status_dokumen" => "status_docs" , "id" => "ids" , "id_dokumen" => "id_docs"])}}';
+            url_edit_file = url_edit_file.replace('status_docs' , fileStatus);
+            url_edit_file = url_edit_file.replace('ids' , id);
+            url_edit_file = url_edit_file.replace('id_docs' , fileID);
+            $(".edited-dokumen-form").attr('action' , url_edit_file);
         });
 
-        // $(document).on('click' , '.delete_dokumen', function(){
-        //     $(".modal_delete").modal();
-        //     $(modalState).modal('hide');
-        //     modalState = ".modal_delete";
-        // });
+
+        $(document).on('click' , '.delete_dokumen', function(){
+            $(".modal_delete").modal();
+            $(modalState).modal('hide');
+            modalState = ".modal_delete";
+            //add file name serta link asset
+            let fileAsset = $(this).attr('value');
+            let fileName = $(this).attr('data-target');
+            let fileStatus = $(this).attr('data-target2');
+            let fileID = $(this).attr('data-target3');
+            document.querySelector('.show_dokumen_delete').innerHTML = "<i class='fa fa-file-alt mr-2'></i>"+fileName+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+fileAsset+"'>Lihat File</button><a href='"+fileAsset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+fileName+"'>Unduh Dokumen</a></li>";
+            //add form action
+            //{status_dokumen}/{id}/{id_dokumen}
+            let url_delete_form = "{{route('pj.dokumentasi_kegiatan.deleteDokumenDokumentasi' , ['status_dokumen' => 'status' , 'id' => 'id_dokumentasi' , 'id_dokumen' => 'id_docs'])}}";
+            url_delete_form = url_delete_form.replace('status' , fileStatus);
+            url_delete_form = url_delete_form.replace('id_dokumentasi' , id);
+            url_delete_form = url_delete_form.replace('id_docs' , fileID);
+            let url_form = $('.delete-dokumen-dokumentasi').attr('action' , url_delete_form);
+        });
 
         $(".add").click(function(){
             doc_row++;
@@ -463,7 +504,7 @@
         });  
 
         $(document).on('click', '.btn_remove', function(){  
-            var button_id = $(this).attr("id");          
+            let button_id = $(this).attr("id");          
             $(this).remove();
 
             //karena modal mempunyai class add dan remove yang sama
@@ -471,23 +512,22 @@
             $("#row"+button_id).remove();
         });  
         
-        // $(document).on('click', '.btn_remove_doc_baru', function(){
-        //     let button_remove_doc_baru_id = $(this).attr("id");
-        //     $(this).remove();
-        //     $("#row_doc_baru"+button_remove_doc_baru_id+"").remove();
-        // });
+        $(document).on('click', '.btn_remove_doc_baru', function(){
+            let button_remove_doc_baru_id = $(this).attr("id");
+            $(this).remove();
+            $("#row_doc_baru"+button_remove_doc_baru_id+"").remove();
+        });
 
         // Hidden bootstrap Modals
 
-        // $(".modal_edit").on('hidden.bs.modal', function(){
-        //     getDataDokumentasiModal(id);
-        //     modalState = modalStartLihatDokumentasi;            
-        // });
+        $(".modal_edit").on('hidden.bs.modal', function(){
+            //add get request
+            getDataDokumentasiModal(id);
+        });
 
-        // $(".modal_delete").on('hidden.bs.modal', function(){
-        //     getDataDokumentasiModal(id);
-        //     modalState = modalStartLihatDokumentasi;
-        // });
+        $(".modal_delete").on('hidden.bs.modal', function(){
+            getDataDokumentasiModal(id);
+        });
 
         $("#unggah_dokumentasi_baru").on('hidden.bs.modal', function(){
             $(".unggah_form_dokumentasi")[0].reset();
@@ -549,9 +589,11 @@
                 $("[value = '"+element+"']").prop('checked', false);
             }
             // $(".nilai_ppk").prop('checked', false);
-            $(".dokumen_kegiatan").empty();
+            // $(".dokumen_kegiatan").empty();
             $(".status_dokumentasi").empty();
             $(".show_added_dokumentasi").empty();
+            $(".form-pengelolaan-kegiatan")[0].reset();
+            $(".error_notification_upload_baru").empty();
             value_checked.length = 0;
             kegiatan_berbasis = "";
             doc_added_dokumentasi_baru = 1;
@@ -563,12 +605,142 @@
         $('form').on('submit', function(e){
             e.preventDefault();
             var form_submit = $(this).attr('action');
+            let class_form = $(this).attr('class');
             var data_form = new FormData($(this)[0]);
             $.ajaxSetup({
                 headers:{
                     'X-CSRF-TOKEN': $("[name= '_token']").val()
                 }
             });
+            if (class_form === "form-pengelolaan-kegiatan") {
+                $.ajax({
+                    url: form_submit,
+                    type: 'POST',
+                    data: data_form,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function(){
+                        progressBarState("show", modalState);
+                        console.log(modalState);
+                    },
+                    xhr: function(){
+                    let xhr = new XMLHttpRequest();
+                    xhr.upload.addEventListener('progress', function(event){
+                        if (event.lengthComputable) {
+                            var percentageComplete = event.loaded / event.total;
+                            percentageComplete = parseInt(percentageComplete * 100);
+                            $(".myProgress").text(percentageComplete+'%');
+                            $(".myProgress").css('width', percentageComplete+'%');
+                        }
+                    }, false);
+                        return xhr;
+                    },
+                    success: function(res){
+                        progressBarState("reset");
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false,
+                            allowEnterKey: false
+                        }).then((result) => {
+                            $(modalState).modal('hide');
+                        });
+                        $("#dokumentasi_kegiatan").DataTable().ajax.reload();
+                    },
+                    error: function(res){
+                        progressBarState("reset" , modalState);
+                        //error_notification_upload_baru
+                        if (res.status === 401) {
+                        let loginInfo = JSON.parse(res.responseText);
+                        alertNotificationsForLoginAndErrors(res.status , loginInfo.message);
+                    } else if(res.status === 422) {
+                        let value_error = JSON.parse(res.responseText);
+                        $(".error_notification_upload_baru").append('<h5>Error Pengisian Form:</h5>');
+                        $.each(value_error.errors, function(key, value){
+                            $(".error_notification_upload_baru").append('<li>'+value+'</li>');
+                        });                       
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terdapat Error ketika melakukan unggah Dokumentasi, Silahkan Lihat Error diatas Form'
+                        }).then((result) => {
+                            if (result.value) {
+                                document.querySelector('.error_notification_upload_baru').scrollIntoView(true);
+                            }
+                        });
+                    } else if(res.status === 404){
+                        let error_info = JSON.parse(res.responseText);
+                        alertNotificationsForLoginAndErrors(res.status , error_info.messages);
+                    } else {
+                        anyErrors(res.status , res.statusText , res);
+                    }
+                    }
+                });
+            } else if(class_form === "edited-dokumen-form"){
+                $.ajax({
+                url: form_submit,
+                type: 'POST',
+                data: data_form,
+                cache: false,
+                contentType: false,
+                processData: false,
+                beforeSend: function(){
+                    progressBarState("show" , modalState);
+                },
+                xhr: function(){
+                    var xhr = new XMLHttpRequest();
+                    xhr.upload.addEventListener('progress', function(event){
+                        if (event.lengthComputable) {
+                            var percentageComplete = event.loaded / event.total;
+                            percentageComplete = parseInt(percentageComplete * 100);
+                            $(".myProgress").text(percentageComplete+'%');
+                            $(".myProgress").css('width', percentageComplete+'%');
+                        }
+                    }, false);
+                    return xhr;
+                },
+                success: function(res){
+                    progressBarState("reset");
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Sukses',
+                        text: res.notification
+                    }).then((result)=> {
+                        $(".modal_edit").modal('hide');
+                    });
+                    $("#dokumentasi_kegiatan").DataTable().ajax.reload();
+                },
+                error: function(res){
+                    progressBarState("reset" , modalState);
+                    if (res.status === 401) {
+                        let loginInfo = JSON.parse(res.responseText);
+                        alertNotificationsForLoginAndErrors(res.status , loginInfo.message);
+                    } else if(res.status === 422) {
+                        let value_error = JSON.parse(res.responseText);
+                        $(".error_notification_upload_edit").append('<h5>Error Pengisian Form:</h5>');
+                        $.each(value_error.errors, function(key, value){
+                            $(".error_notification_upload_edit").append('<li>'+value+'</li>');
+                        });                       
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Terdapat Error ketika melakukan unggah Dokumentasi, Silahkan Lihat Error diatas Form'
+                            }).then((result) => {
+                                if (result.value) {
+                                    document.querySelector('.error_notification_upload_edit').scrollIntoView(true);
+                                }
+                            });
+                        } else if(res.status === 404){
+                            let error_info = JSON.parse(res.responseText);
+                            alertNotificationsForLoginAndErrors(res.status , error_info.messages);
+                        } else {
+                            anyErrors(res.status , res.statusText , res);
+                        }
+                    }   
+                });       
+            } else {
             $.ajax({
                 url: form_submit,
                 type: 'POST',
@@ -598,7 +770,7 @@
                         title: 'Sukses',
                         text: res.notification
                     }).then((result)=> {
-                        $(modalState).modal('hide');
+                        $(".modal_delete").modal();
                     });
                     $("#dokumentasi_kegiatan").DataTable().ajax.reload();
                 },
@@ -629,7 +801,8 @@
                         anyErrors(res.status , res.statusText , res);
                     }
                 }   
-            });        
+            });       
+            } 
         });
 
         //Other Functions
@@ -642,6 +815,8 @@
                 $(".myProgress").text('0%');
                 $(".myProgress").css('width' , '0%');
                 $(".close").attr('disabled', false);
+                // $(".submit_dokumen_baru").attr('disabled' , false);
+                // $(".submit_edit_dokumen").attr('disabled' , false);
                 // $(valueModal).attr('data-keyboard' , true);
                 // $(valueModal).attr('data-backdrop' , '');
             }
@@ -652,7 +827,11 @@
                 $(".myProgress").text('0%');
                 $(".myProgress").css('width' , '0%');
                 $(".error_notification").empty();
+                $(".error_notification_upload_edit").empty();
+                $(".error_notification_upload_baru").empty();
                 $(".close").attr('disabled', true);
+                // $(".submit_dokumen_baru").attr('disabled' , true);
+                // $(".submit_edit_dokumen").attr('disabled' , true);
                 // $(valueModal).attr('data-keyboard' , false);
                 // $(valueModal).attr('data-backdrop' , 'static');
             }
@@ -711,13 +890,18 @@
 
         function getDataDokumentasiModal(id){
             //add get request
-            $(".dokumen_kegiatan").empty();
+            
+            // $(".dokumen_kegiatan").empty();
             $(".kelola_dokumen_kegiatan").empty();
             $(".kelola_dokumen_baru").empty();
             let url = '{{route("pj.dokumentasi_kegiatan.show", ["dokumentasi_kegiatan" => "ids"])}}';
+            let url_dokumen_upload_baru = '{{route("pj.dokumentasi_kegiatan.uploadDokumenBaru", ["id_dokumentasi" => "id_doc_baru"])}}'
+            let dokumen_asset = '{{asset("kegiatan/dokumentasi_kegiatan/nama_dokumen")}}';
             url = url.replace("ids", id);
+            url_dokumen_upload_baru = url_dokumen_upload_baru.replace('id_doc_baru' , id);
             loadingBar('show');
             $.get(url, function(res){         
+                $(".form-pengelolaan-kegiatan").attr('action' , url_dokumen_upload_baru);
                 $(".lihat_dokumentasi").modal();
                     $(".nama_kegiatan_terlaksana").attr('value', res.dokumentasi_kegiatan.nama_kegiatan);
                     $(".awal_kegiatan").attr('value', res.dokumentasi_kegiatan.mulai_kegiatan);
@@ -740,19 +924,27 @@
                         $(".status_dokumentasi").append('<li>Dokumen Sudah Diunggah!</li>');
                     }
                     // Dokumen untuk lihat
-                    $.each(res.dokumen, function(key,item){            
-                        var dokumen_asset = '{{asset("kegiatan/dokumentasi_kegiatan/nama_dokumen")}}';
-                        dokumen_asset = dokumen_asset.replace('nama_dokumen', item.nama_dokumen);
-                        $(".dokumen_kegiatan").append("<li><i class='fa fa-file-alt'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a></li>");                        
-                        // $(".kelola_dokumen_kegiatan").append("<li><i class='fa fa-file-alt'></i>"+item.nama_dokumen+"<button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Edit File</button><button type='button' class='btn btn-danger btn-sm delete_dokumen ml-2 mr-2 mb-2'>Delete Dokumen</a></li>");                        
-                    });
-                    // if (res.dokumentasi_baru === 0) {
-                    //     $(".kelola_dokumen_baru").append('<li>Tidak Ada Dokumen Kegiatan Baru Yang Diunggah</li>');
-                    // } else {
-                    //     $.each(res.dokumen_baru , function(key,item){
-                    //         $(".kelola_dokumen_baru").append("<li><i class='fa fa-file-alt'></i>"+item.nama_dokumen+"</li>");
-                    //     });
-                    // }
+                    
+                    if (res.dokumen.length > 1) {
+                        $.each(res.dokumen, function(key,item){            
+                            dokumen_asset = dokumen_asset.replace('nama_dokumen', item.nama_dokumen);
+                            // $(".dokumen_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a></li>");                        
+                            $(".kelola_dokumen_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a><button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_dokumen+"' data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Edit File</button><button type='button' class='btn btn-danger btn-sm delete_dokumen ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_dokumen+"' data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Delete Dokumen</button></li>");                        
+                        });
+                    } else {
+                        $.each(res.dokumen, function(key,item){            
+                            dokumen_asset = dokumen_asset.replace('nama_dokumen', item.nama_dokumen);
+                            // $(".dokumen_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a></li>");                        
+                            $(".kelola_dokumen_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a><button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'data-target='"+item.nama_dokumen+"'data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Edit File</button></li>");                        
+                        });
+                    }
+                    if (res.dokumentasi_baru.length !== 0) {
+                        $.each(res.dokumentasi_baru , function(key,item){
+                            $(".kelola_dokumen_baru").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a><button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_dokumen+"' data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Edit File</button><button type='button' class='btn btn-danger btn-sm delete_dokumen ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_dokumen+"' data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Delete Dokumen</button></li>");                        
+                        });
+                    } else {
+                        $(".kelola_dokumen_baru").append('<li>Tidak Ada Dokumen Kegiatan Baru Yang Diunggah</li>');
+                    }
                     modalState = modalStartLihatDokumentasi;
             }).done(function(){
                 loadingBar('hide');

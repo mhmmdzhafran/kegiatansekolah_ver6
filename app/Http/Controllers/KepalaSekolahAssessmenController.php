@@ -341,7 +341,6 @@ class KepalaSekolahAssessmenController extends Controller
         //strictly for storing skor dan upload dokumen
         foreach ($file as $unggah_dokumen) {
             $file_default_name =  "Poin_Indikator_".$request->assessment."_".$assessmen_internal->nama_sekolah."_Internal Asesmen_".$unggah_dokumen->getClientOriginalName();
-            $kumpulan_dokumen [] = $file_default_name;
                 if (file_exists(public_path('kegiatan/asesmen_internal/'.$file_default_name))) {
                     $dokumen_update = $assessmen_internal->dokumenAsesmen()->where([
                         ['nama_dokumen_asesmen' , '=', $file_default_name],
@@ -365,6 +364,7 @@ class KepalaSekolahAssessmenController extends Controller
                     }
                 } 
                 else {
+                    $kumpulan_dokumen [] = $file_default_name;
                     $dokumen = new DokumenAsesmen([
                         'assessment_internal_id' => $id,
                         'nama_dokumen_asesmen' => $file_default_name,

@@ -71,9 +71,22 @@
                         <div class="row">
                             <div class="col-sm-12 col-lg-12">
                                 {!! Form::label('dokumen' , "Data Dokumen Kegiatan:") !!}
-                                <ol class="dokumen_kegiatan">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>No</th>
+                                            <th>Nama Dokumen</th>
+                                            <th>Status Unggahan</th>
+                                            <th>Aksi</th>                                        
+                                        </tr>
+                                    </thead>
+                                    <tbody class="dokumen_kegiatan">
+                                        
+                                    </tbody>
+                                </table>
+                                {{-- <ol class="dokumen_kegiatan">
         
-                                </ol>
+                                </ol> --}}
                             </div>
                         </div>
                         <div class="row">
@@ -174,12 +187,14 @@
                     $(".kegiatan_berbasis").find("[value = '"+res.data_dokumentasi.kegiatan_berbasis+"']").prop('selected', true);
                     $(".awal_kegiatan").val(res.data_dokumentasi.mulai_kegiatan);
                     $(".akhir_kegiatan").val(res.data_dokumentasi.akhir_kegiatan);
+                    var count_id = 1;
                     res.dokumen_dokumentasi.forEach(item_dokumen => {
-                        if (item_dokumen.status_unggah_dokumen === "Pengajuan") {
+                        // if (item_dokumen.status_unggah_dokumen === "Pengajuan") {
                             var asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
                             asset_url = asset_url.replace("asset_dokumen" , item_dokumen.nama_dokumen);
-                            $(".dokumen_kegiatan").append('<li> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></li><br>');
-                        }
+                            // $(".dokumen_kegiatan").append('<li> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></li><br>');
+                            $(".dokumen_kegiatan").append('<tr><td>'+(count_id++)+'</td><td> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'</td><td>'+item_dokumen.status_unggah_dokumen+'</td><td><button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></td></tr>');
+                        // }
                     });
                 }).done(function(){
                     loadingBar('hide');
