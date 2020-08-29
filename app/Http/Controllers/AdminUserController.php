@@ -76,7 +76,13 @@ class AdminUserController extends Controller
     public function store(UserValidationRequest $request)
     {
         //
-        $input = $request->all();
+        $input = $request->only([
+            'name', 
+            'username_id',
+            'role_id',
+            'password',
+            'passwordChecker'
+        ]);
         if ($request->password != $request->passwordChecker) {
             return Response::json(['data' => 'data is not valid', 'errors' => ['Password yang diberikan tidak cocok, Silahkan masukkan password kembali']], 422);
         } 
@@ -142,7 +148,13 @@ class AdminUserController extends Controller
         if ($request->password != $request->passwordChecker) {
             return Response::json(['data' => 'data is not valid', 'errors' => ['Password yang diberikan tidak cocok, Silahkan masukkan password kembali']], 422);
         }
-        $input = $request->all();    
+        $input = $request->only([
+            'name', 
+            'username_id',
+            'role_id',
+            'password',
+            'passwordChecker'
+        ]);  
         $input['password'] = bcrypt($request->password);
         $update_user = $user->update($input);
         if (!$update_user) {

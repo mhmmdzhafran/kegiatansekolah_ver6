@@ -38,6 +38,7 @@ class UserValidationRequest extends FormRequest
             'useraname_id.unique' => 'Username telah diambil, silahkan coba kembali',
             'username_id.required' => 'Masukkan username user',
             'username_id.max' => 'Username melebihi 255 karakter',
+            'username_id.unique' => 'Username ID Telah Diambil, Silahkan Pilih Username Baru',
             'role_id.required' => 'Pilih Peran User!',
             'password.required' => 'Masukkan password user',
             'passwordChecker.required' => 'Masukkan password kedua kalinya',

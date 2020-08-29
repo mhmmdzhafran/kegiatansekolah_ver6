@@ -770,7 +770,7 @@
                         title: 'Sukses',
                         text: res.notification
                     }).then((result)=> {
-                        $(".modal_delete").modal();
+                        $(modalState).modal('hide');
                     });
                     $("#dokumentasi_kegiatan").DataTable().ajax.reload();
                 },

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DokumentasiKegiatan;
+use App\Events\KeputusanProposalKegiatanToPJEvent;
 use App\FolderDokumentasi;
 use App\Http\Requests\KepalaSekolahKegiatanValidatorRequest;
 use App\PengajuanKegiatan;
@@ -271,6 +272,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                                 return Response::json(['errors' => ['Tidak dapat membuat data Dokumentasi Kegiatan, silahkan dicoba kembali']], 422);
                             }
                             $statusSukses = StatusKegiatan::findOrFail(1);
+                            event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
                             $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
                                 'status_kegiatan_id' => $statusSukses->id
                             ]);
@@ -302,6 +304,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
 
                         $update = $pengajuan_kegiatan->update($input);
                         if($update){
+                            event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
                             $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
                                 'status_kegiatan_id' => $statusSukses->id
                             ]);
@@ -334,6 +337,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                         $statusSukses = StatusKegiatan::findOrFail(5);
                         $update = $pengajuan_kegiatan->update($input);
                         if($update){
+                            event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
                             $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
                                 'status_kegiatan_id' => $statusSukses->id
                             ]);                            

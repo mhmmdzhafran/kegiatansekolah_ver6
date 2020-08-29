@@ -9,7 +9,19 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-sm-12">
-                <div class="card shadow mb-4 mb-2">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#" id="profile">Profil</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="/kepala-sekolah/notifications" id="notification">Notifikasi 
+                        <span class="badge badge-primary badge-pill" id="badge-counter-notification">
+                            {{ $counter_notification }}
+                        </span>  
+                    </a>
+                    </li>
+                  </ul>
+                  <div class="card shadow mb-4 mb-2" id="card-profile">
                     <div class="card-header py-3">
                       <h6 class="m-0 font-weight-bold text-primary">Profil Penanggung Jawab {{ Auth::user()->name }}</h6>
                     </div>

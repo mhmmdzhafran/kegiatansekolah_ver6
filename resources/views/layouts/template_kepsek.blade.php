@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="">
   <meta name="author" content="">
-  
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   <title>@yield('title')</title>
 
@@ -18,12 +18,13 @@
 
   <!-- Custom styles for this template-->
   <link href="{{ asset('css/libs.css') }}" rel="stylesheet">
+  <link href="{{ asset('css/app.css') }}" rel="stylesheet">
   <link rel="shortcut icon" href="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" type="image/x-icon">
 
 </head>
 
 <body id="page-top">
-
+  <input type="hidden" id="user" value="{{ Auth::user()->id }}">
   <!-- Page Wrapper -->
   <div id="wrapper">
 
@@ -100,7 +101,7 @@
         </div> --}}
       </li>
 
-      <li class="nav-item {{(request()->segment(2) == 'user-profile') ? 'active' : ''}}">
+      <li class="nav-item {{(request()->segment(2) == 'user-profile') || (request()->segment(2) == 'notifications') ? 'active' : ''}}">
         <a class="nav-link" href="{{  route("userprofile.kepsek.index") }}">
           <i class="fas fa-id-card-alt"></i>
           <span>Profil Kepala Sekolah</span></a>
@@ -177,13 +178,62 @@
 
           <!-- Topbar Navbar -->
           <ul class="navbar-nav ml-auto">
+            <li class="nav-item dropdown no-arrow mx-1">
+              <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Alerts -->
+                <span class="badge badge-danger badge-counter">0</span>
+              </a>
+              <!-- Dropdown - Alerts -->
+              <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                  Notifikasi Anda
+                </h6>
+                <div class="notification-items">
+                  {{-- <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3">
+                      <div class="icon-circle bg-primary">
+                        <i class="fas fa-file-alt text-white"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="small text-gray-500">December 12, 2019</div>
+                      <span class="font-weight-bold">A new monthly report is ready to download!</span>
+                    </div>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3">
+                      <div class="icon-circle bg-success">
+                        <i class="fas fa-donate text-white"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="small text-gray-500">December 7, 2019</div>
+                      $290.29 has been deposited into your account!
+                    </div>
+                  </a>
+                  <a class="dropdown-item d-flex align-items-center" href="#">
+                    <div class="mr-3">
+                      <div class="icon-circle bg-warning">
+                        <i class="fas fa-exclamation-triangle text-white"></i>
+                      </div>
+                    </div>
+                    <div>
+                      <div class="small text-gray-500">December 2, 2019</div>
+                      Spending Alert: We've noticed unusually high spending for your account.
+                    </div>
+                  </a> --}}
+                </div>
+                <a class="dropdown-item text-center small text-gray-500" href="{{ route('kepsek.userprofile.getAllNotify') }}">Show All Alerts</a>
+              </div>
+            </li>
             <div class="topbar-divider d-none d-sm-block"></div>
 
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <img class="img-profile rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}">
-                <span class="ml-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
+                <span class="ml-2 d-none d-lg-inline text-gray-600 small">{{ ucwords(Auth::user()->name) }}</span>
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -276,7 +326,9 @@
   {{-- <script src="vendor/jquery-easing/jquery.easing.min.js"></script> --}}
 
   <!-- Custom scripts for all pages-->
+  <script src="{{ asset('js/app.js') }}"></script>
   <script src="{{ asset('js/libs.js') }}"></script>
+  <script src="{{ asset('js/kepalasekolah.js') }}"></script>
   @yield('script')
 </body>
 

@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\AjukanProposalKegiatanToKepalaSekolahEvent;
+use App\Events\KeputusanProposalKegiatanToPJEvent;
+use App\Events\UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent;
+use App\Listeners\BroadcastAjukanProposalKegiatanToKepalaSekolah;
+use App\Listeners\BroadcastDokumentasiKegiatanNotifyKepalaSekolah;
+use App\Listeners\BroadcastKeputusanProposalKegiatanToPJ;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -17,6 +23,15 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        AjukanProposalKegiatanToKepalaSekolahEvent::class => [
+            BroadcastAjukanProposalKegiatanToKepalaSekolah::class
+        ],
+        KeputusanProposalKegiatanToPJEvent::class => [
+            BroadcastKeputusanProposalKegiatanToPJ::class
+        ],
+        UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent::class => [
+            BroadcastDokumentasiKegiatanNotifyKepalaSekolah::class
         ],
     ];
 

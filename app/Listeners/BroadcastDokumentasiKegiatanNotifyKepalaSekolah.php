@@ -2,14 +2,14 @@
 
 namespace App\Listeners;
 
-use App\Events\AjukanProposalKegiatanToKepalaSekolahEvent;
-use App\Notifications\AjukanProposalKegiatanToKepalaSekolahNotification;
+use App\Events\UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent;
+use App\Notifications\DokumentasiKegiatanNotifyKepalaSekolahNotification;
 use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Notification;
 
-class BroadcastAjukanProposalKegiatanToKepalaSekolah
+class BroadcastDokumentasiKegiatanNotifyKepalaSekolah
 {
     /**
      * Create the event listener.
@@ -27,12 +27,12 @@ class BroadcastAjukanProposalKegiatanToKepalaSekolah
      * @param  object  $event
      * @return void
      */
-    public function handle(AjukanProposalKegiatanToKepalaSekolahEvent $event)
+    public function handle(UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent $event)
     {
         //
         $user_kepalaSekolah = User::whereHas('Role', function($query){
-            $query->where('id',2);
+            $query->where('id' , 2);
         })->first();
-        Notification::send($user_kepalaSekolah, new AjukanProposalKegiatanToKepalaSekolahNotification($event->pengajuanKegiatan, $event->statusKegiatan));
+        Notification::send($user_kepalaSekolah, new DokumentasiKegiatanNotifyKepalaSekolahNotification($event->dokumentasiKegiatan , $event->statusKegiatan));
     }
 }

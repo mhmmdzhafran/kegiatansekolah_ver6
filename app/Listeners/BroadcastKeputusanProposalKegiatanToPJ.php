@@ -2,8 +2,12 @@
 
 namespace App\Listeners;
 
+use App\Events\KeputusanProposalKegiatanToPJEvent;
+use App\Notifications\KeputusanProposalKegiatanToPJNotification;
+use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Support\Facades\Notification;
 
 class BroadcastKeputusanProposalKegiatanToPJ
 {
@@ -23,8 +27,10 @@ class BroadcastKeputusanProposalKegiatanToPJ
      * @param  object  $event
      * @return void
      */
-    public function handle($event)
+    public function handle(KeputusanProposalKegiatanToPJEvent $event)
     {
         //
+        $user_PJ = User::where('id' , '=' , $event->user->id)->first();
+        Notification::send($user_PJ , new KeputusanProposalKegiatanToPJNotification($event->pengajuanKegiatan ,$event->statusKegiatan));
     }
 }

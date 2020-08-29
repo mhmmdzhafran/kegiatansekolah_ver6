@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DokumenKegiatan;
 use App\DokumentasiKegiatan;
+use App\Events\AjukanProposalKegiatanToKepalaSekolahEvent;
+use App\Events\UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent;
 use App\Http\Requests\PengajuanDokumentasiBaruRequest;
 use App\Http\Requests\PengajuanDokumentasiKegiatanRequest;
 use App\Http\Requests\PengajuanKegiatanUlangValidationRequest;
@@ -163,6 +165,7 @@ class PJMengelolaKegiatanController extends Controller
                             unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
                             return Response::json(['errors' => ['Tidak dapat membentuk data Pengajuan Kegiatan, Silahkan coba kembali']], 422);
                         }
+                        event(new AjukanProposalKegiatanToKepalaSekolahEvent($kegiatan, $statusDefault));
                         $kegiatan->StatusKegiatan()->save($statusDefault);
                         return Response::json(['data' => 'data is valid'], 200);
                     }
@@ -302,7 +305,8 @@ class PJMengelolaKegiatanController extends Controller
                     $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_ulang);
                     //unlink file dokumen yang kemaren dikirim
                     unlink(public_path('kegiatan/pengajuan_kegiatan/'.$file_lama));
-                    //update pivot
+                    //update pivot and fire event
+                    event(new AjukanProposalKegiatanToKepalaSekolahEvent($pengajuan_ulang, $status_ulang));
                     $pengajuan_ulang->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
                         'status_kegiatan_id' => $status_ulang->id
                     ]);
@@ -545,6 +549,7 @@ class PJMengelolaKegiatanController extends Controller
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Berhasil Membentuk Dokumentasi dan unggah Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
                 }
+                event(new UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent($dokumentasi_kegiatan_baru, $statusDefault));
                 return Response::json(['message' => 'data is valid' , 'notification' => 'Berhasil Mengunggah Dokumentasi Kegiatan Baru'], 200);
             } else {
                 return Response::json(['errors' => ['Tidak Berhasil Membentuk Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
@@ -625,6 +630,7 @@ class PJMengelolaKegiatanController extends Controller
                         }
                         return Response::json(['errors' => ['sistem tidak dapat memproseskan data, silahkan dicoba kembali']], 422);
                     }
+                    event(new UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent($dokumentasi_kegiatan, $status_update));
                     return Response::json(['message' => 'data is valid', 'notification' => 'Berhasil Mengunggah Dokumentasi Kegiatan'], 200);
         // }
 

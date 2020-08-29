@@ -325,6 +325,7 @@
             loadingBar(true);
           },
           success: function(res){
+            console.log(res);
             url_redirect = '{{route("kepsek.kelola_kegiatan.index")}}';
             loadingBar(false);  
             Swal.fire({

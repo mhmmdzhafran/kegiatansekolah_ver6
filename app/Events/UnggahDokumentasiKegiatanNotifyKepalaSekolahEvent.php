@@ -2,7 +2,7 @@
 
 namespace App\Events;
 
-use App\PengajuanKegiatan;
+use App\DokumentasiKegiatan;
 use App\StatusKegiatan;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -12,11 +12,11 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AjukanProposalKegiatanToKepalaSekolahEvent implements ShouldBroadcast
+class UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $pengajuanKegiatan;
+    public $dokumentasiKegiatan;
     public $statusKegiatan;
 
     /**
@@ -24,10 +24,10 @@ class AjukanProposalKegiatanToKepalaSekolahEvent implements ShouldBroadcast
      *
      * @return void
      */
-    public function __construct(PengajuanKegiatan $pengajuanKegiatan , StatusKegiatan $statusKegiatan)
+    public function __construct(DokumentasiKegiatan $dokumentasiKegiatan , StatusKegiatan $statusKegiatan)
     {
         //
-        $this->pengajuanKegiatan = $pengajuanKegiatan;
+        $this->dokumentasiKegiatan = $dokumentasiKegiatan;
         $this->statusKegiatan = $statusKegiatan;
     }
 
@@ -38,6 +38,6 @@ class AjukanProposalKegiatanToKepalaSekolahEvent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('pengajuanKegiatan-KepalaSekolah');
+        return new PrivateChannel('dokumentasi-kegiatan-pj');
     }
 }

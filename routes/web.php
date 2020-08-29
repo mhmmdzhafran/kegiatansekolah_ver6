@@ -125,13 +125,17 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     Route::get('/kepala-sekolah/dokumentasi-kegiatan', 'KepalaSekolahMengelolaKegiatanController@indexDokumentasi')
     ->name('kepsek.pengajuan_dokumentasi_kegiatan.index');
 
-    Route::resource('/kepala-sekolah/mengelola-dokumentasi-kegiatan/mengelola-kegiatan', 'KepalaSekolahDokumentasiController', ['names' => [
-        'index' => 'kepsek.kelola_dokumentasi.index',
-        'show' => 'kepsek.kelola_dokumentasi.show',
-        'store' => 'kepsek.kelola_dokumentasi.store',
-        'edit' => 'kepsek.kelola_dokumentasi.edit',
-        'destroy' => 'kepsek.kelola_dokumentasi.destroy'
-    ]]);
+    Route::get('/kepala-sekolah/get-notification', 'UsersNotificationController@getNotification')->name('kepsek.notification.getData');
+    Route::get('/kepala-sekolah/get-more-notification/{request}' , 'UsersNotificationController@getMoreNotification')->name('kepsek.notification.getMoreData');
+    Route::get('/kepala-sekolah/specific-notification/{notification}' , 'UsersNotificationController@getSpecificNotification')->name('kepsek.notification.specificNotification');
+    Route::put('/kepala-sekolah/mark-as-read/', 'UsersNotificationController@markAsReadNotification')->name('kepsek.notification.markAsRead');
+    // Route::resource('/kepala-sekolah/mengelola-dokumentasi-kegiatan/mengelola-kegiatan', 'KepalaSekolahDokumentasiController', ['names' => [
+    //     'index' => 'kepsek.kelola_dokumentasi.index',
+    //     'show' => 'kepsek.kelola_dokumentasi.show',
+    //     'store' => 'kepsek.kelola_dokumentasi.store',
+    //     'edit' => 'kepsek.kelola_dokumentasi.edit',
+    //     'destroy' => 'kepsek.kelola_dokumentasi.destroy'
+    // ]]);
 
     Route::resource('/kepala-sekolah/mengelola-kegiatan', 'KepalaSekolahMengelolaKegiatanController', ['names' => [
         'index' => 'kepsek.kelola_kegiatan.index',
@@ -170,7 +174,11 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
 
     Route::post('/kepala-sekolah/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('kepsek.userprofile.check');
     Route::post('/kepala-sekolah/user-profile/change-pass' , 'UserProfileController@update')->name('kepsek.userprofile.update');
-
+    Route::get('/kepala-sekolah/search-notification/{search_notification}', 'UserProfileController@searchNotification')->name('kepsek.notification.searchNotify');
+    Route::get('/kepala-sekolah/notifications', 'UserProfileController@getAllNotifications')->name('kepsek.userprofile.getAllNotify');
+    Route::get('/kepala-sekolah/filter-notifications/{filterChoice}' , 'UserProfileController@orderByNotification')->name('kepsek.userprofile.orderNotify');
+    Route::get('/kepala-sekolah/filter-two/notifications/{filterChoiceOne}/{filterChoiceTwo}', 'UserProfileController@orderByTwoChoiceNotifications')->name('kepsek.userprofile.orderTwoConditionNotify');
+    Route::put('/kepala-sekolah/read-notification/', 'UserProfileController@readNotification')->name('kepsek.userprofile.readNotificationFromProfile');
     /**
      * Commented Routes => For uses later
      */
