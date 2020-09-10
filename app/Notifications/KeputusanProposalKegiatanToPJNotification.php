@@ -59,11 +59,27 @@ class KeputusanProposalKegiatanToPJNotification extends Notification
      */
     public function toArray($notifiable)
     {
+        $nilai_ppk = json_decode($this->pengajuan_kegiatan->nilai_ppk);
+        $id_nilai_ppk = 1;
+        $data_ppk = "";
+        foreach ($nilai_ppk as $item_ppk) {
+            if (count($nilai_ppk) == $id_nilai_ppk) {
+                $data_ppk .=  $item_ppk->nilai_ppk;
+            }
+            else{
+                $data_ppk .= $item_ppk->nilai_ppk.", ";
+            }
+            $id_nilai_ppk++;
+        }
         return [
             // input field pengajuan kegiatan serta nama pj, links
+            "user_pj" => $this->pengajuan_kegiatan->user->username_id,
             "nama_kegiatan" => $this->pengajuan_kegiatan->PJ_nama_kegiatan,
-            "status_proposal_id" => $this->status_kegiatan->id,
-            "status_proposal" => $this->status_kegiatan->nama,
+            "nilai_ppk" => $data_ppk,
+            "kegiatan_berbasis" => $this->pengajuan_kegiatan->kegiatan_berbasis,
+            "status_kegiatan_id" => $this->status_kegiatan->id,
+            "status_kegiatan" => $this->status_kegiatan->nama,
+            "timestamp_pengiriman" => $this->pengajuan_kegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
             "link" => '/penanggung-jawab/mengelola-kegiatan',
         ];
     }

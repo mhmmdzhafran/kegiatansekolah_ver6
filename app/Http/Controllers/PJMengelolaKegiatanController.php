@@ -44,16 +44,16 @@ class PJMengelolaKegiatanController extends Controller
             return datatables()->eloquent($pengajuan_kegiatan)->addColumn('statusKegiatan', function(PengajuanKegiatan $post){
                 $status = $post->StatusKegiatan->pluck('nama')->implode('<br>');
                 if($status =="Belum Disetujui"){
-                    $status_indikator = "<h5 class='text-center alert alert-info alert-heading font-weight-bolder' style='border-radius:10px;'>".$status."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-info alert-heading font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
                 elseif($status == "Sudah Disetujui"){
-                    $status_indikator ="<h5 class='text-center alert alert-success alert-heading font-weight-bolder' style='border-radius:10px;'>".$status."</h5>";
+                    $status_indikator ="<h6 class='text-center alert alert-success alert-heading font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
                 elseif($status == "Pengajuan Ulang"){
-                    $status_indikator = "<h5 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
                 elseif($status == "Menolak"){
-                    $status_indikator = "<h5 class='text-center alert alert-danger font-weight-bolder' style='border-radius:10px;'>".$status."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-danger font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
                 return $status_indikator;
             })
@@ -87,7 +87,10 @@ class PJMengelolaKegiatanController extends Controller
                     $count_ppk++;
                 }
                 return $data_ppk;
-            })->rawColumns(['pengajuan', 'statusKegiatan', 'nilai_ppk'])->make(true);
+            })->editColumn('updated_at' , function($data){
+                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
+            })
+            ->rawColumns(['pengajuan', 'statusKegiatan'])->make(true);
         }
         // $nilai_ppk_kegiatan = false;
         return view('pj.kelola_kegiatan.index');
@@ -123,7 +126,14 @@ class PJMengelolaKegiatanController extends Controller
             return Response::json(['errors' => ['Tanggal Akhir Kegiatan Lampau Dibandingkan Tanggal Mulai Kegiatan, Silahkan Masukkan Kembali']], 422);
         }
         else{
-            $input = $request->all();                
+            $input = $request->only([
+                'PJ_nama_kegiatan',
+                'nilai_ppk',
+                'kegiatan_berbasis',
+                'dokumen_kegiatan',
+                'mulai_kegiatan',
+                'akhir_kegiatan'
+            ]);                
             $file =  $request->file('dokumen_kegiatan');
                 $name = $file->getClientOriginalName();
                 $json_dokumen_kegiatan[] = array(
@@ -265,7 +275,7 @@ class PJMengelolaKegiatanController extends Controller
         } catch(\Throwable $th){
             return Response::json(['messages' => $th->getMessage()], 404);
         }
-        $input = $request->all();
+
         $id_nilai_ppk = 1;        
         $dateMulai = Carbon::parse($request->mulai_kegiatan);
         $dateAkhir = Carbon::parse($request->akhir_kegiatan);
@@ -276,6 +286,14 @@ class PJMengelolaKegiatanController extends Controller
             return response()->json(['errors' => ['Tanggal Akhir Kegiatan Lampau Dibandingkan Tanggal Mulai Kegiatan, Silahkan Masukkan Kembali']], 422);
         }
         else{
+            $input = $request->only([
+                'PJ_nama_kegiatan',
+                'nilai_ppk',
+                'kegiatan_berbasis',
+                'dokumen_kegiatan',
+                'mulai_kegiatan',
+                'akhir_kegiatan'
+            ]);   
                 $dokumen_lama = json_decode($pengajuan_ulang->dokumen_kegiatan);
                 foreach($dokumen_lama as $file_terdahulu){
                     $file_lama = $file_terdahulu->nama_dokumen;
@@ -341,14 +359,13 @@ class PJMengelolaKegiatanController extends Controller
             return datatables()->eloquent($dokumentasi_kegiatan)->addColumn('statusKegiatan', function(DokumentasiKegiatan $dokumentasi_kegiatan){
                 $status =  $dokumentasi_kegiatan->statusKegiatan->pluck('nama')->implode('<br>');
                 if ($status == "Unggah Dokumentasi") {
-                    $status_indikator = "<h5 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
                 elseif($status == "Sudah Mengunggah Dokumentasi"){
-                    $status_indikator = "<h5 class='text-center alert alert-success font-weight-bolder' style='border-radius:10px;'>".$status."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-success font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
                 return $status_indikator;
             })->addColumn('unggah_dokumentasi', function($data){
-                
                 foreach ($data->statusKegiatan as $status) {
                     if ($status->pivot->status_kegiatanable_type == "App\DokumentasiKegiatan") {
                         if ($status->pivot->status_kegiatanable_id == $data->id && $status->pivot->status_kegiatan_id == 6) {
@@ -381,8 +398,10 @@ class PJMengelolaKegiatanController extends Controller
                     $id_nilai_ppk++;
                 }
                 return $data_nilai_ppk; 
+            })->editColumn('updated_at' , function($data){
+                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
             })
-            ->rawColumns(['statusKegiatan', 'unggah_dokumentasi', 'nilai_ppk_kegiatan_berbasis_json'])->make(true);
+            ->rawColumns(['statusKegiatan', 'unggah_dokumentasi'])->make(true);
         }   
             return view('pj.dokumentasi_kegiatan.index');
     }

@@ -37,10 +37,10 @@ class KepalaSekolahAssessmenController extends Controller
                 $aksi.= '&nbsp;&nbsp;';
                 $aksi.= '<button type="button" id="'.$data_asesmen->id.'"class="btn btn-sm btn-info show rounded-pill" value="lihat_table">Lihat Skor</button>';
                 return $aksi;
-            // })->editColumn('created_at', function($data_asesmen){
-            //     return $data_asesmen->created_at->diffForHumans();
-            // })->editColumn('updated_at', function($data_asesmen){
-            //     return $data_asesmen->updated_at->diffForHumans();
+            })->editColumn('created_at', function($data_asesmen){
+                return $data_asesmen->created_at->timezone('Asia/Jakarta')->toDateTimeString();
+            })->editColumn('updated_at', function($data_asesmen){
+                return $data_asesmen->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
             })
             ->rawColumns(['Aksi'])->make(true);
         }

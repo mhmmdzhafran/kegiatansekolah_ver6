@@ -14,7 +14,7 @@
                         <table class="table table-bordered" id="pengajuan_kegiatan">
                             <thead>
                                 <tr>
-                                    <th>No</th>
+                                    <th>ID</th>
                                     <th width="15%">Nama Kegiatan</th>
                                     <th>Nilai PPK</th>                                  
                                     <th>Kegiatan Berbasis</th>
@@ -117,7 +117,7 @@
                 {data: 'nilai_ppk', name:'nilai_ppk'},
                 {data: 'kegiatan_berbasis', name: 'kegiatan_berbasis'},
                 {data: 'updated_at' , name: 'updated_at'},
-                {data: 'user' , name: 'user' },
+                {data: 'user.name' , name: 'user.name' },
                 {data: 'statusKegiatan', name: 'statusKegiatan.nama', orderable: false},
                 {data: 'data_pengajuan' , name: 'data_pengajuan', orderable: false}
             ],

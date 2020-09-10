@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class UsersNotificationController extends Controller
 {
@@ -21,7 +18,9 @@ class UsersNotificationController extends Controller
         $userNotifications =  Auth::user()->notifications->sortByDesc('created_at')->take(9);
         $userUnreadNotifications = Auth::user()->unreadNotifications->sortByDesc('created_at');
         if (request()->ajax()) {
-            return response()->json(['notifications' => $userNotifications, 'unreadNotifications' => $userUnreadNotifications], 200);
+            if (!is_null($userNotifications)) {
+                return response()->json(['notifications' => $userNotifications, 'unreadNotifications' => $userUnreadNotifications], 200);
+            }
         }
     }
 
@@ -29,7 +28,7 @@ class UsersNotificationController extends Controller
         $userNotifications = Auth::user()->notifications->sortByDesc('created_at')->skip($lastRequest)->take(9);
         if (request()->ajax()) {
             if (!is_null($userNotifications)) {
-                return response()->json(['moreNotifications' => $userNotifications , "itung" => $lastRequest], 200);
+                return response()->json(['moreNotifications' => $userNotifications], 200);
             }
         }
     }

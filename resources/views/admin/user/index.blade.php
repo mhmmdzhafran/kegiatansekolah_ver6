@@ -11,7 +11,7 @@
             <h1>Pengguna PPK</h1>
         </div>
         <div class="col-sm-12 col-lg-8">
-            <button class="btn btn-primary rounded-pill float-md-left float-lg-right float-sm-left create_user">Buat Pengguna</button>
+            <button class="btn btn-primary rounded-pill float-md-left float-lg-right float-sm-left create_user">Buat Pengguna Baru</button>
         </div>
         {{-- <div class="col-sm-12 col-lg-12">
             @if (Session::has('created_user'))

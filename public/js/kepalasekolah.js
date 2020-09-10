@@ -1,4 +1,4 @@
-const userID = document.getElementById('user').getAttribute('value');
+const userID = document.querySelector('meta[name="user-authorization"]').getAttribute('content');
 const getUserNotificationsElement = document.querySelector('.notification-items');
 let badgeCounterElement = document.querySelector('.badge-counter');
 let notificationID = [];
@@ -7,6 +7,7 @@ let unreadNotification = 0;
 Echo.private('App.User.'+userID)
     .notification((notification) => {
         unreadNotification+=1;
+        
         console.log(notificationID);
         if (notificationID.length >= 9) {
             if (unreadNotification > 9) {
@@ -33,8 +34,6 @@ Echo.private('App.User.'+userID)
             }
         }
         
-        
-
         const createLinkElement = document.createElement('a');
 
         const createStatusPartition = document.createElement('div');
@@ -99,7 +98,9 @@ Echo.private('App.User.'+userID)
         createDivNotificationDetailsElement.className = "notification-details";
         
         createDivDetailsElement.className = "small text-gray-500";
-        createDivDetailsElement.innerText = notification.timestamp_pengiriman;
+        const notificationTime = new Date();
+        const timestamp = notificationTime.getFullYear()+"-"+transformToFormatTimestamps(notificationTime.getMonth()+1)+"-"+transformToFormatTimestamps(notificationTime.getDate())+" "+transformToFormatTimestamps(notificationTime.getHours())+":"+transformToFormatTimestamps(notificationTime.getMinutes())+":"+transformToFormatTimestamps(notificationTime.getSeconds());
+        createDivDetailsElement.innerText = timestamp;
 
         createSpanExtraDetailsElement.className = "font-weight-bold";
         createSpanExtraDetailsElement.setAttribute('id' , 'span-class-notification-'+notification.id);
@@ -158,86 +159,20 @@ $(document).on("click", '.notify-test', function(e){
 });
 
 function initializeNotifications(status){
-    if (status === "refresh") {
-        //ada di notification page saja
-        console.log(notificationID);
+   if(status === "init") {
         $.get('/kepala-sekolah/get-notification', function(res) {
-            notificationID.length = 0;
-            console.log(res.notifications);
             let notificationData = res.notifications;
             // count_more_notification+= notificationData.length;
             // console.log(count_more_notification);
             let counterNotification = res.unreadNotifications;
             unreadNotification = counterNotification.length;
-            if (counterNotification.length <= 9) {
+
+            if (unreadNotification <= 9) {
                 badgeCounterElement.innerText = unreadNotification;    
             } else {
                 badgeCounterElement.innerText = "9+";   
             }
-            notificationData.forEach(element => {
-                const createLinkElement = document.createElement('a');
-        
-                const createStatusPartition = document.createElement('div');
-                const createCircleStatusElement = document.createElement('div');
-                const createIconElement = document.createElement('i');
             
-                const createDivNotificationDetailsElement = document.createElement('div');
-                const createDivDetailsElement = document.createElement('div');
-                const createSpanExtraDetailsElement = document.createElement('span');
-        
-                let {data: {link, nama_kegiatan, status_kegiatan, status_kegiatan_id, user_pj}} = element;
-                notificationID.push(element.id);
-                createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+element.id;
-                createLinkElement.setAttribute('id' , element.id);
-                createLinkElement.setAttribute('href' , link);
-        
-                createStatusPartition.className = 'mr-3';
-                switch (status_kegiatan_id) {
-                    case 3:
-                        createCircleStatusElement.className = 'icon-circle bg-warning';
-                        createIconElement.className= 'fa fa-exclamation text-white';
-                        createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Yang diunggah oleh "+user_pj+" "+status_kegiatan;
-                        break;
-                    case 6:
-                        createCircleStatusElement.className = 'icon-circle bg-success';
-                        createIconElement.className= 'fa fa-check text-white';
-                        createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Sudah Diunggah oleh "+user_pj;
-                        break;
-                    default:
-                        break;
-                }
-                createDivNotificationDetailsElement.className = "notification-details";
-        
-                createDivDetailsElement.className = "small text-gray-500";
-                createDivDetailsElement.innerText = element.created_at;
-                if (element.read_at === null) {
-                    createSpanExtraDetailsElement.className = "font-weight-bold";
-                    createSpanExtraDetailsElement.setAttribute('id' , 'span-class-notification-'+element.id);
-                } 
-                getUserNotificationsElement.appendChild(createLinkElement);
-                createLinkElement.appendChild(createStatusPartition);
-                createStatusPartition.appendChild(createCircleStatusElement);
-                createCircleStatusElement.appendChild(createIconElement);
-                createLinkElement.appendChild(createDivNotificationDetailsElement);
-                createDivNotificationDetailsElement.appendChild(createDivDetailsElement);
-                createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
-                let badgeCounterNotificationElement = document.getElementById('badge-counter-notification');
-                badgeCounterNotificationElement.innerText = unreadNotification;
-            });
-            console.log(notificationID);
-        });
-    } else if(status === "init") {
-        $.get('/kepala-sekolah/get-notification', function(res) {
-            let notificationData = res.notifications;
-            // count_more_notification+= notificationData.length;
-            // console.log(count_more_notification);
-            let counterNotification = res.unreadNotifications;
-            unreadNotification = counterNotification.length;
-            if (counterNotification.length <= 9) {
-                badgeCounterElement.innerText = unreadNotification;    
-            } else {
-                badgeCounterElement.innerText = "9+";   
-            }
             notificationData.forEach(element => {
                 const createLinkElement = document.createElement('a');
         
@@ -273,7 +208,13 @@ function initializeNotifications(status){
                 createDivNotificationDetailsElement.className = "notification-details";
 
                 createDivDetailsElement.className = "small text-gray-500";
-                createDivDetailsElement.innerText = element.created_at;
+
+                const dateConvert = new Date(element.created_at);
+                dateConvert.setHours(dateConvert.getHours()+7);
+
+                const notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
+                createDivDetailsElement.innerText = notificationTimestamp;
+
                 if (element.read_at === null) {
                     createSpanExtraDetailsElement.className = "font-weight-bold";
                     createSpanExtraDetailsElement.setAttribute('id' , 'span-class-notification-'+element.id);
@@ -336,7 +277,11 @@ scrollNotification.onscroll = (ev) => {
                     createDivNotificationDetailsElement.className = "notification-details";
 
                     createDivDetailsElement.className = "small text-gray-500";
-                    createDivDetailsElement.innerText = newNotification[element].created_at; 
+                    const dateConvert = new Date(element.created_at);
+                    dateConvert.setHours(dateConvert.getHours()+7);
+    
+                    const notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
+                    createDivDetailsElement.innerText = notificationTimestamp;
                     getUserNotificationsElement.appendChild(createLinkElement);
                     createLinkElement.appendChild(createStatusPartition);
                     createStatusPartition.appendChild(createCircleStatusElement);
@@ -364,21 +309,43 @@ function markAsReadNotification(notificationRequest, notificationLink){
         data: notificationRequest,
         links: notificationLink
     }).then((response) => {
-        console.log(response.data);
         window.location = notificationLink;
     }).catch((responseError) => {
-        if (responseError.response.status === 404) {
-            console.log(responseError.response.statusText);
-            console.log(responseError.response);
-        } else if(responseError.response.status === 401){
-
-        } else {
-            console.log(responseError.response);
-        }
-        
+        errorsNotificationAlert(responseError.response.status, responseError.response);
     });
 }
-    function errorsNotifications(status, message){
+    function errorsNotificationAlert(status, messages){
+        let {data:{message}} = messages;
+        if (status === 404) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Terdapat Error Ketika Mengambil Data, System Error Code',
+                text: message
+            });
+        } else if(status === 401){
+            Swal.fire({
+                icon: 'info',
+                title: 'Please Login',
+                text: message
+            }).then((result)=>{
+                window.location = '/';
+            });
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Terdapat Error Ketika Mengambil Data, Jika Masalah Masih Ada, Kontak Admin! System Error: ',
+                text: message
+            }).then((result) => {
+                location.reload(true);
+            });
+            console.log(messages);
+        }
+    }
 
+    function transformToFormatTimestamps(timestamps){
+        if (timestamps < 10) {
+            return "0"+timestamps;
+        }
+        return timestamps;
     }
 

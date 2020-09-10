@@ -44,12 +44,12 @@ class AdminUserController extends Controller
                 }
                 return $aksi;
             })
-            // ->editColumn('created_at', function($data){
-            //     return $data->created_at->diffForHumans();
-            // })
-            // ->editColumn('updated_at', function($data){
-            //     return $data->updated_at->diffForHumans();
-            // })
+            ->editColumn('created_at', function($data){
+                return $data->created_at->timezone('Asia/Jakarta')->toDateTimeString();
+            })
+            ->editColumn('updated_at', function($data){
+                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
+            })
             ->rawColumns(['Aksi'])->make(true);
         }
         return view('admin.user.index', compact('roles'));

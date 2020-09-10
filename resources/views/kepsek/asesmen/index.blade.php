@@ -21,7 +21,7 @@
                         <table class="table table-bordered" id="asesmen-table">
                             <thead>
                                 <tr>
-                                    <th width="10%">No</th>
+                                    <th width="10%">ID</th>
                                     <th>Nama Sekolah</th>
                                     <th>Skor Akhir</th>
                                     <th>Dibentuk Tanggal</th>
@@ -50,14 +50,27 @@
               </div>
               <div class="modal-body">
                   {{ csrf_field() }}
-                  <ul id="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px">
-
-                  </ul>
-                  Nama Sekolah: <input type="text" name="nama_sekolah" id="nama_sekolah" class="form-control">
-                  Alamat: <input type="text" name="alamat_sekolah" id="alamat_sekolah" class="form-control">
-                  Nama Kepala Sekolah: <input type="text" name="nama_kepsek" id="nama_kepsek" class="form-control">
-                  Nomor HP: <input type="text" name="no_hp" id="no_hp" class="form-control">
-                  Email: <input type="text" name="email_kepsek" id="email_kepsek" class="form-control">
+                  <ul id="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
+                  <div class="form-group">
+                    <label for="name_sekolah">Nama Sekolah: </label>
+                    <input type="text" name="nama_sekolah" id="nama_sekolah" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="alamat_sekolah">Alamat: </label>
+                    <input type="text" name="alamat_sekolah" id="alamat_sekolah" class="form-control">
+                  </div>
+                  <div class="form-group">
+                      <label for="nama_kepsek">Nama Kepala Sekolah</label>
+                      <input type="text" name="nama_kepsek" id="nama_kepsek" class="form-control">
+                  </div>
+                  <div class="form-group">
+                      <label for="no_hp">Nomor HP:</label>
+                      <input type="text" name="no_hp" id="no_hp" class="form-control">
+                  </div>
+                  <div class="form-group">
+                    <label for="email_kepsek">Email: </label>
+                    <input type="text" name="email_kepsek" id="email_kepsek" class="form-control">
+                  </div>
               </div>
               <div class="modal-footer">
                       <button type="button" class="btn btn-secondary close_form" data-dismiss="modal">Cancel</button>
@@ -101,7 +114,7 @@
             }
         });
         $.ajax({
-            url: url,
+            url: url_form,
             type: 'POST',
             data: $("#create_form_asesmen").serialize(),
             beforeSend: function(){

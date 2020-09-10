@@ -83,7 +83,7 @@ class DokumentasiKegiatanNotifyKepalaSekolahNotification extends Notification
             "nama_kegiatan" => $this->dokumentasiKegiatan->nama_kegiatan,
             "nilai_ppk" => $data_ppk,
             "kegiatan_berbasis" => $this->dokumentasiKegiatan->kegiatan_berbasis,
-            "timestamp_pengiriman" => $this->dokumentasiKegiatan->updated_at,
+            "timestamp_pengiriman" => $this->dokumentasiKegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
             "status_kegiatan" => $this->statusKegiatan->nama,
             "status_kegiatan_id" => $this->statusKegiatan->id,
             "link" => '/kepala-sekolah/dokumentasi-kegiatan',

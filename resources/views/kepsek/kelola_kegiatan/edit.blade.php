@@ -131,8 +131,8 @@
                     {!! Form::hidden('user_id', $pengajuan_kegiatan->user_id) !!} --}}
                     {!! Form::label('keterangan', 'Keterangan(Opsional):') !!}
                     {!! Form::textarea('keterangan', null , ['class' => 'form-control keterangan', 'onkeyup' => 'characterCount(this.value, "keterangan_opsional")']) !!}
+                    <div class="error_count_opsional alert alert-danger mt-2" hidden></div>
                     <div class="float-right count_keterangan_opsional">0 / 255 Karakter</div>
-                    <div class="error_count_opsional alert alert-danger" hidden></div>
                 </div>
              
         </div>
@@ -168,8 +168,8 @@
                 {!! Form::hidden('id_keterangan', 2)!!}
                 {!! Form::label('keterangan_wajib_ulang', 'Keterangan(Wajib):') !!}
                 {!! Form::textarea('keterangan', null , ['class' => 'form-control keterangan', 'onkeyup' => 'characterCount(this.value , "keterangan_ulang")']) !!}
+                <div class="error_count_ulang alert alert-danger mt-2" hidden></div>
                 <div class="float-right count_keterangan_ulang">0 / 255 Karakter</div>
-                <div class="error_count_ulang alert alert-danger" hidden></div>
             </div>
         
         </div>
@@ -206,8 +206,8 @@
                     {!! Form::hidden('id_keterangan', 3)!!}
                     {!! Form::label('keterangan_wajib', 'Keterangan(Wajib):') !!}
                     {!! Form::textarea('keterangan', null , ['class' => 'form-control keterangan', 'onkeyup' => 'characterCount(this.value , "keterangan_wajib")']) !!}
+                    <div class="error_count_wajib alert alert-danger mt-2" hidden></div>
                     <div class="float-right count_keterangan_wajib">0 / 255 Karakter</div>
-                    <div class="error_count_wajib alert alert-danger" hidden></div>
                 </div>
             
         </div>
@@ -225,6 +225,7 @@
 @section('script')
 <script>
       // var state = true;
+
       $("textarea").each(function(){
         $(this).val('');
       });
@@ -233,6 +234,7 @@
       $("#file_upload").empty();
       var url = '{{route("pj.kelola_kegiatan.data_kegiatan", "id")}}';
       url = url.replace("id", $("[name='id']").val());
+
       $.get(url, function(res){
         var data_nilai_ppk = $.parseJSON(res.data.nilai_ppk);
 
@@ -450,29 +452,33 @@
           if (lng > 255) {
             $(".error_count_wajib").html('Keterangan melebihi '+lng+' / 255 Karakter');
             $(".error_count_wajib").prop('hidden', false);
+            $(".btn_keterangan_wajib").prop('disabled' , true);
           } else {
             $(".error_count_wajib").empty();
             $(".error_count_wajib").prop('hidden', true);
+            $(".btn_keterangan_wajib").prop('disabled' , false);
           } 
         } else if(stateKeterangan === "keterangan_ulang"){
           document.querySelector('.count_keterangan_ulang').innerHTML = lng + ' / 255 Karakter'
           if (lng > 255) {
             $(".error_count_ulang").html('Keterangan melebihi '+lng+' / 255 Karakter');
             $(".error_count_ulang").prop('hidden', false);
+            $(".btn_keterangan_ulang").prop('disabled', true);
           } else {
             $(".error_count_ulang").empty();
             $(".error_count_ulang").prop('hidden', true);
+            $(".btn_keterangan_ulang").prop('disabled', false);
           } 
         } else if(stateKeterangan === 'keterangan_opsional'){
           document.querySelector('.count_keterangan_opsional').innerHTML = lng + ' / 255 Karakter'
           if (lng > 255) {
             $(".error_count_opsional").html('Keterangan melebihi '+lng+' / 255 Karakter');
             $(".error_count_opsional").prop('hidden', false);
-            // $(".btn_keterangan_opsional").prop('disabled', true);
+            $(".btn_keterangan_opsional").prop('disabled', true);
           } else {
             $(".error_count_opsional").empty();
             $(".error_count_opsional").prop('hidden', true);
-            // $(".btn_keterangan_opsional").prop('disabled', false);
+            $(".btn_keterangan_opsional").prop('disabled', false);
           } 
         }
       }

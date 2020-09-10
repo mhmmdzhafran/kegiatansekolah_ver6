@@ -8,10 +8,8 @@ use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Validator;
 
 class UserProfileController extends Controller
 {
@@ -29,7 +27,14 @@ class UserProfileController extends Controller
     public function index()
     {
         //
-        $data_user = User::findOrFail(Auth::user()->id);
+        try {
+            $data_user = User::findOrFail(Auth::user()->id);
+        } catch (\Throwable $th) {
+            return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
+        } catch(ModelNotFoundException $evt) {
+            return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
+        }
+
         $role = Auth::user()->Role->role_title;
         $counter_notification = $data_user->unreadNotifications()->count();
         switch ($role) {
@@ -57,7 +62,14 @@ class UserProfileController extends Controller
     //function notification sementara kepsek dulu
     
     public function getAllNotifications(){
-        $data_user = User::findOrFail(Auth::user()->id);
+        try {
+            $data_user = User::findOrFail(Auth::user()->id);
+        } catch (\Throwable $th) {
+            return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
+        } catch(ModelNotFoundException $evt) {
+            return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
+        }
+        
         $notification = $data_user->notifications()->paginate(10);        
         $role = Auth::user()->Role->role_title;
         $counter_notification = $data_user->unreadNotifications()->count();
@@ -65,7 +77,7 @@ class UserProfileController extends Controller
             $notification = $data_user->notifications()->paginate(10);
             switch ($role) {
                 case 'Penanggung Jawab Kegiatan':
-                    //belom ada
+                    return view('userprofile.pj.notification' , compact('notification' , 'counter_notification'));
                     break;
                 case 'Kepala Sekolah':
                     return view('userprofile.kepsek.notification', compact('notification', 'counter_notification'));
@@ -77,7 +89,7 @@ class UserProfileController extends Controller
         }
         switch ($role) {
             case 'Penanggung Jawab Kegiatan':
-                return view('userprofile.pj.index', compact('notification'));
+                return view('userprofile.pj.notification_page', compact('notification' , 'counter_notification'));
                 break;
             case 'Kepala Sekolah':
                 return view('userprofile.kepsek.notification_page', compact('notification' , 'counter_notification'));
@@ -92,20 +104,20 @@ class UserProfileController extends Controller
         try {
             $user = User::findOrFail(Auth::user()->id);
         } catch (\Throwable $th) {
-            
+            return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
         } catch(ModelNotFoundException $evt) {
-
+            return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
         }
         //thanks stack overflow!
         if (request()->ajax()) {
             $notification= $user->notifications()
             ->Where('data','LIKE','%"user_pj":"'.$searchValue.'"%')
-            ->orWhere('data','LIKE','%"nama_proposal_kegiatan":"'.$searchValue.'"%')
+            ->orWhere('data','LIKE','%"nama_kegiatan":"'.$searchValue.'"%')
             ->orWhere('data' , 'LIKE' , '%"nilai_ppk":"%'.$searchValue.'%"%')
             ->orWhere('data' , 'LIKE' , '%"kegiatan_berbasis":"%'.$searchValue.'%"%')
-            ->orderBy('created_at' , 'desc')
+            ->orWhere('data' , 'LIKE' , '%"status_kegiatan:"%'.$searchValue.'%"%')
             ->paginate(10);
-            return view('userprofile.kepsek.notification', compact('notification'));
+            return $this->redirectToRespectivePageNotifications($notification , Auth::user()->Role->role_title);
         }
     }
 
@@ -113,26 +125,23 @@ class UserProfileController extends Controller
         try {
             $user = User::findOrFail(Auth::user()->id);
         } catch (\Throwable $th) {
-            // return response()->json[]
+            return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
         } catch(ModelNotFoundException $evt) {
-
+            return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
         }
 
         if (request()->ajax()) {
             $orderChoice = ucwords($option);
             if ($orderChoice == "Terlama") {
                 $notification = $user->oldestNotifications()->paginate(10);
-                return view('userprofile.kepsek.notification', compact('notification'));
-            } elseif($orderChoice == "Sudah Mengunggah Dokumentasi" || $orderChoice == "Belum Disetujui"){
+            } elseif($orderChoice == "Sudah Mengunggah Dokumentasi" || $orderChoice == "Belum Disetujui" || $orderChoice == "Pengajuan Ulang" || $orderChoice == "Menolak" || $orderChoice == "Sudah Disetujui"){
                 $notification = $user->notifications()
                                 ->Where('data' , 'LIKE', '%"status_kegiatan":"'.$orderChoice.'"%')
-                                ->orderBy('created_at', 'desc')
                                 ->paginate(10);
-                return view('userprofile.kepsek.notification', compact('notification'));
             } elseif($orderChoice == "Terbaru"){
                 $notification = $user->notifications()->paginate(10);
-                return view('userprofile.kepsek.notification', compact('notification'));
             }
+            return $this->redirectToRespectivePageNotifications($notification , Auth::user()->Role->role_title);
         }
     }
 
@@ -140,9 +149,9 @@ class UserProfileController extends Controller
         try {
             $user = User::findOrFail(Auth::user()->id);
         } catch (\Throwable $th) {
-            //throw $th;
-        } catch (ModelNotFoundException $evt) {
-
+            return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
+        } catch(ModelNotFoundException $evt) {
+            return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
         }
 
         if (request()->ajax()) {
@@ -152,32 +161,30 @@ class UserProfileController extends Controller
                 $notification = $user->oldestNotifications()
                 ->Where('data' , 'LIKE' , '%"status_kegiatan":"'.$optionOne.'"%')
                 ->orWhere('data','LIKE','%"user_pj":"'.$optionOne.'"%')
-                ->orWhere('data','LIKE','%"nama_proposal_kegiatan":"'.$optionOne.'"%')
+                ->orWhere('data','LIKE','%"nama_kegiatan":"'.$optionOne.'"%')
                 ->orWhere('data' , 'LIKE' , '%"nilai_ppk":"%'.$optionOne.'%"%')
                 ->orWhere('data' , 'LIKE' , '%"kegiatan_berbasis":"%'.$optionOne.'%"%')
                 ->paginate(10);
-                return view('userprofile.kepsek.notification', compact('notification'));
-            } elseif($orderChoice === "Belum Disetujui" || $orderChoice === "Sudah Mengunggah Dokumentasi") {
+            } elseif($orderChoice == "Sudah Mengunggah Dokumentasi" || $orderChoice == "Belum Disetujui" || $orderChoice == "Pengajuan Ulang" || $orderChoice == "Menolak" || $orderChoice == "Sudah Disetujui") {
                 $notification = $user->notifications()
                 ->Where('data' , 'LIKE', '%"status_kegiatan":"%'.$orderChoice.'%"%')
                 ->Where(function($query) use ($optionOne){
                     $query->where('data' , 'LIKE' , '%"status_kegiatan":"'.$optionOne.'"%')
                     ->orWhere('data','LIKE','%"user_pj":"'.$optionOne.'"%')
-                    ->orWhere('data','LIKE','%"nama_proposal_kegiatan":"'.$optionOne.'"%')
+                    ->orWhere('data','LIKE','%"nama_kegiatan":"'.$optionOne.'"%')
                     ->orWhere('data' , 'LIKE' , '%"nilai_ppk":"%'.$optionOne.'%"%')
                     ->orWhere('data' , 'LIKE' , '%"kegiatan_berbasis":"%'.$optionOne.'%"%');
                 })->paginate(10);               
-                return view('userprofile.kepsek.notification', compact('notification'));
             } elseif($orderChoice == "Terbaru"){
                 $notification = $user->notifications()
                 ->Where('data' , 'LIKE' , '%"status_kegiatan":"'.$optionOne.'"%')
                 ->orWhere('data','LIKE','%"user_pj":"'.$optionOne.'"%')
-                ->orWhere('data','LIKE','%"nama_proposal_kegiatan":"'.$optionOne.'"%')
+                ->orWhere('data','LIKE','%"nama_kegiatan":"'.$optionOne.'"%')
                 ->orWhere('data' , 'LIKE' , '%"nilai_ppk":"%'.$optionOne.'%"%')
                 ->orWhere('data' , 'LIKE' , '%"kegiatan_berbasis":"%'.$optionOne.'%"%')
                 ->paginate(10);
-                return view('userprofile.kepsek.notification', compact('notification'));
             }
+            return $this->redirectToRespectivePageNotifications($notification , Auth::user()->Role->role_title);
             
         }
 
@@ -203,13 +210,12 @@ class UserProfileController extends Controller
     {
         //
         //for changing password
-        $id = Auth::user()->id;
         try {
-            $user = User::findOrFail($id);
+            $user = User::findOrFail(Auth::user()->id);
         } catch (\Throwable $th) {
             return Response::json(['messages' => $th->getMessage()], 404);
         } catch(ModelNotFoundException $e) {
-            return Response::json(['messages' => ["Data Anda Tidak Dapat Ditemukkan, Silahkan Kontak Admin! ID yang diberikan: ".$id."System Error Code: ".$e->getMessage()]], 404);
+            return Response::json(['messages' => ["Data Anda Tidak Dapat Ditemukkan, Silahkan Kontak Admin! ID yang diberikan: ".Auth::user()->id."System Error Code: ".$e->getMessage()]], 404);
         }
         $passwordInput = $request->passwordBaru;
         $passwordChecker = $request->passwordChecker;
@@ -224,4 +230,17 @@ class UserProfileController extends Controller
         return Response::json(['message' => 'data is valid'], 200);
     }
 
+    public function redirectToRespectivePageNotifications($notification , $roles){
+        switch ($roles) {
+            case 'Penanggung Jawab Kegiatan':
+                return view('userprofile.pj.notification', compact('notification'));
+                break;
+            case 'Kepala Sekolah':
+                return view('userprofile.pj.notification', compact('notification'));
+                break;
+            default:
+                return redirect()->to('/404');
+                break;
+        }
+    }
 }

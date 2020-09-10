@@ -28,7 +28,7 @@ class InformasiAssessmenInternalRequest extends FormRequest
             'nama_sekolah' => 'required',
             'alamat_sekolah' => 'required',
             'nama_kepsek' => 'required',
-            'no_hp' => 'required|numeric|min:12',
+            'no_hp' => 'required|numeric|digits:12',
             'email_kepsek' => 'required|email'
         ];
     }
@@ -41,7 +41,7 @@ class InformasiAssessmenInternalRequest extends FormRequest
             'nama_kepsek.required' => 'Nama Kepala Sekolah Wajib Diisi',
             'no_hp.required' => 'Nomor HP Kepala Sekolah Wajib Diisi',
             'no_hp.numeric' => 'Nomor HP Wajib berbentuk Numerik',
-            'no_hp.min' => 'Nomor HP Minimal Terdiri dari 12 Angka Numerik',
+            'no_hp.digits' => 'Nomor HP Harus Terdiri dari 12 Angka Numerik',
             'email_kepsek.required' => 'Email Wajib Diisi',
             'email_kepsek.email' => 'Email Tidak Valid'
         ];

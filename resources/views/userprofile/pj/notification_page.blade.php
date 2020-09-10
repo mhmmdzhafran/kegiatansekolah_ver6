@@ -1,11 +1,11 @@
-@extends('layouts.template_kepsek')
+@extends('layouts.template_pj')
 
 @section('title')
-    Kepala Sekolah - Notifikasi
+    Penanggung Jawab - Notifikasi
 @endsection
 
 @section('content')
-<h1>Halaman Notifikasi Kepala Sekolah {{ ucwords(Auth::user()->name) }}</h1>
+<h1>Halaman Notifikasi Penanggung Jawab {{ ucwords(Auth::user()->name) }}</h1>
 
 <div class="container">
     <div class="row">
@@ -13,14 +13,14 @@
             {{-- animate__animated animate__fadeInDown --}}
             <div class="alert alert-warning py-3 shadow-sm d-none" id="alerts-notify-exist">
                 Anda Mendapatkan Notifikasi Baru, Silahkan Klik Refresh Laman Untuk Melihatnya!
-                <a class="btn btn-sm btn-success float float-lg-right float-md-right float-sm-right" href="/kepala-sekolah/notifications">Refresh Laman</a>
+                <a class="btn btn-sm btn-success float float-lg-right float-md-right float-sm-right" href="/penanggung-jawab/notifications">Refresh Laman</a>
             </div>
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('userprofile.kepsek.index')}}" id="profile">Profil</a>
+                  <a class="nav-link" href="{{route('userprofile.pj.index')}}" id="profile">Profil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{{route('kepsek.userprofile.getAllNotify')}}" id="notification">Notifikasi 
+                  <a class="nav-link active" href="{{route('pj.userprofile.getAllNotify')}}" id="notification">Notifikasi 
                     <span class="badge badge-primary badge-pill" id="badge-counter-notification">
                         {{ $counter_notification }}
                     </span>
@@ -34,15 +34,16 @@
                 <div class="card-body" style="max-height: 500px; overflow-y: scroll; height: auto">
                     <div class="input-group mb-5">
                         <button class="btn btn-circle btn-info mr-2 d-none" type="button" id="button_back"><i class="fa fa-arrow-circle-left"></i></button>
-                        <div class="dropdown">
+                        <div class="dropdown mr-2">
                             <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               Filter
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terbaru">Terbaru</button>
-                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Belum Disetujui">Belum Disetujui</button>
-                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Sudah Mengunggah Dokumentasi">Sudah Mengunggah Dokumentasi</button>
-                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terlama">Terlama</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="terbaru">Terbaru</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Sudah Disetujui">Sudah Disetujui</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Pengajuan Ulang">Pengajuan Ulang</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Ditolak">Ditolak</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="terlama">Terlama</button>
                             </div>
                           </div>
                         <input type="text" class="form-control bg-light border-0 ml-2 small search" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" id="search">
@@ -62,7 +63,7 @@
                         <b id="text_search_2"></b>
                         <a href="#" class="float float-right text-black-50" id="remove_filter_2">x</a>
                       </div>
-                    @include('userprofile.kepsek.notification')
+                    @include('userprofile.pj.notification')
                 </div>
               </div>
         </div>
@@ -110,7 +111,7 @@
         if (searchData !== "") {
             if (state_2 !== "") {
                 //masuk ke two conditions  
-                url = '/kepala-sekolah/filter-notifications-by/'+searchData+'/'+text_state_2;
+                url = '/penanggung-jawab/filter-two/notifications/'+searchData+'/'+text_state_2;
                 window.axios.get(url)
                     .then((response) => {
                         console.log(response.data);
@@ -124,7 +125,7 @@
                         errorNotifications(responseError.response.status, responseError.response);
                     });
             } else {
-                url = '/kepala-sekolah/search-notification/'+searchData+"/search";
+                url = '/penanggung-jawab/search-notification/'+searchData+"/search";
                 window.axios.get(url)
                 .then((response) => {
                     // Swal.close();
@@ -137,17 +138,8 @@
                     textSearch.innerText="Pencarian: "+searchData;
                     page = 1;
                 }).catch((responseError) => {
-                    // let {data: {message}} = responseError.response;
-                    // if (responseError.response.status === 401) {
-                    //     errorMessagesAlert(responseError.response.status , responseError.response.statusText);
-                    // } else if(responseError.response.status === 404){
-                    //     errorMessagesAlert(responseError.response.status, message);
-                    // } else {
-                    //     errorMessagesAlert(responseError.response.status, message);
-                    // }
-                    // console.log(responseError.response);
-                    errorNotifications(responseError.response.status, responseError.response);
-                });
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
             }
         } 
     });
@@ -177,10 +169,19 @@
 
     $(document).on('click', '.filter_by', function(e){
         e.preventDefault();
-        text_state_2 = $(this).attr('id');
+        console.log($(this).attr('id'));
+        let choiceFilter = $(this).attr('id');
+        let filterName = "";
+        if (choiceFilter === "Ditolak") {
+            filterName = "Menolak";
+        } else {
+            filterName = $(this).attr('id');
+            
+        }
+        text_state_2 = filterName;
         if (state !== "") {
             // ke url two conditions
-            url = '/kepala-sekolah/filter-notifications-by/'+searchValue+'/'+text_state_2;
+            url = '/penanggung-jawab/filter-two/notifications/'+searchValue+'/'+text_state_2;
             state_2 = $(this).attr('id');
             window.axios.get(url)
                 .then((response) => {
@@ -188,14 +189,14 @@
                     // location.hash = url+"?page="+page;
                     state_2 = $(this).attr('id');
                     getSecondAlertElement.classList.remove('d-none');
-                    textSearchTwo.innerText= text_state_2;
+                    textSearchTwo.innerText= filterName;
                     button_return.classList.remove('d-none');
                     page = 1;
                 }).catch((responseError) => {
-                    errorNotifications(responseError.response.status, responseError.response);
-                });
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
         } else {               
-            url = '/kepala-sekolah/filter-notifications/'+text_state_2;
+            url = '/penanggung-jawab/filter-notifications/'+text_state_2;
             window.axios.get(url)
                 .then((response) => {
                     // Swal.close();
@@ -203,19 +204,19 @@
                     // location.hash = url+"?page="+page;
                     state_2 = $(this).attr('id');
                     getSecondAlertElement.classList.remove('d-none');
-                    textSearchTwo.innerText = text_state_2;
+                    textSearchTwo.innerText = filterName;
                     button_return.classList.remove('d-none');
                     page = 1;
                 }).catch((responseError) => {
-                    errorNotifications(responseError.response.status, responseError.response);
-                });   
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });  
         }
     });
 
     $(document).on('click' , '.notificationRead', function(e) {
         e.preventDefault();
         let readState = $(this).attr('id');
-        window.axios.put('/kepala-sekolah/read-notification/', {
+        window.axios.put('/penanggung-jawab/read-notification/', {
                 data: readState
             }).then((response) => {
                 if (state !== "") {
@@ -292,27 +293,17 @@
                 getAlertElement.classList.remove('d-none');
                 // button_return.classList.remove('d-none');
             }).catch((responseError) => {
-                errorNotifications(responseError.response.status, responseError.response);
-            });   
-         } else if(state_2 === "belum_disetujui") {
-            window.axios.get(url+'?page='+page)
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });    
+         } else if(state_2 !== "terbaru" || state_2 !== "terlama"){
+             window.axios.get(url+'?page='+page)
                 .then((response) => {
                     console.log(response.data);
                     $("#notification_box").empty().html(response.data);
-                    // location.hash = url+"?page="+page;
                 }).catch((responseError) => {
-                    errorNotifications(responseError.response.status, responseError.response);
-                });
-        } else if(state_2 === "sudah_unggah_dokumentasi") {
-            window.axios.get(url+'?page='+page)
-                .then((response) => {
-                    console.log(response.data);
-                    $("#notification_box").empty().html(response.data);
-                    // location.hash = url+"?page="+page;
-                }).catch((responseError) => {
-                    errorNotifications(responseError.response.status, responseError.response);
-                });
-        } else if(state === "" || state_2 === "terbaru" || state_2 === "terlama") {
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
+         } else if(state === "" || state_2 === "terbaru" || state_2 === "terlama") {
             window.axios.get("?page="+page)
                 .then((response) => {
                     // Swal.close();
@@ -322,9 +313,9 @@
                     getAlertElement.classList.add('d-none');
                     // button_return.classList.add('d-none');
                 }).catch((responseError) => {
-                    errorNotifications(responseError.response.status, responseError.response);
-                });
-        }
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
+        } 
     }
 
     function getDataTwoConditions(page, stateOne, stateTwo){
@@ -335,14 +326,14 @@
                 $("#notification_box").empty().html(response.data);
                 // location.hash = url+'?page='+page;
             }).catch((responseError) => {
-                errorNotifications(responseError.response.status, responseError.response);
-            });
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
     }
 
   
 
     function init(){
-        url = '/kepala-sekolah/notifications';
+        url = '/penanggung-jawab/notifications';
         window.axios.get(url)
             .then((response) => {
                 $("#notification_box").empty().html(response.data);
@@ -355,13 +346,13 @@
                 location.replace(url);
                 page = 1;
             }).catch((responseError) => {
-                errorNotifications(responseError.response.status, responseError.response);
-            });
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
     }
 
     function filterByInit(option){
         //axios
-        url = '/kepala-sekolah/filter-notifications/'+text_state_2;
+        url = '/penanggung-jawab/filter-notifications-by/'+text_state_2;
         window.axios.get(url)
             .then((response) => {                
                 $("#notification_box").empty().html(response.data);
@@ -370,13 +361,13 @@
                 state = "";
                 page = 1;
             }).catch((responseError) => {
-                errorNotifications(responseError.response.status, responseError.response);
-            });
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
     }
 
     function searchInit(searchData) {
         //axios
-        url = '/kepala-sekolah/search-notification/'+searchValue+"/search";
+        url = '/penanggung-jawab/search-notification/'+searchValue+"/search";
         window.axios.get(url)
             .then((response) => {
                 $("#notification_box").empty().html(response.data);
@@ -385,8 +376,8 @@
                 state_2 = "";
                 page = 1;
             }).catch((responseError) => {
-                errorNotifications(responseError.response.status, responseError.response);
-            });
+                        errorNotifications(responseError.response.status, responseError.response);
+                    });
     }
 
     function errorNotifications(status, errorMessages){

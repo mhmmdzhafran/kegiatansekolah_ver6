@@ -54,6 +54,12 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
     //Dokumentasi index
     Route::get('/penanggung-jawab/unggah-dokumentasi-kegiatan', 'PJMengelolaKegiatanController@indexDokumentasi')->name('pj.dokumentasi_kegiatan.index');
 
+    Route::get('/penanggung-jawab/get-notification', 'UsersNotificationController@getNotification')->name('pj.notification.getData');
+    Route::get('/penanggung-jawab/get-more-notification/{request}' , 'UsersNotificationController@getMoreNotification')->name('pj.notification.getMoreData');
+    Route::get('/penanggung-jawab/specific-notification/{notification}' , 'UsersNotificationController@getSpecificNotification')->name('pj.notification.specificNotification');
+    Route::put('/penanggung-jawab/mark-as-read/', 'UsersNotificationController@markAsReadNotification')->name('pj.notification.markAsRead');
+
+
     Route::resource('/penanggung-jawab/mengelola-kegiatan', 'PJMengelolaKegiatanController',['names' =>[
         'index' => 'pj.kelola_kegiatan.index',
         'create' => 'pj.kelola_kegiatan.create',
@@ -90,7 +96,12 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
 
     Route::post('/penanggung-jawab/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('pj.userprofile.check');
     Route::post('/penanggung-jawab/user-profile/change-pass' , 'UserProfileController@update')->name('pj.userprofile.update');
-
+    
+    Route::get('/penanggung-jawab/search-notification/{search_notification}/search', 'UserProfileController@searchNotification')->name('pj.notification.searchNotify');
+    Route::get('/penanggung-jawab/notifications', 'UserProfileController@getAllNotifications')->name('pj.userprofile.getAllNotify');
+    Route::get('/penanggung-jawab/filter-notifications/{filterChoice}' , 'UserProfileController@orderByNotification')->name('pj.userprofile.orderNotify');
+    Route::get('/penanggung-jawab/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UserProfileController@orderByTwoChoiceNotifications')->name('pj.userprofile.orderTwoConditionNotify');
+    Route::put('/penanggung-jawab/read-notification/', 'UserProfileController@readNotification')->name('pj.userprofile.readNotificationFromProfile');
     /**
      * Commented Routes => For uses later
      */
@@ -174,10 +185,10 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
 
     Route::post('/kepala-sekolah/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('kepsek.userprofile.check');
     Route::post('/kepala-sekolah/user-profile/change-pass' , 'UserProfileController@update')->name('kepsek.userprofile.update');
-    Route::get('/kepala-sekolah/search-notification/{search_notification}', 'UserProfileController@searchNotification')->name('kepsek.notification.searchNotify');
+    Route::get('/kepala-sekolah/search-notification/{search_notification}/search', 'UserProfileController@searchNotification')->name('kepsek.notification.searchNotify');
     Route::get('/kepala-sekolah/notifications', 'UserProfileController@getAllNotifications')->name('kepsek.userprofile.getAllNotify');
     Route::get('/kepala-sekolah/filter-notifications/{filterChoice}' , 'UserProfileController@orderByNotification')->name('kepsek.userprofile.orderNotify');
-    Route::get('/kepala-sekolah/filter-two/notifications/{filterChoiceOne}/{filterChoiceTwo}', 'UserProfileController@orderByTwoChoiceNotifications')->name('kepsek.userprofile.orderTwoConditionNotify');
+    Route::get('/kepala-sekolah/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UserProfileController@orderByTwoChoiceNotifications')->name('kepsek.userprofile.orderTwoConditionNotify');
     Route::put('/kepala-sekolah/read-notification/', 'UserProfileController@readNotification')->name('kepsek.userprofile.readNotificationFromProfile');
     /**
      * Commented Routes => For uses later

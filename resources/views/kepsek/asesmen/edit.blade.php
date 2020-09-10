@@ -26,11 +26,16 @@
                     <div class="card-body">
                         <button type="button" class="btn btn-warning btn-sm rounded-pill float-md-right float-lg-right float-sm-left" id="edit" style="color:white;">Edit Informasi</button>
                         <br>
-                        Nama Sekolah: <input type="text" name="nama_sekolah" id="nama_sekolah" class="form-control" value="{{ $assessment->nama_sekolah }}" disabled>
-                        Alamat: <input type="text" name="alamat_sekolah" id="alamat_sekolah" class="form-control" value="{{ $assessment->alamat_sekolah }}" disabled>
-                        Nama Kepala Sekolah: <input type="text" name="nama_kepsek" id="nama_kepsek" class="form-control" value="{{ $assessment->nama_kepsek }}" disabled>
-                        Nomor HP: <input type="text" name="no_hp" id="no_hp" class="form-control" value="{{ $assessment->nomor_hp }}" disabled>
-                        Email: <input type="email" name="email_kepsek" id="email_kepsek" class="form-control" value="{{ $assessment->email_kepsek }}" disabled>
+                          <label for="nama_sekolah">Nama Sekolah: </label>
+                          <input type="text" name="nama_sekolah" id="nama_sekolah" class="form-control mb-2" value="{{ $assessment->nama_sekolah }}" disabled>
+                          <label for="alamat_sekolah">Alamat: </label>
+                          <input type="text" name="alamat_sekolah" id="alamat_sekolah" class="form-control mb-2" value="{{ $assessment->alamat_sekolah }}" disabled>
+                          <label for="nama_kepsek">Nama Kepala Sekolah: </label>
+                          <input type="text" name="nama_kepsek" id="nama_kepsek" class="form-control mb-2" value="{{ $assessment->nama_kepsek }}" disabled>
+                          <label for="no_hp">Nomor HP: </label>
+                          <input type="text" name="no_hp" id="no_hp" class="form-control mb-2" value="{{ $assessment->nomor_hp }}" disabled>
+                          <label for="email_kepsek">Email: </label>
+                          <input type="email" name="email_kepsek" id="email_kepsek" class="form-control" value="{{ $assessment->email_kepsek }}" disabled>
                     </div>
                   </div>
             </div>
@@ -52,16 +57,6 @@
                           <div class="collapse show" id="collapseCardExample">
                             <div class="card-body">
                                 <div id="accordion">
-                                    {{-- @include('_partials/internal/assessment_indikator1') 
-                                    @include('_partials/internal/assessment_indikator2')
-                                    @include('_partials/internal/assessment_indikator3')
-                                    @include('_partials/internal/assessment_indikator4')
-                                    @include('_partials/internal/assessment_indikator5')
-                                    @include('_partials/internal/assessment_indikator6')
-                                    @include('_partials/internal/assessment_indikator7')
-                                    @include('_partials/internal/assessment_indikator8')
-                                    @include('_partials/internal/assessment_indikator9')
-                                    @include('_partials/internal/assessment_indikator10') --}}
                                     @include('_partials/internal/testing_asesmen_indikator')
                                 </div>
                             </div>
@@ -130,21 +125,36 @@
             {{ csrf_field() }}
         <div class="modal-body">
             <div class="row">
-            <div class="col-lg-12 col-sm-12">
-                <ul id="kurang_indikator" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
-                <input type="hidden" value="{{ $assessment->id }}" id="id_assessmen">
-                Nama Sekolah: <input type="text" name="nama_sekolah" id="nama_sekolah" class="form-control" value="{{ $assessment->nama_sekolah }}">
-                Alamat: <input type="text" name="alamat_sekolah" id="alamat_sekolah" class="form-control" value="{{ $assessment->alamat_sekolah }}">
-                Nama Kepala Sekolah: <input type="text" name="nama_kepsek" id="nama_kepsek" class="form-control" value="{{ $assessment->nama_kepsek }}">
-                Nomor HP: <input type="text" name="no_hp" id="no_hp" class="form-control" value="{{ $assessment->nomor_hp }}">
-                Email: <input type="email" name="email_kepsek" id="email_kepsek" class="form-control" value="{{ $assessment->email_kepsek }}">
-        </div>
+              <div class="col-lg-12 col-sm-12">
+                  <ul id="kurang_indikator" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
+                  <input type="hidden" value="{{ $assessment->id }}" id="id_assessmen">
+                  <div class="form-group">
+                    <label for="nama_sekolah">Nama Sekolah:</label>
+                    <input type="text" name="nama_sekolah" id="nama_sekolah" class="form-control" value="{{ $assessment->nama_sekolah }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="alamat_sekolah">Alamat:</label>
+                    <input type="text" name="alamat_sekolah" id="alamat_sekolah" class="form-control" value="{{ $assessment->alamat_sekolah }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="nama_kepsek">Nama Kepala Sekolah:</label>
+                    <input type="text" name="nama_kepsek" id="nama_kepsek" class="form-control" value="{{ $assessment->nama_kepsek }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="no_hp">Nomor HP:</label>
+                    <input type="text" name="no_hp" id="no_hp" class="form-control" value="{{ $assessment->nomor_hp }}">
+                  </div>
+                  <div class="form-group">
+                    <label for="email_kepsek">Email:</label>
+                    <input type="email" name="email_kepsek" id="email_kepsek" class="form-control" value="{{ $assessment->email_kepsek }}">
+                  </div>
+              </div>
             </div>
         </div>
     </form>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary submit">Save changes</button>
+          <button type="submit" class="btn btn-primary submit">Ubah Informasi</button>
         </div>
       </div>
     </div>
@@ -175,7 +185,7 @@
     </form>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary submit_delete">Save changes</button>
+          <button type="submit" class="btn btn-danger submit_delete">Hapus Dokumen</button>
         </div>
       </div>
     </div>

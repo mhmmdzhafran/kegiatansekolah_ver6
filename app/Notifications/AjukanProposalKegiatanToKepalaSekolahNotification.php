@@ -79,7 +79,7 @@ class AjukanProposalKegiatanToKepalaSekolahNotification extends Notification
              "nama_kegiatan" => $this->pengajuan_kegiatan->PJ_nama_kegiatan,
              "nilai_ppk" => $data_ppk,
              "kegiatan_berbasis" => $this->pengajuan_kegiatan->kegiatan_berbasis,
-             "timestamp_pengiriman" => $this->pengajuan_kegiatan->updated_at,
+             "timestamp_pengiriman" => $this->pengajuan_kegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
              "status_kegiatan_id" => $this->status_kegiatan->id,
              "status_kegiatan" => $this->status_kegiatan->nama,
              "link" => "/kepala-sekolah/mengelola-kegiatan/".$this->pengajuan_kegiatan->id."/edit"

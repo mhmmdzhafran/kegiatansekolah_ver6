@@ -18,14 +18,14 @@
                             <table class="table table-bordered" id="dokumentasi_kegiatan">
                                 <thead>
                                     <tr>
-                                        <th>ID Dokumentasi</th>
+                                        <th>ID</th>
                                         <th>Nama Kegiatan</th>
                                         <th>Nilai PPK</th>                                  
                                         <th>Kegiatan Berbasis</th>
                                         <th>Timestamp Dokumentasi</th>
-                                        <th width="10%">Nama Penanggung Jawab</th>
-                                        <th width="15%">Status Proposal Kegiatan</th>  
-                                        <th width="15%">Aksi</th>
+                                        <th>Nama Penanggung Jawab</th>
+                                        <th>Status Proposal Kegiatan</th>  
+                                        <th>Aksi</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -125,7 +125,7 @@
                 {data: 'nilai_ppk', name: 'nilai_ppk'},
                 {data: 'kegiatan_berbasis', name:'kegiatan_berbasis'},
                 {data: 'updated_at' , name:'updated_at'},
-                {data: 'user' , name: 'user'},
+                {data: 'user.name' , name: 'user.name'},
                 {data: 'statusKegiatan', name: 'statusKegiatan.nama' , orderable: false},
                 {data: 'unggah_dokumentasi', name:'unggah_dokumentasi', orderable: false}
             ],
@@ -193,7 +193,11 @@
                             var asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
                             asset_url = asset_url.replace("asset_dokumen" , item_dokumen.nama_dokumen);
                             // $(".dokumen_kegiatan").append('<li> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></li><br>');
-                            $(".dokumen_kegiatan").append('<tr><td>'+(count_id++)+'</td><td> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'</td><td>'+item_dokumen.status_unggah_dokumen+'</td><td><button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></td></tr>');
+                            if (item_dokumen.status_unggah_dokumen === "Pengajuan") {
+                                $(".dokumen_kegiatan").append('<tr><td>'+(count_id++)+'</td><td> <i class="fa fa-file-alt mr-2"></i>'+item_dokumen.nama_dokumen+'</td><td>'+item_dokumen.status_unggah_dokumen+'</td><td><button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></td></tr>');                                
+                            } else if(item_dokumen.status_unggah_dokumen === "Dokumentasi") {
+                                $(".dokumen_kegiatan").append('<tr><td>'+(count_id++)+'</td><td> <i class="fa fa-file-alt mr-2"></i>'+item_dokumen.nama_dokumen+'</td><td>'+item_dokumen.status_unggah_dokumen+'</td><td><button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></td></tr>');   
+                            }
                         // }
                     });
                 }).done(function(){

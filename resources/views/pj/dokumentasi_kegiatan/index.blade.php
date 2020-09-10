@@ -10,7 +10,7 @@
     <h1>Kelola Dokumentasi Kegiatan PPK</h1>
 </div>
 <div class="col-sm-12 col-lg-4">
-    <button type="button" class="btn btn-primary rounded-pill float-md-left float-lg-right float-sm-left mb-2" id="unggah_baru">Tambah Dokumentasi Baru</button>
+    <button type="button" class="btn btn-primary rounded-pill float-md-left float-lg-right float-sm-left mb-2" id="unggah_baru">Tambah Dokumentasi Historis</button>
 </div>
 </div>
     <div class="row">
@@ -18,7 +18,7 @@
             <div class="card shadow mb-4">
                 <div class="card-body">
                     <div class="table-responsive-sm table-responsive-lg">
-                        <table class="table table-striped table-bordered" id="dokumentasi_kegiatan">
+                        <table class="table table-bordered" id="dokumentasi_kegiatan">
                             <thead>
                                 <tr>
                                     <th>ID Dokumentasi</th>

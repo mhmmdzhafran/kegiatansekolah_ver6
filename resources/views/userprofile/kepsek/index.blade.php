@@ -14,7 +14,7 @@
                       <a class="nav-link active" href="#" id="profile">Profil</a>
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="/kepala-sekolah/notifications" id="notification">Notifikasi 
+                      <a class="nav-link" href="{{route('kepsek.userprofile.getAllNotify')}}" id="notification">Notifikasi 
                         <span class="badge badge-primary badge-pill" id="badge-counter-notification">
                             {{ $counter_notification }}
                         </span>  

@@ -9,6 +9,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
   <meta name="csrf-token" content="{{ csrf_token() }}">
+  <meta name="user-authorization" content="{{ Auth::user()->id }}">
 
   <title>@yield('title')</title>
 
@@ -24,7 +25,7 @@
 </head>
 
 <body id="page-top">
-  <input type="hidden" id="user" value="{{ Auth::user()->id }}">
+  {{-- <input type="hidden" id="user" value="{{ Auth::user()->id }}"> --}}
   <!-- Page Wrapper -->
   <div id="wrapper">
 

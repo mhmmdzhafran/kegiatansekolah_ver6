@@ -5,10 +5,22 @@
 @endsection
 
 @section('content')
-    <h1>Profil Penanggung Jawab {{ Auth::user()->name }}</h1>
+    <h1>Profil Penanggung Jawab {{ ucwords(Auth::user()->name) }}</h1>
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-sm-12">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                      <a class="nav-link active" href="#" id="profile">Profil</a>
+                    </li>
+                    <li class="nav-item">
+                    <a class="nav-link" href="{{route('pj.userprofile.getAllNotify')}}" id="notification">Notifikasi 
+                        <span class="badge badge-primary badge-pill" id="badge-counter-notification">
+                            {{ $counter_notification }}
+                        </span>  
+                    </a>
+                    </li>
+                  </ul>
                 <div class="card shadow mb-4 mb-2">
                     <div class="card-header py-3">
                       <h6 class="m-0 font-weight-bold text-primary">Profil Penanggung Jawab {{ Auth::user()->name }}</h6>
@@ -46,7 +58,7 @@
             <form action="" id="form_check_pass" method="POST">
                 @csrf
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Pergantian Password</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -73,7 +85,7 @@
             <form action="" id="form_change_pass" method="POST">
                 @csrf
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Pergantian Password</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>

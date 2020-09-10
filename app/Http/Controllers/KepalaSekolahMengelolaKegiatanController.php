@@ -31,21 +31,21 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
     public function index()
     {
         //
-        $pengajuan_all = PengajuanKegiatan::with('statusKegiatan')->select('pengajuan_kegiatans.*');
-        if (request()->ajax()) {
+        $pengajuan_all = PengajuanKegiatan::with(['statusKegiatan' , 'user'])->select('pengajuan_kegiatans.*');
+        if (request()->ajax()) { 
             return datatables()->eloquent($pengajuan_all)->addColumn('statusKegiatan', function(PengajuanKegiatan $pengajuan){
                 $status_pengajuan =  $pengajuan->statusKegiatan->pluck('nama')->implode('<br>');
                 if($status_pengajuan =="Belum Disetujui"){
-                    $status_indikator = "<h5 class='text-center alert alert-info alert-heading font-weight-bolder'>".$status_pengajuan."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-info alert-heading font-weight-bolder'>".$status_pengajuan."</h6>";
                 }
                 elseif($status_pengajuan == "Sudah Disetujui"){
-                    $status_indikator ="<h5 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status_pengajuan."</h5>";
+                    $status_indikator ="<h6 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status_pengajuan."</h6>";
                 }
                 elseif($status_pengajuan == "Pengajuan Ulang"){
-                    $status_indikator = "<h5 class='text-center alert alert-warning alert-heading font-weight-bolder'>Sedang ".$status_pengajuan."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-warning alert-heading font-weight-bolder'>Sedang ".$status_pengajuan."</h6>";
                 }
                 elseif($status_pengajuan == "Menolak"){
-                    $status_indikator = "<h5 class='text-center alert alert-danger alert-heading font-weight-bolder'>".$status_pengajuan."</h5>";
+                    $status_indikator = "<h6 class='text-center alert alert-danger alert-heading font-weight-bolder'>".$status_pengajuan."</h6>";
                 }
                 return $status_indikator;
             })->addColumn('data_pengajuan', function($data){
@@ -80,15 +80,11 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     $id_nilai_ppk++;
                 }
                 return $data_ppk;
-            })->addColumn('user', function($data){
-                $user = $data->user()->get();
-                $userName = "";
-                foreach ($user as $users_proposal) {
-                    $userName = $users_proposal->name;
-                }
-                return $userName;
-            })->rawColumns(['statusKegiatan', 'data_pengajuan', 'nilai_ppk', 'user'])->make(true);
-        }
+            })->editColumn('updated_at' , function($data){
+                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
+            })
+            ->rawColumns(['statusKegiatan', 'data_pengajuan', 'nilai_ppk'])->make(true);       
+        }        
 
        return view('kepsek.kelola_kegiatan.index');
     }
@@ -172,11 +168,13 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 'messages' => $e->getMessage()
             ], 422);
         }
-        
+        $data_user = $pengajuan_kegiatan->user->name;
         foreach($pengajuan_kegiatan->StatusKegiatan as $status){
             $status_kegiatan  = $status;
         }
-        $data_user = $pengajuan_kegiatan->user->name;
+        if ($status_kegiatan->id !== 3) {
+            return redirect()->to('/404');
+        }
         return view('kepsek.kelola_kegiatan.edit', compact('pengajuan_kegiatan', 'status_kegiatan', 'data_user', 'id'));
     }
 
@@ -234,7 +232,15 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             ], 404);
         }
         $statusSebelumnya = 0;
-        $input = $request->except('nama_user');
+        $input = $request->only([
+            'PJ_nama_kegiatan',
+            'nilai_ppk',
+            'kegiatan_berbasis',
+            'mulai_kegiatan',
+            'akhir_kegiatan',
+            'id_keterangan',
+            'keterangan'
+        ]);
         foreach($pengajuan_kegiatan->StatusKegiatan as $status){
             $statusSebelumnya = $status->pivot->status_kegiatan_id;
         }
@@ -374,15 +380,15 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
      */
 
     public function indexDokumentasi(){
-        $dokumentasi_all = DokumentasiKegiatan::with('statusKegiatan')->select('dokumentasi_kegiatans.*');
+        $dokumentasi_all = DokumentasiKegiatan::with(['statusKegiatan' , 'user'])->select('dokumentasi_kegiatans.*');
          if (request()->ajax()) {
             return datatables()->eloquent($dokumentasi_all)->addColumn('statusKegiatan', function(DokumentasiKegiatan $dokumentasi){
                 $status_indikator = $dokumentasi->statusKegiatan->pluck('nama')->implode('<br>');
                 if ($status_indikator == "Unggah Dokumentasi") {
-                    $status = "<h5 class='text-center alert alert-warning alert-heading font-weight-bolder'>".$status_indikator."</h5>";
+                    $status = "<h6 class='text-center alert alert-warning alert-heading font-weight-bolder'>Belum ".$status_indikator."</h6>";
                 }
                 elseif($status_indikator == "Sudah Mengunggah Dokumentasi"){
-                    $status = "<h5 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status_indikator."</h5>";
+                    $status = "<h6 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status_indikator."</h6>";
                 }
                 return $status;
              })->addColumn('unggah_dokumentasi', function($data){
@@ -410,14 +416,10 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     $id_nilai_ppk++;
                 }
                 return $nilai_ppk_kegiatan;
-             })->addColumn('user', function($data){
-                 $user_data = $data->user()->get();
-                 $nama_user = "";
-                 foreach ($user_data as $userInfo) {
-                     $nama_user = $userInfo->name;
-                 }
-                 return $nama_user;
-             })->rawColumns(['statusKegiatan', 'unggah_dokumentasi' , 'nilai_ppk', 'user'])->make(true);
+             })->editColumn('updated_at' , function($data){
+                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
+             })
+             ->rawColumns(['statusKegiatan', 'unggah_dokumentasi' , 'nilai_ppk'])->make(true);
          }
         return view('kepsek.pengajuan_dokumentasi_kegiatan.index');
     }
