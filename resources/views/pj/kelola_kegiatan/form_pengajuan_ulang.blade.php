@@ -10,13 +10,10 @@
             </button>
         </div>
         <div class="modal-body">
-            <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px;">
-
-            </ul>
+            <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
             <div class="form-group">
-                <h4>Keterangan yang diberikan</h4>
-                <ul class="keterangan" style="background-color: #36b9cc; color: white; border-radius: 10px; padding-bottom: 3rem">
-                </ul>
+                {!! Form::label('keterangan' , 'Keterangan Yang Diberikan: ') !!}
+                <ul class="keterangan" style="background-color: #36b9cc; color: white; border-radius: 10px;"></ul>
             </div>
                 <div class="form-group">
                 {!! Form::label('PJ_nama_kegiatan', 'Nama Kegiatan:') !!}
@@ -67,7 +64,7 @@
                 </div>
         </div>
         <div class="progress" hidden>
-            <div class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
+            <div class="progress-bar progress-bar-success myprogress progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%">0%</div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Cancel</button>

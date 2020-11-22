@@ -86,7 +86,7 @@
         <span>Dokumentasi Kegiatan</span></a>
       </li>
 
-      <li class="nav-item {{(request()->segment(2) == 'user-profile') ? 'active' : ''}}">
+      <li class="nav-item {{(request()->segment(2) == 'user-profile') || (request()->segment(2) == 'notifications') ? 'active' : ''}}">
         <a class="nav-link" href="{{  route("userprofile.pj.index") }}">
           <i class="fas fa-id-card-alt"></i>
           <span>Profil Penanggung Jawab</span></a>
@@ -234,7 +234,11 @@
             <!-- Nav Item - User Information -->
             <li class="nav-item dropdown no-arrow">
               <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <img class="img-profile rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}">
+                @if (is_null(Auth::user()->photo_user))
+                  <img class="img-profile rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}">
+                @else 
+                  <img class="img-profile rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.Auth::user()->photo_user) }}">
+                @endif
                 <span class="ml-2 d-none d-lg-inline text-gray-600 small">{{ ucwords(Auth::user()->name) }}</span>
               </a>
               <!-- Dropdown - User Information -->

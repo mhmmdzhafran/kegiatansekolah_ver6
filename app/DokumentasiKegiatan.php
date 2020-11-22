@@ -8,7 +8,7 @@ class DokumentasiKegiatan extends Model
 {
     //
 
-    protected $fillable = ['folder_dokumentasi_id' , 'user_id' , 'nama_kegiatan' , 'nilai_kegiatan_ppk' , 'keterangan_dokumentasi', 'nilai_ppk', 'kegiatan_berbasis', 'mulai_kegiatan', 'akhir_kegiatan'];
+    protected $fillable = ['folder_dokumentasi_id' , 'user_id' , 'nama_pj','nama_kegiatan' , 'nilai_kegiatan_ppk' , 'keterangan_dokumentasi', 'nilai_ppk', 'kegiatan_berbasis', 'mulai_kegiatan', 'akhir_kegiatan' , 'tipe_kegiatan'];
 
 
     public function folderDokumentasi(){
@@ -21,6 +21,10 @@ class DokumentasiKegiatan extends Model
 
     public function dokumenKegiatan(){
         return $this->hasMany('App\DokumenKegiatan');
+    }
+
+    public function fotoKegiatan(){
+        return $this->hasMany('App\FotoKegiatan');
     }
 
     public function user(){

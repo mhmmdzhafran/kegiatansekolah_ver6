@@ -21,7 +21,7 @@
                 </li>
                 <li class="nav-item">
                   <a class="nav-link active" href="{{route('pj.userprofile.getAllNotify')}}" id="notification">Notifikasi 
-                    <span class="badge badge-primary badge-pill" id="badge-counter-notification">
+                    <span class="badge badge-primary badge-pill" id="badge-counter-notification" data-id="{{$counter_notification}}">
                         {{ $counter_notification }}
                     </span>
                 </a>
@@ -39,11 +39,11 @@
                               Filter
                             </button>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="terbaru">Terbaru</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terbaru">Terbaru</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Sudah Disetujui">Sudah Disetujui</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Pengajuan Ulang">Pengajuan Ulang</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Ditolak">Ditolak</button>
-                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="terlama">Terlama</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terlama">Terlama</button>
                             </div>
                           </div>
                         <input type="text" class="form-control bg-light border-0 ml-2 small search" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" id="search">
@@ -90,6 +90,8 @@
 
     const textSearch = document.getElementById('text_search');
     const textSearchTwo = document.getElementById('text_search_2');
+
+    const badgeCounterElementNotificationPage = document.getElementById('badge-counter-notification');
 
     //add events
     $(document).on('click', '.pagination a',function(event){
@@ -138,8 +140,8 @@
                     textSearch.innerText="Pencarian: "+searchData;
                     page = 1;
                 }).catch((responseError) => {
-                        errorNotifications(responseError.response.status, responseError.response);
-                    });
+                    errorNotifications(responseError.response.status, responseError.response);
+                });
             }
         } 
     });
@@ -181,7 +183,7 @@
         text_state_2 = filterName;
         if (state !== "") {
             // ke url two conditions
-            url = '/penanggung-jawab/filter-two/notifications/'+searchValue+'/'+text_state_2;
+            url = '/penanggung-jawab/filter-notifications-by/'+searchValue+'/'+text_state_2;
             state_2 = $(this).attr('id');
             window.axios.get(url)
                 .then((response) => {
@@ -216,57 +218,150 @@
     $(document).on('click' , '.notificationRead', function(e) {
         e.preventDefault();
         let readState = $(this).attr('id');
-        window.axios.put('/penanggung-jawab/read-notification/', {
-                data: readState
-            }).then((response) => {
-                if (state !== "") {
-                    if (state_2 !== "") {
-                        //dua state
-                        console.log(state+" "+state_2);
-                        getDataTwoConditions(page, state, state_2);
-                    } else {
-                        //state2 tidak ada, state satu berisi
-                        getData(page, state);
-                    }
-                } else if(state_2 !== "") {
-                    if (state !== "") {
-                        //dua state
-                        console.log(state+" "+state_2);
-                        getDataTwoConditions(page, state, state_2);
-                    } else {
-                        //state satu tidak ada, state 2 berisi
-                        getData(page, state);
-                    }
+        let countNotification = notificationID.length - 1;
+        if (countNotification <= 0) {
+            countNotification = 0;
+        }
+        window.axios.put('/penanggung-jawab/mark-as-read/', {
+            data: readState,
+            page: 'read',
+            lastRequest: countNotification
+        }).then((response) => {
+            if (state !== "") {
+                if (state_2 !== "") {
+                    //dua state
+                    console.log(state+" "+state_2);
+                    getDataTwoConditions(page, state, state_2);
                 } else {
-                    //all state
-                    getData(page , state);
+                    //state2 tidak ada, state satu berisi
+                    getData(page, state);
                 }
+            } else if(state_2 !== "") {
+                if (state !== "") {
+                    //dua state
+                    console.log(state+" "+state_2);
+                    getDataTwoConditions(page, state, state_2);
+                } else {
+                    //state satu tidak ada, state 2 berisi
+                    getData(page, state);
+                }
+            } else {
+                //all state
+                getData(page , state);
+            }
 
-                $.notify({
-                    message: 'Notifikasi Berhasil Dibaca!',
-                }, {
-                    newest_on_top: true,
-                    type: 'secondary',
-                    delay: 100,
-                    placement: {
-                        from: "bottom",
-                        align: "center"
-                    },
-                    animate: {
-                        enter: 'animate__animated animate__fadeInUp',
-                        exit: 'animate__animated animate__fadeOutDown'
-                    },
-                });
-                // $(".notification-items").empty();
-                // initializeNotifications("refresh");
-                if (document.getElementById('span-class-notification-'+readState) !== null) {                    
-                    let spanClassNotificationDropdown = document.getElementById('span-class-notification-'+readState);
-                    if (spanClassNotificationDropdown.classList.contains('font-weight-bold')) {
-                        spanClassNotificationDropdown.classList.remove('font-weight-bold');   
+            $.notify({
+                message: 'Notifikasi Berhasil Dibaca!',
+            }, {
+                newest_on_top: true,
+                type: 'secondary',
+                delay: 100,
+                placement: {
+                    from: "bottom",
+                    align: "center"
+                },
+                animate: {
+                    enter: 'animate__animated animate__fadeInUp',
+                    exit: 'animate__animated animate__fadeOutDown'
+                },
+            });
+            // if (document.getElementById('span-class-notification-'+readState) !== null) {
+            //     // let spanClassNotificationDropdown = document.getElementById('span-class-notification-'+readState);
+            //     // if (spanClassNotificationDropdown.classList.contains('font-weight-bold')) {
+            //     //     spanClassNotificationDropdown.classList.remove('font-weight-bold');   
+            //     // }
+            // }
+            if (typeof document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+readState)[0] !== "undefined") {
+                document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+readState)[0].remove();
+                let indexNotification = notificationID.indexOf(readState);
+                if (indexNotification > -1) {
+                    notificationID.splice(indexNotification, 1);   
+                }
+                unreadNotification-=1;
+                if (unreadNotification <= 9) {
+                    badgeCounterElement.innerText = unreadNotification;    
+                } else {
+                    badgeCounterElement.innerText = "9+";   
+                }
+                let counterElement = badgeCounterElementNotificationPage.getAttribute('data-id');
+                counterElement-=1;
+                badgeCounterElementNotificationPage.setAttribute('data-id', counterElement);
+                badgeCounterElementNotificationPage.innerText = counterElement;
+                if (notificationID.length < 9) {
+                    // console.log(response.data);
+                    console.log(response.data.data_notification);
+                    if (typeof response.data.data_notification !== Boolean && typeof response.data.data_notification === 'object') {
+                        const dataNotification = response.data.data_notification;
+                        $.each(dataNotification, function(key, value){
+                            const createLinkNotificationElement = document.createElement('a');
+                            const createStatusNotificationElement = document.createElement('div');
+                            const createLogoStatusElement = document.createElement('div');
+                            const createIconStatusElement = document.createElement('i');
+                            const createSectionNotificationElement = document.createElement('div');
+                            const createNotificationDetailsElement = document.createElement('div');
+                            const createSpanFontElement = document.createElement('span');
+
+                            createLinkNotificationElement.className='dropdown-item d-flex align-items-center notify-test notification-'+value.id;
+                            createLinkNotificationElement.setAttribute('id' , value.id);
+                            createLinkNotificationElement.setAttribute('href' , value.data.link);
+                    
+                            createStatusNotificationElement.className = 'mr-3';
+                            switch (value.data.status_kegiatan_id) {
+                                case 1:
+                                    createLogoStatusElement.className = 'icon-circle bg-success';
+                                    createIconStatusElement.className= 'fa fa-check text-white';
+                                    createSpanFontElement.innerText = "Proposal Kegiatan "+value.data.nama_kegiatan+" "+value.data.status_kegiatan+" Oleh Kepala Sekolah";
+                                    break;
+                                case 4:
+                                    createLogoStatusElement.className = 'icon-circle bg-warning';
+                                    createIconStatusElement.className= 'fa fa-exclamation text-white';
+                                    createSpanFontElement.innerText = value.data.type_notification+" "+value.data.nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
+                                    break;
+                                case 5:
+                                    createLogoStatusElement.className = 'icon-circle bg-danger';
+                                    createIconStatusElement.className= 'fa fa-times text-white';
+                                    createSpanFontElement.innerText = "Proposal Kegiatan "+value.data.nama_kegiatan+" Telah Ditolak Oleh Kepala Sekolah";
+                                    break;
+                                case 6:
+                                    createLogoStatusElement.className = 'icon-circle bg-success';
+                                    createIconStatusElement.className= 'fa fa-check text-white';
+                                    createSpanFontElement.innerText = "Laporan Kegiatan "+value.data.nama_kegiatan+" Sudah Disetujui Oleh Kepala Sekolah";
+                                    break;
+                                default:
+                                    createLogoStatusElement.className = 'icon-circle bg-secondary';
+                                    createIconStatusElement.className= 'fa fa-question text-white';
+                                    createSpanFontElement.innerText = "Undefined Notification";
+                                    break;
+                            }
+                            createSectionNotificationElement.className = "notification-details";
+
+                            createNotificationDetailsElement.className = "small text-gray-500";
+
+                            const dateConvert = new Date(value.created_at);
+                            dateConvert.setHours(dateConvert.getHours() + 7)
+
+                            let notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
+                            
+                            createNotificationDetailsElement.innerText = notificationTimestamp;
+                            if (value.read_at === null) {
+                                createSpanFontElement.className = "font-weight-bold";
+                                createSpanFontElement.setAttribute('id' , 'span-class-notification-'+value.id);
+                            } 
+                            getUserNotificationsElement.appendChild(createLinkNotificationElement);
+                            createLinkNotificationElement.appendChild(createStatusNotificationElement);
+                            createStatusNotificationElement.appendChild(createLogoStatusElement);
+                            createLogoStatusElement.appendChild(createIconStatusElement);
+                            createLinkNotificationElement.appendChild(createSectionNotificationElement);
+                            createSectionNotificationElement.appendChild(createNotificationDetailsElement);
+                            createSectionNotificationElement.appendChild(createSpanFontElement);
+                            notificationID.push(value.id);
+                        });
                     }
                 }
-            });
-        
+            }
+        }).catch((responseError) => {
+            errorNotifications(responseError.response.status, responseError.response);
+        });
     });
 
     $(document).on('click' , '.notificationLink', function(e) {
@@ -274,10 +369,10 @@
         let readState = $(this).attr('id');
         let linkNotification = $(this).attr('href');
         if (readState !== 'alreadyRead') {
-            //fungsi js kepsek
+            //fungsi js pj
             markAsReadNotification(readState , linkNotification);
         } else {
-            location.replace(linkNotification);
+            window.location.replace(linkNotification);
         }
     });
 
@@ -352,7 +447,7 @@
 
     function filterByInit(option){
         //axios
-        url = '/penanggung-jawab/filter-notifications-by/'+text_state_2;
+        url = '/penanggung-jawab/filter-notifications/'+text_state_2;
         window.axios.get(url)
             .then((response) => {                
                 $("#notification_box").empty().html(response.data);
@@ -376,8 +471,8 @@
                 state_2 = "";
                 page = 1;
             }).catch((responseError) => {
-                        errorNotifications(responseError.response.status, responseError.response);
-                    });
+                errorNotifications(responseError.response.status, responseError.response);
+            });
     }
 
     function errorNotifications(status, errorMessages){
@@ -387,7 +482,7 @@
                 icon: 'info',
                 title: message
             }).then((result) => {
-                window.location = '/';
+                window.location.replace('/');
             }); 
         } else if(status === 404){
             Swal.fire({

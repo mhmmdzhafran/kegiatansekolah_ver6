@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Events\AjukanProposalKegiatanToKepalaSekolahEvent;
+use App\Events\KeputusanLaporanKegiatanToPJEvent;
 use App\Events\KeputusanProposalKegiatanToPJEvent;
 use App\Events\UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent;
 use App\Listeners\BroadcastAjukanProposalKegiatanToKepalaSekolah;
 use App\Listeners\BroadcastDokumentasiKegiatanNotifyKepalaSekolah;
+use App\Listeners\BroadcastKeputusanLaporanKegiatanToPJ;
 use App\Listeners\BroadcastKeputusanProposalKegiatanToPJ;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
@@ -32,6 +34,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent::class => [
             BroadcastDokumentasiKegiatanNotifyKepalaSekolah::class
+        ],
+        KeputusanLaporanKegiatanToPJEvent::class => [
+            BroadcastKeputusanLaporanKegiatanToPJ::class
         ],
     ];
 

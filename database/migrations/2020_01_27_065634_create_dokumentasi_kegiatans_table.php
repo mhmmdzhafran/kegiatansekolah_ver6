@@ -20,6 +20,7 @@ class CreateDokumentasiKegiatansTable extends Migration
             $table->string('nama_kegiatan');
             // $table->longText('dokumentasi_kegiatan_ppk')->nullable();
             $table->longText('keterangan_dokumentasi');
+            // $table->longText('keterangan_json');
             $table->timestamps();
         });
     }

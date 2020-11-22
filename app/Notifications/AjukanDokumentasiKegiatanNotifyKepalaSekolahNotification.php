@@ -4,12 +4,13 @@ namespace App\Notifications;
 
 use App\DokumentasiKegiatan;
 use App\StatusKegiatan;
+use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class DokumentasiKegiatanNotifyKepalaSekolahNotification extends Notification
+class AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification extends Notification
 {
     use Queueable;
 
@@ -47,9 +48,13 @@ class DokumentasiKegiatanNotifyKepalaSekolahNotification extends Notification
      */
     public function toMail($notifiable)
     {
+        $user_kepsek = User::whereRoleId(2)->first();
+        $url = url('/kepala-sekolah/dokumentasi-kegiatan');
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->greeting('Hello, '.$user_kepsek->name)
+                    ->line('Laporan Kegiatan dengan Nama Kegiatan: '.$this->dokumentasiKegiatan->nama_kegiatan
+                    .' Telah Diunggah oleh: '.$this->dokumentasiKegiatan->user->name)
+                    ->action('Notification Action', $url)
                     ->line('Thank you for using our application!');
     }
 
@@ -74,19 +79,21 @@ class DokumentasiKegiatanNotifyKepalaSekolahNotification extends Notification
             }
             $id_nilai_ppk++;
         }
-
         
         return [
             // input field dokumentasi, status, and links
             "user_pj" => $this->dokumentasiKegiatan->user->name,
             "username_id" => $this->dokumentasiKegiatan->user->username_id,
+            "kegiatan_id" => $this->dokumentasiKegiatan->id,
             "nama_kegiatan" => $this->dokumentasiKegiatan->nama_kegiatan,
             "nilai_ppk" => $data_ppk,
             "kegiatan_berbasis" => $this->dokumentasiKegiatan->kegiatan_berbasis,
             "timestamp_pengiriman" => $this->dokumentasiKegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
+            "type_notification" => "Laporan Kegiatan",
             "status_kegiatan" => $this->statusKegiatan->nama,
             "status_kegiatan_id" => $this->statusKegiatan->id,
-            "link" => '/kepala-sekolah/dokumentasi-kegiatan',
+            "link" => "/kepala-sekolah/dokumentasi-kegiatan/".$this->dokumentasiKegiatan->id."/edit",
+            "link_changed" => '/kepala-sekolah/dokumentasi-kegiatan/'
         ];
     }
 }

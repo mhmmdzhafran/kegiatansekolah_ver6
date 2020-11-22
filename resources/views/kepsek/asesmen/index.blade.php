@@ -133,7 +133,7 @@
                 }).then((result)=> {
                     var url_asesmen = '{{route("kepsek.asesmen.edit" , "id")}}';
                     url_asesmen = url_asesmen.replace("id" , res.url);
-                    window.location = url_asesmen;
+                    window.location.replace(url_asesmen);
                 });
             },
             error: function(res){
@@ -174,7 +174,7 @@
                 // },
                 success: function(){
                     // loading_bar(false);
-                    window.location = url;
+                    window.location.replace(url);
                 },
                 error: function(error){
                     if (error.status === 401) {
@@ -199,7 +199,7 @@
                 type: 'GET',
                 success: function(res){
                     // loading_bar(false);
-                    window.location = url;
+                    window.location.replace(url);
                 },
                 error: function(error){
                     if (error.status === 401) {
@@ -246,7 +246,7 @@
                 title: 'Please Login',
                 text: infoError
             }).then((result)=>{
-                window.location = '/';
+                window.location.replace('/');
             });
         } else if(status === 404){
             Swal.fire({

@@ -2889,7 +2889,7 @@ input[type="button"].btn-block {
 }
 
 .dropdown-menu {
-  position: relative;
+  position: absolute;
   top: 100%;
   left: 0;
   z-index: 1000;
@@ -2906,11 +2906,6 @@ input[type="button"].btn-block {
   background-clip: padding-box;
   border: 1px solid #e3e6f0;
   border-radius: 0.35rem;
-  /* new changes */
-  /* overflow-y: scroll; */
-  max-height: 300px;
-  height: auto;
-  /* width:600px;  */
 }
 
 .dropdown-menu-left {
@@ -9999,7 +9994,8 @@ a:focus {
 .topbar .dropdown-list {
   padding: 0;
   border: none;
-  overflow: scroll;
+  overflow-y: scroll;
+  height: 80vh;
 }
 
 .topbar .dropdown-list .dropdown-header {

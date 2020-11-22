@@ -24,7 +24,7 @@
                                     <th width="20%">Nama Kegiatan</th>
                                     <th>Nilai PPK</th>   
                                     <th>Kegiatan Berbasis</th>                               
-                                    <th>Timestamp Proposal</th>
+                                    <th>Pengiriman Proposal</th>
                                     <th width="20%">Status Proposal Kegiatan</th>  
                                     <th width="15%">Aksi</th>
                                 </tr>
@@ -51,10 +51,9 @@
                     {!! Form::label('status_kegiatan_ini' , 'Status Proposal Kegiatan: ') !!}
                     <ul class="status-proposal"></ul>
                 </div>
-                <div class="form-group card bg-info text-white font-weight-bolder">
-                    {!! Form::label('keterangan_kegiatan_ini' , 'Histori Keterangan Proposal Kegiatan: ') !!}
-                        <ul class="keterangan-show">
-                    </ul>
+                {!! Form::label('keterangan_kegiatan_ini' , 'Histori Keterangan Proposal Kegiatan: ') !!}
+                <div class="form-group card bg-info text-white">
+                    <ul class="keterangan-show"></ul>
                 </div>
                 <hr>
                 <div class="form-group">
@@ -126,7 +125,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px">
+            <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
 
             </ul>
             <div class="form-group">
@@ -175,7 +174,7 @@
             </div>
         </div>
         <div class="progress" hidden>
-            <div class="progress-bar progress-bar-success myprogress" role="progressbar" style="width:0%">0%</div>
+            <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated myprogress" role="progressbar" style="width:0%">0%</div>
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Cancel</button>
@@ -318,10 +317,10 @@ $('#pengajuan-table').DataTable({
 
                     if (res.status_proposal.id === 1) {
                         $(".status-proposal").css({
-                            "background-color": "#d2f4e8",
-                            "color": "black",
+                            "background-color": "#00a85a",
+                            "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "2rem",
+                            // "padding-bottom": "2rem",
                             "font-weight": 'bold'
                         });
                         
@@ -330,18 +329,18 @@ $('#pengajuan-table').DataTable({
                     else if(res.status_proposal.id === 5){
                         $(".status-proposal").css({
                             "background-color": "#e74a3b",
-                            "color": "black",
+                            "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "2rem",
+                            // "padding-bottom": "2rem",
                             "font-weight": 'bold'
                         });
                         $(".status-proposal").append('<li>'+res.status_proposal.nama+'</li>');   
                     } else if(res.status_proposal.id === 3){
                         $(".status-proposal").css({
                             "background-color": "#d7f1f5",
-                            "color": "black",
+                            "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "2rem",
+                            // "padding-bottom": "2rem",
                             "font-weight": 'bold'
                         });
                         $(".status-proposal").append('<li>'+res.status_proposal.nama+'</li>');   
@@ -351,7 +350,7 @@ $('#pengajuan-table').DataTable({
                             "background-color": "#858796",
                             "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "2rem",
+                            // "padding-bottom": "2rem",
                             "font-weight": 'bold'
                         });
                         $(".status-proposal").append('<li>Tidak terdapat Status</li>');   
@@ -359,10 +358,12 @@ $('#pengajuan-table').DataTable({
 
                     if (res.status_dokumen) {
                         $.each(dokumen, function(key, value){
-                        var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
-                        asset = asset.replace('asset_kegiatan', value.nama_dokumen);
-                        $("#upload-file").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
-                    });   
+                            var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                            asset = asset.replace('asset_kegiatan', value.nama_dokumen);
+                            $("#upload-file").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
+                        });   
+                    } else {
+                        $("#upload-file").append('<ol><li class="mb-2">Tidak Terdapat Proposal Kegiatan</li></ol>')
                     }
                     $(".mulai_kegiatan").attr('value', res.data.mulai_kegiatan);
                     $(".akhir_kegiatan").attr('value', res.data.akhir_kegiatan);                    
@@ -419,10 +420,12 @@ $('#pengajuan-table').DataTable({
 
                     if (res.status_dokumen) {
                         $.each(dokumen, function(key, value){
-                        var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
-                        asset = asset.replace('asset_kegiatan', value.nama_dokumen);
-                        $("#upload-ulang").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
-                    });   
+                            var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                            asset = asset.replace('asset_kegiatan', value.nama_dokumen);
+                            $("#upload-ulang").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
+                        });   
+                    } else {
+                        $("#upload-ulang").append('<ol><li class="mb-2">Tidak Terdapat Proposal Kegiatan</li></ol>');
                     }
                     $(".mulai_kegiatan").val(res.data.mulai_kegiatan);
                     $(".akhir_kegiatan").val(res.data.akhir_kegiatan);             
@@ -466,10 +469,14 @@ $('#pengajuan-table').DataTable({
         // $(".akhir_kegiatan").val();
         // $(".PJ_nama_kegiatan").attr('value' ,'');
         $("#pengajuanUlangForm")[0].reset();
+        $(".error_notification").empty();
+        $('.error_notification').addClass('d-none');
     });
 
     $("#createModal").on('hidden.bs.modal', function(){
         $("#createPengajuanForm")[0].reset();
+        $(".error_notification").empty();
+        $('.error_notification').addClass('d-none');
     });
 
     $(document).on('click', '.create_proposal', function(){
@@ -516,6 +523,7 @@ $('#pengajuan-table').DataTable({
             },
             success: function(res){
                 progressState('reset');  
+                console.log(res);
                 $("#createModal").modal('hide');
                 $("#createPengajuanForm")[0].reset();
                 Swal.fire({
@@ -532,7 +540,7 @@ $('#pengajuan-table').DataTable({
                     backToLogin(res.status, info_login.message);
                 } else if(res.status === 422){
                     let error_notifikasi = $.parseJSON(res.responseText);
-                    $(".error_notification").css('padding-bottom: 3rem');
+                    // $(".error_notification").css('padding-bottom: 3rem');
                     $.each(error_notifikasi.errors, function(key, value){
                         $(".error_notification").append('<li>'+value+'</li>');
                     });   
@@ -592,7 +600,7 @@ $('#pengajuan-table').DataTable({
                     let info_login = $.parseJSON(res.responseText);
                     backToLogin(res.status,info_login.message);
                 } else if(res.status === 422){
-                    $(".error_notification").css('padding-bottom: 3rem');
+                    // $(".error_notification").css('padding-bottom: 3rem');
                     let error_notifikasi = $.parseJSON(res.responseText);
                     if (typeof error_notifikasi.messages === 'string') {
                         Swal.fire({
@@ -635,12 +643,14 @@ $('#pengajuan-table').DataTable({
             $(".new_proposal").attr('disabled', false);
             $(".close_proposal").attr('disabled', false);
             $(".close").attr('disabled', false);    
+            $('.error_notification').removeClass('d-none');
         }
         else if(condition === 'show'){
             $('.myprogress').text('0%');
             $('.myprogress').css('width', '0%');
             $(".progress").attr('hidden', false);
             $(".error_notification").empty();
+            $('.error_notification').addClass('d-none');
             
             //button disabled when progress shows
             $(".new_proposal").attr('disabled', true);
@@ -671,7 +681,7 @@ $('#pengajuan-table').DataTable({
                 title: 'Please Login',
                 text: info
             }).then((result)=>{
-                window.location = '/';
+                window.location.replace('/');
             });
         }
     }

@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'username_id', 'password', 'role_id',
+        'name', 'username_id', 'email_user','password', 'role_id', 'photo_user'
     ];
 
     /**
@@ -89,6 +89,10 @@ class User extends Authenticatable
 
     public function oldestNotifications(){
         return $this->morphMany(DatabaseNotification::class, 'notifiable')->orderBy('created_at', 'asc');
+    }
+
+    public function routeNotificationForMail($notification){
+        return $this->email_user;
     }
 
     // public function isPenilaiEksternal(){

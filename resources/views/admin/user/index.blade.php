@@ -13,14 +13,6 @@
         <div class="col-sm-12 col-lg-8">
             <button class="btn btn-primary rounded-pill float-md-left float-lg-right float-sm-left create_user">Buat Pengguna Baru</button>
         </div>
-        {{-- <div class="col-sm-12 col-lg-12">
-            @if (Session::has('created_user'))
-                <b class="bg-success" style="color: white">{{ session('created_user') }}</b>
-            @endif
-            <div class="danger">
-                <ul class="bg-danger font-weight-bolder" id="danger_delete" style="color:white; border-radius: 10px"></ul>
-            </div>
-        </div> --}}
         <div class="col-lg-12">
             <div class="card shadow mb-4">
                 <div class="card-body">
@@ -31,6 +23,7 @@
                                     <th>ID</th>
                                     <th>Name</th>
                                     <th>Username</th>
+                                    <th>Email</th>
                                     <th width="10%">Role</th>
                                     <th width="10%">Dibentuk Tanggal</th>
                                     <th width="10%">Diperbarui Tanggal</th>
@@ -84,7 +77,7 @@
                   </div>
                   <div class="modal-body">
                       {{ csrf_field() }}
-                      <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px">
+                      <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
 
                       </ul>
                       <div class="form-group">
@@ -96,11 +89,25 @@
                         {!! Form::label('username_id', 'Username:') !!}
                         {!! Form::text('username_id', null , ['class' => 'form-control']) !!}
                     </div>
+
+                    <div class="form-group">
+                        {!! Form::label('email_user', 'Email User:') !!}
+                        {!! Form::email('email_user', null , ['class' => 'form-control']) !!}
+                    </div>
                 
                     <div class="form-group">
                         {!! Form::label('role_id', 'Role:') !!}
                         {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control']) !!}
                     </div>
+
+                    <div class="form-group">
+                        {!! Form::label('image_user', 'Upload Foto User:') !!}
+                        <div class="form-group text-center">
+                            <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="250" height="250" style="border-radius: 50%; border: 1px solid black" class="change_foto mb-2">
+                            {!! Form::file('photo_user', ['class' => 'file_img ml-5' , 'id' => '1']) !!}
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         {!! Form::label('password', 'Masukkan Password:') !!}
                         {!! Form::password('password', ['class' => 'form-control password']) !!}
@@ -111,8 +118,8 @@
                     </div>
                   </div>
                   <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          <button type="submit" class="btn btn-primary bentuk_user">Buat User Baru</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary bentuk_user">Buat User Baru</button>
                   </div>
               </div>
           </form>
@@ -123,7 +130,7 @@
         <div class="modal-dialog " role="document">
           <!-- Modal content-->
           <form action="" id="editUserForm" autocomplete="off">
-            @method("PUT")
+            {{-- @method("PUT") --}}
             {{ csrf_field() }}
               <div class="modal-content">
                 <div class="modal-header">
@@ -134,7 +141,7 @@
                   </div>
                   <div class="modal-body">
                       
-                      <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px">
+                      <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
 
                       </ul>
                       <div class="form-group">
@@ -146,11 +153,26 @@
                         {!! Form::label('username_id', 'Username:') !!}
                         <input type="text" name="username_id" value="" class="form-control username_id">                        
                     </div>
+
+                    <div class="form-group">
+                        {!! Form::label('email_user', 'Email User:') !!}
+                        {!! Form::email('email_user', null , ['class' => 'form-control email_user']) !!}
+                    </div>
                 
                     <div class="form-group">
                         {!! Form::label('role_id', 'Role:') !!}
                         {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control role_user']) !!}
                     </div>
+                    <div class="form-group">
+                        {!! Form::label('last_file','File Sebelumnya: ') !!}
+                        <ol class="load-file"></ol>
+                    </div>
+                    {!! Form::label('image_user','Upload Foto User: ') !!}
+                    <div class="form-group text-center">
+                        <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="250" height="250" style="border-radius: 50%; border: 1px solid black" class="change_foto mb-2">
+                        {!! Form::file('photo_user', ['class' => 'file_img ml-5' , 'id' => '2']) !!}
+                    </div>
+
                     <div class="form-group">
                         {!! Form::label('password', 'Masukkan Password:') !!}
                         {!! Form::password('password', ['class' => 'form-control password']) !!}
@@ -173,6 +195,9 @@
 <script>
     var url = "";
     var modalState = "";
+    const fileIMG = document.getElementsByClassName('file_img');
+    const photo = document.querySelectorAll('.change_foto');
+    let sourceFile = '';
     var table = $('#users-table').DataTable({
         processing: true,
         serverSide: true,
@@ -181,12 +206,15 @@
             {data: 'id', name: 'id'},
             {data: 'name', name: 'name'},
             {data: 'username_id', name: 'username_id'},
+            {data: 'email_user', name: 'email_user'},
             {data: 'role.role_title', name: 'role.role_title'},
             {data: 'created_at', name: 'created_at'},
             {data: 'updated_at' , name: 'updated_at'},
             {data: 'Aksi' , name: 'Aksi' , orderable: false}
         ]
     });
+    
+    loadImage();
 
     $(document).on('click', '.create_user', function(){
         $(".error_notification").empty();
@@ -206,29 +234,45 @@
         $("#editUserForm").attr('action', url);        
         let data_table = table.row($(this).parents('tr')).data();
         $(".nama_user").prop('value' , data_table.name);
+        $(".email_user").prop('value', data_table.email_user);
         $(".username_id").prop('value' , data_table.username_id);
         $(".role_user").find("[value='"+data_table.role.id+"']").prop('selected' , true);
-        $("#editForm").modal();
+        // $("#editForm").modal();
         modalState = "#editForm";
-        // $.get(url_edit, function(res){
-        //     $("#editForm").modal();
-        //     $(".nama_user").attr('value', res.data.name);
-        //     $(".email_user").attr('value', res.data.email);
-        // }).fail(function(error){
-        //     if (error.status === 401) {
-        //         let response_error = JSON.parse(error.responseText);
-        //         backToLogin(401, response_error.message);
-        //     } else if(error.status === 404) {
-        //         let response_error = $.parseJSON(error.responseText);
-        //         Swal.fire({
-        //             icon: 'error',
-        //             title: 'Error Saat Pengambilan Data',
-        //             text: response_error.messages
-        //         });
-        //     } else {
-        //         anyErrors(error.status, error.statusText , error);
-        //     }
-        // });
+        $.get(url_edit, function(res){
+            loading_bar(true);
+            if (res.data !== null) {
+                let fileLoc = '{{asset("kegiatan/admin/foto_user/images")}}';
+                fileLoc = fileLoc.replace('images' , res.data);
+                sourceFile = fileLoc;
+                $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>'+res.data+'<button type="button" class="btn btn-sm btn-primary preview-image mr-2 ml-2">Lihat Foto</button><a href="'+sourceFile+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+res.data+'">Download File</a></li>');
+                for (let index = 0; index < photo.length; index++) {
+                    const element = photo[index];
+                    element.src = fileLoc;
+                }    
+            } else {
+                $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>Tidak Terdapat Foto</li>');
+            }
+            
+        }).done(function(){
+            loading_bar(false);
+            $("#editForm").modal();
+        }).fail(function(error){
+            loading_bar(false);
+            if (error.status === 401) {
+                let response_error = JSON.parse(error.responseText);
+                backToLogin(401, response_error.message);
+            } else if(error.status === 404) {
+                let response_error = JSON.parse(error.responseText);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error Saat Pengambilan Data',
+                    text: response_error.messages
+                });
+            } else {
+                anyErrors(error.status, error.statusText , error);
+            }
+        });
     });
 
     $(document).on('click', '.delete', function(){
@@ -243,32 +287,51 @@
         modalState = "#DeleteModal";
     });
 
+    $(document).on('click', ".preview-image", function(){
+        window.open(sourceFile);
+    });
+
     $("#editForm").on('hidden.bs.modal', function(){
         $("#editUserForm")[0].reset();
+        $(".error_notification").empty();
+        $('.load-file').empty();
+        $(".error_notification").addClass('d-none');
+        sourceFile = '';
+        resetPhoto();
     });
     $("#createModal").on('hidden.bs.modal', function(){
         $("#createUserForm")[0].reset();
+        $(".error_notification").empty();
+        $(".error_notification").addClass('d-none');
+        resetPhoto();
     });
 
      $('form').on('submit', function(e){
         e.preventDefault();
         var choice = $(this).attr('id');
+        const getForm = document.getElementById(choice);
+        const formData = new FormData(getForm);
         $.ajaxSetup({
             headers:{
                 'X-CSRF-TOKEN': $("[name='_token']").val()
             }
         });
         if (choice === "createUserForm") {
+            console.log(formData);
             $.ajax({
                 url: url,
                 type:'POST',
-                data: $('#createUserForm').serialize(),
+                data: formData,
+                processData: false,
+                contentType: false,
                 beforeSend: function(){
                     $(".error_notification").empty();
+                    $(".error_notification").addClass('d-none');
                     loading_bar(true);
                 },
                 success: function(result){
                     $(".error_notification").empty();
+                    $(".error_notification").addClass('d-none');
                     loading_bar(false);
                     $(modalState).modal('hide');
                     Swal.fire({
@@ -282,6 +345,7 @@
                 error: function(result){
                     loading_bar(false);
                     $(".error_notification").empty();
+                    $(".error_notification").removeClass('d-none');
                     if (result.status === 401) {
                         let info_login = JSON.parse(result.responseText);
                         backToLogin(401, info_login.message);
@@ -305,14 +369,18 @@
         } else if(choice === "editUserForm") {   
             $.ajax({
                 url: url,
-                type:'PUT',
-                data: $('#editUserForm').serialize(),
+                type:'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
                 beforeSend: function(){
                     $(".error_notification").empty();
+                    $(".error_notification").addClass('d-none');
                     loading_bar(true);
                 },
                 success: function(result){
                     $(".error_notification").empty();
+                    $(".error_notification").addClass('d-none');
                     loading_bar(false);
                     $(modalState).modal('hide');
                     Swal.fire({
@@ -325,6 +393,7 @@
                 error: function(result){
                     loading_bar(false);
                     $(".error_notification").empty();
+                    $(".error_notification").removeClass('d-none');
                     if (result.status === 401) {
                         let info_login = JSON.parse(result.responseText);
                         backToLogin(401, info_login.message);
@@ -434,7 +503,7 @@
                 title: 'Please Login',
                 text: infoLogin
             }).then((result)=>{
-                window.location = '/';
+                window.location.replace('/');
             });
         }
     }
@@ -454,6 +523,25 @@
             });
         }
         console.log(errors);
+    }
+
+    function resetPhoto(){
+        let photo = document.querySelectorAll('.change_foto');
+        for (let index = 0; index < photo.length; index++) {
+            const element = photo[index];
+            element.src = "{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}";
+        }
+    }
+    function loadImage(){
+        for (let index = 0; index < fileIMG.length; index++) {
+        const element = fileIMG[index];
+        element.addEventListener('change', (e) => {
+            for (let index = 0; index < photo.length; index++) {
+                const element = photo[index];
+                element.src = URL.createObjectURL(e.target.files[0]);
+            }
+        });
+    }
     }
     </script>
 @endsection

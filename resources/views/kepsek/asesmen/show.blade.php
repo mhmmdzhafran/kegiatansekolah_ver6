@@ -181,7 +181,7 @@
                     });
                   }
                   $(".lakukan_asesmen").on('click', function(){
-                    window.location = url_load;
+                    window.location.replace(url_load);
                   });
                 },
                 error: function(res){
@@ -200,7 +200,7 @@
         });
         $("#back_asesmen").click(function(){
           let id_back_asesmen = $(this).attr('data-target');
-            window.location = "/kepala-sekolah/asesmen-ppk/"+id_back_asesmen+"/edit";
+            window.location.replace("/kepala-sekolah/asesmen-ppk/"+id_back_asesmen+"/edit");
         });
 
         function alertNotifications(status, error){
@@ -212,7 +212,7 @@
               title: 'Please Login',
               text: error
             }).then((result)=>{
-              window.location = back_to_login;
+              window.location.replace(back_to_login);
             });
           } else if(status === 404){
             Swal.fire({

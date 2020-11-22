@@ -363,7 +363,7 @@
                 title: 'Please Login',
                 text: status
             }).then((result)=>{
-                window.location = '/';
+                window.location.replace('/');
             });
         } else if(reqStatus === 404){
             Swal.fire({

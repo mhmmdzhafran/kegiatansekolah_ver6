@@ -23,7 +23,7 @@ Echo.private('App.User.'+userID)
                 console.log(document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+getLastNotification)[0]);
                 document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+getLastNotification)[0].remove();
                 notificationID.pop();
-                console.log(notificationID);
+                // console.log(notificationID);
             }
             
         } else if(notificationID.length < 9) {
@@ -46,17 +46,27 @@ Echo.private('App.User.'+userID)
 
         createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+notification.id;
         createLinkElement.setAttribute('id' , notification.id);
-        createLinkElement.setAttribute('href' , notification.link);
+        createLinkElement.setAttribute('data-type' , notification.type_notification);
+        createLinkElement.setAttribute('data-id' , notification.kegiatan_id);
+        createLinkElement.setAttribute('href' , '#');
 
         createStatusPartition.className = 'mr-3';
         switch (notification.status_kegiatan_id) {
             case 3:
+                let kegiatanType = "";
                 createCircleStatusElement.className = 'icon-circle bg-warning';
                 createIconElement.className= 'fa fa-exclamation text-white';
-                createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+notification.nama_kegiatan+" Yang diunggah oleh "+notification.user_pj+" "+notification.status_kegiatan;
+                // if (notification.type_notification === "Pengajuan Kegiatan") {
+                //     kegiatanType = "Proposal Kegiatan:";
+                //     createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+notification.nama_kegiatan+" Yang diunggah oleh "+notification.user_pj+" "+notification.status_kegiatan;   
+                // } else if(notification.type_notification === "Dokumentasi Kegiatan") {
+                //     kegiatanType = "Dokumentasi Kegiatan:";
+                //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+notification.nama_kegiatan+" Yang diunggah oleh "+notification.user_pj+" "+notification.status_kegiatan;
+                // }
+                createSpanExtraDetailsElement.innerText = notification.type_notification+" "+notification.nama_kegiatan+" Telah diunggah oleh "+notification.user_pj;
                 $.notify({
                     title: "Ada Notifikasi Baru <hr>",
-                    message: "Ada Notifikasi Baru terkait Proposal Kegiatan: "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
+                    message: "Ada Notifikasi Baru terkait "+kegiatanType+" "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
                 }, {
                     type: 'success',
                     newest_on_top: true,
@@ -71,27 +81,27 @@ Echo.private('App.User.'+userID)
                     },
                 });
                 break;
-            case 6:
-                createCircleStatusElement.className = 'icon-circle bg-success';
-                createIconElement.className= 'fa fa-check text-white';
-                createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+notification.nama_kegiatan+" Sudah Diunggah oleh "+notification.user_pj;
-                $.notify({
-                    title: "Ada Notifikasi Baru <hr>",
-                    message: "Ada Notifikasi Baru terkait Dokumentasi Kegiatan: "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
-                }, {
-                    type: 'success',
-                    newest_on_top: true,
-                    offset: {
-                        x: 20,
-                        y: 60
-                    },
-                    delay: 100,
-                    animate: {
-                        enter: 'animate__animated animate__fadeInRight',
-                        exit: 'animate__animated animate__fadeOutRight'
-                    },
-                });
-                break;
+            // case 6:
+            //     createCircleStatusElement.className = 'icon-circle bg-success';
+            //     createIconElement.className= 'fa fa-check text-white';
+            //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+notification.nama_kegiatan+" Sudah Diunggah oleh "+notification.user_pj;
+            //     $.notify({
+            //         title: "Ada Notifikasi Baru <hr>",
+            //         message: "Ada Notifikasi Baru terkait Dokumentasi Kegiatan: "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
+            //     }, {
+            //         type: 'success',
+            //         newest_on_top: true,
+            //         offset: {
+            //             x: 20,
+            //             y: 60
+            //         },
+            //         delay: 100,
+            //         animate: {
+            //             enter: 'animate__animated animate__fadeInRight',
+            //             exit: 'animate__animated animate__fadeOutRight'
+            //         },
+            //     });
+            //     break;
             default:
                 break;
         }
@@ -114,7 +124,7 @@ Echo.private('App.User.'+userID)
         createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
 
         notificationID.unshift(notification.id);
-        console.log(notificationID);
+        // console.log(notificationID);
 
         if (document.getElementById("pengajuan_kegiatan") !== null) {
             const addNewDataPengajuan = $("#pengajuan_kegiatan").DataTable();
@@ -124,6 +134,7 @@ Echo.private('App.User.'+userID)
             addNewDataDokumentasi.draw(false);
         } else if(document.getElementById('badge-counter-notification') !== null) {
             let badgeCounterNotificationElement = document.getElementById('badge-counter-notification');
+            badgeCounterNotificationElement.setAttribute('data-id' , unreadNotification);
             badgeCounterNotificationElement.innerText = unreadNotification;
             if(document.getElementById("notification_box") !== null) {
                 console.log(state+" "+state_2);
@@ -154,16 +165,15 @@ initializeNotifications("init");
 $(document).on("click", '.notify-test', function(e){
     e.preventDefault();
     let notificationRequest = $(this).attr('id');
-    let notificationLink = $(this).attr('href');
-    markAsReadNotification(notificationRequest, notificationLink);     
+    let notificationType = $(this).attr('data-type');
+    markAsReadNotification(notificationRequest, notificationType);     
 });
 
 function initializeNotifications(status){
    if(status === "init") {
         $.get('/kepala-sekolah/get-notification', function(res) {
+            console.log(res.notifications);
             let notificationData = res.notifications;
-            // count_more_notification+= notificationData.length;
-            // console.log(count_more_notification);
             let counterNotification = res.unreadNotifications;
             unreadNotification = counterNotification.length;
 
@@ -184,25 +194,39 @@ function initializeNotifications(status){
                 const createDivDetailsElement = document.createElement('div');
                 const createSpanExtraDetailsElement = document.createElement('span');
         
-                let {data: {link, nama_kegiatan, status_kegiatan, status_kegiatan_id, user_pj}} = element;
+                let {data: {kegiatan_id,nama_kegiatan, status_kegiatan, status_kegiatan_id, user_pj , type_notification}} = element;
                 notificationID.push(element.id);
                 createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+element.id;
                 createLinkElement.setAttribute('id' , element.id);
-                createLinkElement.setAttribute('href' , link);
-        
+                createLinkElement.setAttribute('data-type' , type_notification);
+                createLinkElement.setAttribute('data-id' , kegiatan_id);
+                createLinkElement.setAttribute('href' , '#');
+                // if (element.read_at !== null) {
+                //     createLinkElement.setAttribute('href' , link_changed);
+                // } else {
+                //     createLinkElement.setAttribute('href' , link);
+                // }
                 createStatusPartition.className = 'mr-3';
                 switch (status_kegiatan_id) {
                     case 3:
                         createCircleStatusElement.className = 'icon-circle bg-warning';
                         createIconElement.className= 'fa fa-exclamation text-white';
-                        createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Yang diunggah oleh "+user_pj+" "+status_kegiatan;
+                        // if (type_notification === "Pengajuan Kegiatan") {
+                        //     createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Yang diunggah oleh "+user_pj+" "+status_kegiatan;   
+                        // } else if(type_notification === "Dokumentasi Kegiatan") {
+                        //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Yang diunggah oleh "+user_pj+" "+status_kegiatan;
+                        // }
+                        createSpanExtraDetailsElement.innerText = type_notification+" "+nama_kegiatan+" Telah diunggah oleh "+user_pj;
                         break;
-                    case 6:
-                        createCircleStatusElement.className = 'icon-circle bg-success';
-                        createIconElement.className= 'fa fa-check text-white';
-                        createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Sudah Diunggah oleh "+user_pj;
-                        break;
+                    // case 6:
+                    //     createCircleStatusElement.className = 'icon-circle bg-success';
+                    //     createIconElement.className= 'fa fa-check text-white';
+                    //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Sudah Diunggah oleh "+user_pj;
+                    //     break;
                     default:
+                        createCircleStatusElement.className = 'icon-circle bg-secondary';
+                        createIconElement.className= 'fa fa-question text-white';
+                        createSpanExtraDetailsElement.innerText = "Undefined Notification";
                         break;
                 }
                 createDivNotificationDetailsElement.className = "notification-details";
@@ -226,90 +250,92 @@ function initializeNotifications(status){
                 createLinkElement.appendChild(createDivNotificationDetailsElement);
                 createDivNotificationDetailsElement.appendChild(createDivDetailsElement);
                 createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
-                
             });
         });
     }
 }
 
 //onscroll
-const scrollNotification = getUserNotificationsElement.parentElement;
-scrollNotification.onscroll = (ev) => {
-    if (scrollNotification.scrollTop + scrollNotification.clientHeight === scrollNotification.scrollHeight) {
-        console.log(notificationID.length);
-        console.log(notificationID);
-        if (notificationID.length >= 9) {
-            console.log(notificationID.length);
-            $.get('/kepala-sekolah/get-more-notification/'+notificationID.length, function(res){
-                let newNotification = res.moreNotifications;
-                Object.keys(newNotification).forEach(element => {
-                    const createLinkElement = document.createElement('a');
-                    const createStatusPartition = document.createElement('div');
-                    const createCircleStatusElement = document.createElement('div');
-                    const createIconElement = document.createElement('i');
+// const scrollNotification = getUserNotificationsElement.parentElement;
+// scrollNotification.onscroll = (ev) => {
+//     if (scrollNotification.scrollTop + scrollNotification.clientHeight === scrollNotification.scrollHeight) {
+//         // console.log(notificationID.length);
+//         // console.log(notificationID);
+//         if (notificationID.length >= 9) {
+//             console.log(notificationID.length);
+//             $.get('/kepala-sekolah/get-more-notification/'+notificationID.length, function(res){
+//                 let newNotification = res.moreNotifications;
+//                 Object.keys(newNotification).forEach(element => {
+//                     const createLinkElement = document.createElement('a');
+//                     const createStatusPartition = document.createElement('div');
+//                     const createCircleStatusElement = document.createElement('div');
+//                     const createIconElement = document.createElement('i');
                 
-                    const createDivNotificationDetailsElement = document.createElement('div');
-                    const createDivDetailsElement = document.createElement('div');
-                    const createSpanExtraDetailsElement = document.createElement('span');
+//                     const createDivNotificationDetailsElement = document.createElement('div');
+//                     const createDivDetailsElement = document.createElement('div');
+//                     const createSpanExtraDetailsElement = document.createElement('span');
                     
-                    let {data: {link, nama_kegiatan, status_kegiatan, status_kegiatan_id, user_pj}} = newNotification[element];
-                    notificationID.push(newNotification[element].id);
+//                     let {data:  {kegiatan_id,link, nama_kegiatan, status_kegiatan, status_kegiatan_id, user_pj , link_changed, type_notification}} = newNotification[element];
+//                     notificationID.push(newNotification[element].id);
 
-                    createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+newNotification[element].id;
-                    createLinkElement.setAttribute('id' , newNotification[element].id);
-                    createLinkElement.setAttribute('href' , link);
+//                     createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+newNotification[element].id;
+//                     createLinkElement.setAttribute('id' , newNotification[element].id);
+//                     createLinkElement.setAttribute('data-type' , type_notification);
+//                     createLinkElement.setAttribute('data-id' , kegiatan_id);
+//                     createLinkElement.setAttribute('href' , '#');
+//                     createStatusPartition.className = 'mr-3';
+//                     switch (status_kegiatan_id) {
+//                         case 3:
+//                             createCircleStatusElement.className = 'icon-circle bg-warning';
+//                             createIconElement.className= 'fa fa-exclamation text-white';
+//                             createSpanExtraDetailsElement.innerText = type_notification+" "+nama_kegiatan+" Telah diunggah oleh "+user_pj;
+//                             break;
+//                         // case 6:
+//                         //     createCircleStatusElement.className = 'icon-circle bg-success';
+//                         //     createIconElement.className= 'fa fa-check text-white';
+//                         //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Sudah Diunggah oleh "+user_pj;
+//                         //     break;
+//                         default:
+//                             break;
+//                     }
+//                     createDivNotificationDetailsElement.className = "notification-details";
 
-                    createStatusPartition.className = 'mr-3';
-                    switch (status_kegiatan_id) {
-                        case 3:
-                            createCircleStatusElement.className = 'icon-circle bg-warning';
-                            createIconElement.className= 'fa fa-exclamation text-white';
-                            createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Yang diunggah oleh "+user_pj+" "+status_kegiatan;
-                            break;
-                        case 6:
-                            createCircleStatusElement.className = 'icon-circle bg-success';
-                            createIconElement.className= 'fa fa-check text-white';
-                            createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Sudah Diunggah oleh "+user_pj;
-                            break;
-                        default:
-                            break;
-                    }
-                    createDivNotificationDetailsElement.className = "notification-details";
-
-                    createDivDetailsElement.className = "small text-gray-500";
-                    const dateConvert = new Date(element.created_at);
-                    dateConvert.setHours(dateConvert.getHours()+7);
+//                     createDivDetailsElement.className = "small text-gray-500";
+//                     const dateConvert = new Date(element.created_at);
+//                     dateConvert.setHours(dateConvert.getHours()+7);
     
-                    const notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
-                    createDivDetailsElement.innerText = notificationTimestamp;
-                    getUserNotificationsElement.appendChild(createLinkElement);
-                    createLinkElement.appendChild(createStatusPartition);
-                    createStatusPartition.appendChild(createCircleStatusElement);
-                    createCircleStatusElement.appendChild(createIconElement);
-                    createLinkElement.appendChild(createDivNotificationDetailsElement);
-                    createDivNotificationDetailsElement.appendChild(createDivDetailsElement);
-                    if (newNotification[element].read_at === null) {
-                        createSpanExtraDetailsElement.className = "font-weight-bold";
-                        createSpanExtraDetailsElement.setAttribute('id' , 'span-class-notification-'+newNotification[element].id);
-                        createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
-                    } else {
-                        createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
-                    }
-                    console.log(notificationID);
-                });
-                // count_more_notification+=Object.keys(newNotification).length;
-                // console.log(count_more_notification);
-            });    
-        }
-    }
-};
+//                     const notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
+//                     createDivDetailsElement.innerText = notificationTimestamp;
+//                     getUserNotificationsElement.appendChild(createLinkElement);
+//                     createLinkElement.appendChild(createStatusPartition);
+//                     createStatusPartition.appendChild(createCircleStatusElement);
+//                     createCircleStatusElement.appendChild(createIconElement);
+//                     createLinkElement.appendChild(createDivNotificationDetailsElement);
+//                     createDivNotificationDetailsElement.appendChild(createDivDetailsElement);
+//                     if (newNotification[element].read_at === null) {
+//                         createSpanExtraDetailsElement.className = "font-weight-bold";
+//                         createSpanExtraDetailsElement.setAttribute('id' , 'span-class-notification-'+newNotification[element].id);
+//                         createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
+//                     } else {
+//                         createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
+//                     }
+//                     // console.log(notificationID);
+//                 });
+//                 // count_more_notification+=Object.keys(newNotification).length;
+//                 // console.log(count_more_notification);
+//             });    
+//         }
+//     }
+// }
 
-function markAsReadNotification(notificationRequest, notificationLink){
+function markAsReadNotification(notificationRequest, notificationType){
     window.axios.put('/kepala-sekolah/mark-as-read/', {
         data: notificationRequest,
-        links: notificationLink
+        type: notificationType,
+        page: 'accessLinks'
     }).then((response) => {
-        window.location = notificationLink;
+        const links = response.data.link_data;
+        window.location.replace(links);
     }).catch((responseError) => {
         errorsNotificationAlert(responseError.response.status, responseError.response);
     });
@@ -328,7 +354,7 @@ function markAsReadNotification(notificationRequest, notificationLink){
                 title: 'Please Login',
                 text: message
             }).then((result)=>{
-                window.location = '/';
+                window.location.replace('/');
             });
         } else {
             Swal.fire({
@@ -336,7 +362,7 @@ function markAsReadNotification(notificationRequest, notificationLink){
                 title: 'Terdapat Error Ketika Mengambil Data, Jika Masalah Masih Ada, Kontak Admin! System Error: ',
                 text: message
             }).then((result) => {
-                location.reload(true);
+                location.reload();
             });
             console.log(messages);
         }

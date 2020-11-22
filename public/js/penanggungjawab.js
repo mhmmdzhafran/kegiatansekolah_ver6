@@ -16,17 +16,15 @@ Echo.private('App.User.'+userID)
             } else {
                 badgeCounterElement.innerText = unreadNotification; 
             }
-            //bugs => read google docs
+            
             let getLastNotification = notificationID[notificationID.length-1];
             console.log(getLastNotification);
             
             if (typeof document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+getLastNotification)[0] !== "undefined") {
-                console.log(document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+getLastNotification)[0]);
                 document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+getLastNotification)[0].remove();
                 notificationID.pop();
                 console.log(notificationID);
             }
-            
         } else if(notificationID.length < 9) {
             if (unreadNotification > 9) {
                 badgeCounterElement.innerText = "9+";    
@@ -75,7 +73,7 @@ Echo.private('App.User.'+userID)
             case 4:
                 createCircleStatusElement.className = 'icon-circle bg-warning';
                 createIconElement.className= 'fa fa-exclamation text-white';
-                createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+notification.nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
+                createSpanExtraDetailsElement.innerText = notification.type_notification+" "+notification.nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
                 $.notify({
                     title: "Ada Notifikasi Baru <hr>",
                     message: "Ada Notifikasi Baru terkait Proposal Kegiatan: "+notification.nama_kegiatan
@@ -114,6 +112,27 @@ Echo.private('App.User.'+userID)
                     },
                 });
                 break;
+            case 6:
+                createCircleStatusElement.className = 'icon-circle bg-success';
+                createIconElement.className= 'fa fa-check text-white';
+                createSpanExtraDetailsElement.innerText = "Laporan Kegiatan "+notification.nama_kegiatan+" Sudah Disetujui Oleh Kepala Sekolah";
+                $.notify({
+                    title: "Ada Notifikasi Baru <hr>",
+                    message: "Ada Notifikasi Baru terkait Laporan Kegiatan: "+notification.nama_kegiatan
+                }, {
+                    type: 'success',
+                    newest_on_top: true,
+                    offset: {
+                        x: 20,
+                        y: 60
+                    },
+                    delay: 100,
+                    animate: {
+                        enter: 'animate__animated animate__fadeInRight',
+                        exit: 'animate__animated animate__fadeOutRight'
+                    },
+                });
+                break;
             default:
                 break;
         }
@@ -121,8 +140,6 @@ Echo.private('App.User.'+userID)
         
         createDivDetailsElement.className = "small text-gray-500";
         const getDateNow = new Date();
-        // waktu relatif sama dengan waktu notification table
-        console.log(getDateNow.getHours(), getDateNow.getMinutes(), getDateNow.getSeconds(), getDateNow.getFullYear(), getDateNow.getMonth(), getDateNow.getDate());
         const timestamp = getDateNow.getFullYear()+"-"+transformToFormatTimestamps(getDateNow.getMonth()+1)+"-"+transformToFormatTimestamps(getDateNow.getDate())+" "+transformToFormatTimestamps(getDateNow.getHours())+":"+transformToFormatTimestamps(getDateNow.getMinutes())+":"+transformToFormatTimestamps(getDateNow.getSeconds());
         createDivDetailsElement.innerText = timestamp;
 
@@ -149,6 +166,7 @@ Echo.private('App.User.'+userID)
             addNewDataDokumentasi.draw(false);
         } else if(document.getElementById('badge-counter-notification') !== null) {
             let badgeCounterNotificationElement = document.getElementById('badge-counter-notification');
+            badgeCounterNotificationElement.setAttribute('data-id' , unreadNotification);
             badgeCounterNotificationElement.innerText = unreadNotification;
             if(document.getElementById("notification_box") !== null) {
                 if (state === "" && state_2 === "") {
@@ -187,8 +205,7 @@ function initializeNotifications(status){
         $.get('/penanggung-jawab/get-notification', function(res) {
             console.log(res);
             let notificationData = res.notifications;
-            // count_more_notification+= notificationData.length;
-            // console.log(count_more_notification);
+            
             let counterNotification = res.unreadNotifications;
             unreadNotification = counterNotification.length;
             if (counterNotification.length <= 9) {
@@ -207,11 +224,11 @@ function initializeNotifications(status){
                 const createDivDetailsElement = document.createElement('div');
                 const createSpanExtraDetailsElement = document.createElement('span');
         
-                let {data: {links, nama_kegiatan, status_kegiatan, status_kegiatan_id}} = element;
+                let {data: {link, nama_kegiatan, status_kegiatan, status_kegiatan_id, type_notification}} = element;
                 notificationID.push(element.id);
                 createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+element.id;
                 createLinkElement.setAttribute('id' , element.id);
-                createLinkElement.setAttribute('href' , links);
+                createLinkElement.setAttribute('href' , link);
         
                 createStatusPartition.className = 'mr-3';
                 switch (status_kegiatan_id) {
@@ -223,17 +240,22 @@ function initializeNotifications(status){
                     case 4:
                         createCircleStatusElement.className = 'icon-circle bg-warning';
                         createIconElement.className= 'fa fa-exclamation text-white';
-                        createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
+                        createSpanExtraDetailsElement.innerText = type_notification+" "+nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
                         break;
                     case 5:
                         createCircleStatusElement.className = 'icon-circle bg-danger';
                         createIconElement.className= 'fa fa-times text-white';
                         createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Telah Ditolak Oleh Kepala Sekolah";
                         break;
+                    case 6:
+                        createCircleStatusElement.className = 'icon-circle bg-success';
+                        createIconElement.className= 'fa fa-check text-white';
+                        createSpanExtraDetailsElement.innerText = "Laporan Kegiatan "+nama_kegiatan+" Sudah Disetujui Oleh Kepala Sekolah";
+                        break;
                     default:
                         createCircleStatusElement.className = 'icon-circle bg-secondary';
                         createIconElement.className= 'fa fa-question text-white';
-                        createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" "+status_kegiatan+" Oleh Kepala Sekolah";
+                        createSpanExtraDetailsElement.innerText = "Undefined Notification";
                         break;
                 }
                 createDivNotificationDetailsElement.className = "notification-details";
@@ -264,93 +286,93 @@ function initializeNotifications(status){
 }
 
 //onscroll
-const scrollNotification = getUserNotificationsElement.parentElement;
-scrollNotification.onscroll = (ev) => {
-    if (scrollNotification.scrollTop + scrollNotification.clientHeight === scrollNotification.scrollHeight) {
-        console.log(notificationID.length);
-        console.log(notificationID);
-        if (notificationID.length >= 9) {
-            console.log(notificationID.length);
-            $.get('/kepala-sekolah/get-more-notification/'+notificationID.length, function(res){
-                let newNotification = res.moreNotifications;
-                Object.keys(newNotification).forEach(element => {
-                    const createLinkElement = document.createElement('a');
-                    const createStatusPartition = document.createElement('div');
-                    const createCircleStatusElement = document.createElement('div');
-                    const createIconElement = document.createElement('i');
+// const scrollNotification = getUserNotificationsElement.parentElement;
+// scrollNotification.onscroll = (ev) => {
+//     if (scrollNotification.scrollTop + scrollNotification.clientHeight === scrollNotification.scrollHeight) {
+//         console.log(notificationID.length);
+//         console.log(notificationID);
+//         if (notificationID.length >= 9) {
+//             console.log(notificationID.length);
+//             $.get('/penanggung-jawab/get-more-notification/'+notificationID.length, function(res){
+//                 let newNotification = res.moreNotifications;
+//                 Object.keys(newNotification).forEach(element => {
+//                     const createLinkElement = document.createElement('a');
+//                     const createStatusPartition = document.createElement('div');
+//                     const createCircleStatusElement = document.createElement('div');
+//                     const createIconElement = document.createElement('i');
                 
-                    const createDivNotificationDetailsElement = document.createElement('div');
-                    const createDivDetailsElement = document.createElement('div');
-                    const createSpanExtraDetailsElement = document.createElement('span');
+//                     const createDivNotificationDetailsElement = document.createElement('div');
+//                     const createDivDetailsElement = document.createElement('div');
+//                     const createSpanExtraDetailsElement = document.createElement('span');
                     
-                    let {data: {links, nama_kegiatan, status_kegiatan, status_kegiatan_id}} = newNotification[element];
-                    notificationID.push(newNotification[element].id);
+//                     let {data: {link, nama_kegiatan, status_kegiatan, status_kegiatan_id, type_notification}} = newNotification[element];
+//                     notificationID.push(newNotification[element].id);
 
-                    createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+newNotification[element].id;
-                    createLinkElement.setAttribute('id' , newNotification[element].id);
-                    createLinkElement.setAttribute('href' , links);
+//                     createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+newNotification[element].id;
+//                     createLinkElement.setAttribute('id' , newNotification[element].id);
+//                     createLinkElement.setAttribute('href' , link);
 
-                    createStatusPartition.className = 'mr-3';
-                    switch (status_kegiatan_id) {
-                        case 1:
-                            createCircleStatusElement.className = 'icon-circle bg-success';
-                            createIconElement.className= 'fa fa-check text-white';
-                            createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" "+status_kegiatan+" Oleh Kepala Sekolah";
-                        break;
-                        case 4:
-                            createCircleStatusElement.className = 'icon-circle bg-warning';
-                            createIconElement.className= 'fa fa-exclamation text-white';
-                            createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
-                            break;
-                        case 5:
-                            createCircleStatusElement.className = 'icon-circle bg-danger';
-                            createIconElement.className= 'fa fa-times text-white';
-                            createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Telah Ditolak Oleh Kepala Sekolah";
-                            break;
-                        default:
-                            createCircleStatusElement.className = 'icon-circle bg-secondary';
-                            createIconElement.className= 'fa fa-question text-white';
-                            createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" "+status_kegiatan+" Oleh Kepala Sekolah";
-                            break;
-                    }
-                    createDivNotificationDetailsElement.className = "notification-details";
+//                     createStatusPartition.className = 'mr-3';
+//                     switch (status_kegiatan_id) {
+//                         case 1:
+//                             createCircleStatusElement.className = 'icon-circle bg-success';
+//                             createIconElement.className= 'fa fa-check text-white';
+//                             createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" "+status_kegiatan+" Oleh Kepala Sekolah";
+//                         break;
+//                         case 4:
+//                             createCircleStatusElement.className = 'icon-circle bg-warning';
+//                             createIconElement.className= 'fa fa-exclamation text-white';
+//                             createSpanExtraDetailsElement.innerText = type_notification+" "+nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
+//                             break;
+//                         case 5:
+//                             createCircleStatusElement.className = 'icon-circle bg-danger';
+//                             createIconElement.className= 'fa fa-times text-white';
+//                             createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" Telah Ditolak Oleh Kepala Sekolah";
+//                             break;
+//                         default:
+//                             createCircleStatusElement.className = 'icon-circle bg-secondary';
+//                             createIconElement.className= 'fa fa-question text-white';
+//                             createSpanExtraDetailsElement.innerText = "Proposal Kegiatan "+nama_kegiatan+" "+status_kegiatan+" Oleh Kepala Sekolah";
+//                             break;
+//                     }
+//                     createDivNotificationDetailsElement.className = "notification-details";
 
-                    createDivDetailsElement.className = "small text-gray-500";
+//                     createDivDetailsElement.className = "small text-gray-500";
 
-                    const dateConvert = new Date(element.created_at);
-                    dateConvert.setHours(dateConvert.getHours() + 7)
-                    let notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
-                    createDivDetailsElement.innerText = notificationTimestamp;
+//                     const dateConvert = new Date(element.created_at);
+//                     dateConvert.setHours(dateConvert.getHours() + 7)
+//                     let notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
+//                     createDivDetailsElement.innerText = notificationTimestamp;
                     
-                    getUserNotificationsElement.appendChild(createLinkElement);
-                    createLinkElement.appendChild(createStatusPartition);
-                    createStatusPartition.appendChild(createCircleStatusElement);
-                    createCircleStatusElement.appendChild(createIconElement);
-                    createLinkElement.appendChild(createDivNotificationDetailsElement);
-                    createDivNotificationDetailsElement.appendChild(createDivDetailsElement);
-                    if (newNotification[element].read_at === null) {
-                        createSpanExtraDetailsElement.className = "font-weight-bold";
-                        createSpanExtraDetailsElement.setAttribute('id' , 'span-class-notification-'+newNotification[element].id);
-                        createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
-                    } else {
-                        createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
-                    }
-                    console.log(notificationID);
-                });
-                // count_more_notification+=Object.keys(newNotification).length;
-                // console.log(count_more_notification);
-            });    
-        }
-    }
-};
+//                     getUserNotificationsElement.appendChild(createLinkElement);
+//                     createLinkElement.appendChild(createStatusPartition);
+//                     createStatusPartition.appendChild(createCircleStatusElement);
+//                     createCircleStatusElement.appendChild(createIconElement);
+//                     createLinkElement.appendChild(createDivNotificationDetailsElement);
+//                     createDivNotificationDetailsElement.appendChild(createDivDetailsElement);
+//                     if (newNotification[element].read_at === null) {
+//                         createSpanExtraDetailsElement.className = "font-weight-bold";
+//                         createSpanExtraDetailsElement.setAttribute('id' , 'span-class-notification-'+newNotification[element].id);
+//                         createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
+//                     } else {
+//                         createDivNotificationDetailsElement.appendChild(createSpanExtraDetailsElement);
+//                     }
+//                     console.log(notificationID);
+//                 });
+//             });    
+//         }
+//     }
+// }
 
 function markAsReadNotification(notificationRequest, notificationLink){
-    window.axios.put('/kepala-sekolah/mark-as-read/', {
+    window.axios.put('/penanggung-jawab/mark-as-read/', {
         data: notificationRequest,
-        links: notificationLink
+        links: notificationLink,
+        page: 'accessLinks'
     }).then((response) => {
-        console.log(response.data);
-        window.location = notificationLink;
+        const link = response.data.link_data;
+        // console.log(response.data);
+        window.location.replace(link);
     }).catch((responseError) => {
         errorsNotificationAlert(responseError.response.status , responseError.response);
     });
@@ -360,7 +382,7 @@ function errorsNotificationAlert(status, messages){
     if (status === 404) {
         Swal.fire({
             icon: 'error',
-            title: 'Terdapat Error Ketika Mengambil Data, System Error Code',
+            title: 'Terdapat Error Ketika Mengambil Data',
             text: message
         });
     } else if(status === 401){
@@ -369,7 +391,7 @@ function errorsNotificationAlert(status, messages){
             title: 'Please Login',
             text: message
         }).then((result)=>{
-            window.location = '/';
+            window.location.replace('/');
         });
     } else {
         Swal.fire({
@@ -377,7 +399,7 @@ function errorsNotificationAlert(status, messages){
             title: 'Terdapat Error Ketika Mengambil Data, Jika Masalah Masih Ada, Kontak Admin! System Error: ',
             text: message
         }).then((result) => {
-            location.reload(true);
+            location.reload();
         });
         console.log(messages);
     }

@@ -37,7 +37,12 @@ return [
             'app_id' => env('PUSHER_APP_ID'),
             'options' => [
                 'cluster' => env('PUSHER_APP_CLUSTER'),
+                // updated for package laravel websockets beyondcode => disini cuman ada cluster sama useTLS
+                'encrypted' => true,
+                'host' => '127.0.0.1',
+                'port' => 6001,
                 'useTLS' => true,
+                'scheme' => 'http'
             ],
         ],
 

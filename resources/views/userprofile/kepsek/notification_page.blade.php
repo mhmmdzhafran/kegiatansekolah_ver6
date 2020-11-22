@@ -21,7 +21,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{{route('kepsek.userprofile.getAllNotify')}}" id="notification">Notifikasi 
-                    <span class="badge badge-primary badge-pill" id="badge-counter-notification">
+                    <span class="badge badge-primary badge-pill" id="badge-counter-notification" data-id="{{$counter_notification}}">
                         {{ $counter_notification }}
                     </span>
                 </a>
@@ -41,7 +41,7 @@
                             <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terbaru">Terbaru</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Belum Disetujui">Belum Disetujui</button>
-                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Sudah Mengunggah Dokumentasi">Sudah Mengunggah Dokumentasi</button>
+                              {{-- <button class="dropdown-item dropdown-choice filter_by" type="button" id="Sudah Mengunggah Dokumentasi">Sudah Mengunggah Dokumentasi</button> --}}
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terlama">Terlama</button>
                             </div>
                           </div>
@@ -73,12 +73,12 @@
 @section('script')
 
 <script>
-    var url = "";
-    var state = "";
-    var state_2 = "";
-    var page = 1;
-    var searchValue = "";
-    var text_state_2 = "";
+    let url = "";
+    let state = "";
+    let state_2 = "";
+    let page = 1;
+    let searchValue = "";
+    let text_state_2 = "";
     const button_return = document.getElementById('button_back');
     const getSearchElement = document.getElementById('search');
     const getAlertElement = document.getElementById('status_filter');
@@ -89,6 +89,8 @@
 
     const textSearch = document.getElementById('text_search');
     const textSearchTwo = document.getElementById('text_search_2');
+    
+    const badgeCounterElementNotificationPage = document.getElementById('badge-counter-notification');
 
     //add events
     $(document).on('click', '.pagination a',function(event){
@@ -188,7 +190,7 @@
                     // location.hash = url+"?page="+page;
                     state_2 = $(this).attr('id');
                     getSecondAlertElement.classList.remove('d-none');
-                    textSearchTwo.innerText= text_state_2;
+                    textSearchTwo.innerText= "Filter: "+text_state_2;
                     button_return.classList.remove('d-none');
                     page = 1;
                 }).catch((responseError) => {
@@ -203,7 +205,7 @@
                     // location.hash = url+"?page="+page;
                     state_2 = $(this).attr('id');
                     getSecondAlertElement.classList.remove('d-none');
-                    textSearchTwo.innerText = text_state_2;
+                    textSearchTwo.innerText = "Filter: "+text_state_2;
                     button_return.classList.remove('d-none');
                     page = 1;
                 }).catch((responseError) => {
@@ -215,68 +217,158 @@
     $(document).on('click' , '.notificationRead', function(e) {
         e.preventDefault();
         let readState = $(this).attr('id');
-        window.axios.put('/kepala-sekolah/read-notification/', {
-                data: readState
-            }).then((response) => {
-                if (state !== "") {
-                    if (state_2 !== "") {
-                        //dua state
-                        console.log(state+" "+state_2);
-                        getDataTwoConditions(page, state, state_2);
-                    } else {
-                        //state2 tidak ada, state satu berisi
-                        getData(page, state);
-                    }
-                } else if(state_2 !== "") {
-                    if (state !== "") {
-                        //dua state
-                        console.log(state+" "+state_2);
-                        getDataTwoConditions(page, state, state_2);
-                    } else {
-                        //state satu tidak ada, state 2 berisi
-                        getData(page, state);
-                    }
+        let countNotification = notificationID.length - 1;
+        if (countNotification <= 0) {
+            countNotification = 0;
+        }
+        window.axios.put('/kepala-sekolah/mark-as-read/', {
+            data: readState,
+            page: 'read',
+            lastRequest: countNotification
+        }).then((response) => {
+            if (state !== "") {
+                if (state_2 !== "") {
+                    //dua state
+                    console.log(state+" "+state_2);
+                    getDataTwoConditions(page, state, state_2);
                 } else {
-                    //all state
-                    getData(page , state);
+                    //state2 tidak ada, state satu berisi
+                    getData(page, state);
                 }
+            } else if(state_2 !== "") {
+                if (state !== "") {
+                    //dua state
+                    console.log(state+" "+state_2);
+                    getDataTwoConditions(page, state, state_2);
+                } else {
+                    //state satu tidak ada, state 2 berisi
+                    getData(page, state);
+                }
+            } else {
+                //all state
+                getData(page , state);
+            }
 
-                $.notify({
-                    message: 'Notifikasi Berhasil Dibaca!',
-                }, {
-                    newest_on_top: true,
-                    type: 'secondary',
-                    delay: 100,
-                    placement: {
-                        from: "bottom",
-                        align: "center"
-                    },
-                    animate: {
-                        enter: 'animate__animated animate__fadeInUp',
-                        exit: 'animate__animated animate__fadeOutDown'
-                    },
-                });
-                // $(".notification-items").empty();
-                // initializeNotifications("refresh");
-                if (document.getElementById('span-class-notification-'+readState) !== null) {                    
-                    let spanClassNotificationDropdown = document.getElementById('span-class-notification-'+readState);
-                    if (spanClassNotificationDropdown.classList.contains('font-weight-bold')) {
-                        spanClassNotificationDropdown.classList.remove('font-weight-bold');   
+            $.notify({
+                message: 'Notifikasi Berhasil Dibaca!',
+            }, {
+                newest_on_top: true,
+                type: 'secondary',
+                delay: 100,
+                placement: {
+                    from: "bottom",
+                    align: "center"
+                },
+                animate: {
+                    enter: 'animate__animated animate__fadeInUp',
+                    exit: 'animate__animated animate__fadeOutDown'
+                },
+            });
+            // if (document.getElementById('span-class-notification-'+readState) !== null) {                    
+            //     const spanClassNotificationDropdown = document.getElementById('span-class-notification-'+readState);
+            //     const dropdownElement = document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+readState)[0];
+            //     if (spanClassNotificationDropdown.classList.contains('font-weight-bold') && dropdownElement !== null) {    
+            //         spanClassNotificationDropdown.classList.remove('font-weight-bold');   
+            //     }
+            // }
+            if (typeof document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+readState)[0] !== "undefined") {
+                document.getElementsByClassName('dropdown-item d-flex align-items-center notify-test notification-'+readState)[0].remove();
+                let indexNotification = notificationID.indexOf(readState);
+                if (indexNotification > -1) {
+                    notificationID.splice(indexNotification, 1);   
+                }
+                unreadNotification-=1;
+                if (unreadNotification <= 9) {
+                    badgeCounterElement.innerText = unreadNotification;    
+                } else {
+                    badgeCounterElement.innerText = "9+";   
+                }
+                let counterElement = badgeCounterElementNotificationPage.getAttribute('data-id');
+                counterElement-=1;
+                badgeCounterElementNotificationPage.setAttribute('data-id', counterElement);
+                badgeCounterElementNotificationPage.innerText = counterElement;
+                if (notificationID.length < 9) {
+                    // console.log(response.data);
+                    console.log(response.data.data_notification);
+                    if (typeof response.data.data_notification !== Boolean && typeof response.data.data_notification === 'object') {
+                        const dataNotification = response.data.data_notification;
+                        $.each(dataNotification, function(key, value){
+                            const createLinkNotificationElement = document.createElement('a');
+                            const createStatusNotificationElement = document.createElement('div');
+                            const createLogoStatusElement = document.createElement('div');
+                            const createIconStatusElement = document.createElement('i');
+                            const createSectionNotificationElement = document.createElement('div');
+                            const createNotificationDetailsElement = document.createElement('div');
+                            const createSpanFontElement = document.createElement('span');
+
+                            createLinkNotificationElement.className='dropdown-item d-flex align-items-center notify-test notification-'+value.id;
+                            createLinkNotificationElement.setAttribute('id' , value.id);
+                            createLinkNotificationElement.setAttribute('href' , value.data.link);
+                    
+                            createStatusNotificationElement.className = 'mr-3';
+                            switch (value.data.status_kegiatan_id) {
+                                case 3:
+                                    createLogoStatusElement.className = 'icon-circle bg-warning';
+                                    createIconStatusElement.className= 'fa fa-exclamation text-white';
+                                    createSpanFontElement.innerText = value.data.type_notification+" "+value.data.nama_kegiatan+" Telah diunggah oleh "+value.data.user_pj;
+                                break;
+                                default:
+                                    createLogoStatusElement.className = 'icon-circle bg-secondary';
+                                    createIconStatusElement.className= 'fa fa-question text-white';
+                                    createSpanFontElement.innerText = "Undefined Notification";
+                                    break;
+                            }
+                            createSectionNotificationElement.className = "notification-details";
+
+                            createNotificationDetailsElement.className = "small text-gray-500";
+
+                            const dateConvert = new Date(value.created_at);
+                            dateConvert.setHours(dateConvert.getHours() + 7)
+
+                            let notificationTimestamp = dateConvert.getFullYear()+"-"+transformToFormatTimestamps(dateConvert.getMonth()+1)+"-"+transformToFormatTimestamps(dateConvert.getDate())+" "+transformToFormatTimestamps(dateConvert.getHours())+":"+transformToFormatTimestamps(dateConvert.getMinutes())+":"+transformToFormatTimestamps(dateConvert.getSeconds());
+                            
+                            createNotificationDetailsElement.innerText = notificationTimestamp;
+                            if (value.read_at === null) {
+                                createSpanFontElement.className = "font-weight-bold";
+                                createSpanFontElement.setAttribute('id' , 'span-class-notification-'+value.id);
+                            } 
+                            getUserNotificationsElement.appendChild(createLinkNotificationElement);
+                            createLinkNotificationElement.appendChild(createStatusNotificationElement);
+                            createStatusNotificationElement.appendChild(createLogoStatusElement);
+                            createLogoStatusElement.appendChild(createIconStatusElement);
+                            createLinkNotificationElement.appendChild(createSectionNotificationElement);
+                            createSectionNotificationElement.appendChild(createNotificationDetailsElement);
+                            createSectionNotificationElement.appendChild(createSpanFontElement);
+                            notificationID.push(value.id);
+                        });
                     }
                 }
-            });
-        
+            }
+        }).catch((responseError) => {
+            errorNotifications(responseError.response.status, responseError.response);
+        });
     });
 
     $(document).on('click' , '.notificationLink', function(e) {
         e.preventDefault();
         let readState = $(this).attr('id');
-        let linkNotification = $(this).attr('href');
+        const dataType = $(this).attr('data-type');
         if (readState !== 'alreadyRead') {
             //fungsi js kepsek
-            markAsReadNotification(readState , linkNotification);
+            markAsReadNotification(readState , dataType);
         } else {
-            location.replace(linkNotification);
+            const dataID = $(this).attr('data-id');
+            window.axios.get('/kepala-sekolah/redirect', {
+                params:{
+                    data: dataID,
+                    type: dataType
+                }
+            }).then((response) => {
+                const link = response.data.redirect_link;
+                window.location.replace(link);
+            }).catch((responseError) => {
+                errorNotifications(responseError.response.status, responseError.response);
+            });
         }
     });
 
@@ -284,13 +376,13 @@
         if (state === "search") {
             window.axios.get(url+"?page=" + page)
             .then((response) => {
-                // Swal.close();
+               
                 console.log(response.data);
                 $("#notification_box").empty().html(response.data);
-                // location.hash = url+"?page="+page;
+               
                 console.log(state);
                 getAlertElement.classList.remove('d-none');
-                // button_return.classList.remove('d-none');
+              
             }).catch((responseError) => {
                 errorNotifications(responseError.response.status, responseError.response);
             });   
@@ -396,7 +488,7 @@
                 icon: 'info',
                 title: message
             }).then((result) => {
-                window.location = '/';
+                window.location.replace('/');
             }); 
         } else if(status === 404){
             Swal.fire({

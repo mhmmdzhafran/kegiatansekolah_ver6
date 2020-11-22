@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent;
-use App\Notifications\DokumentasiKegiatanNotifyKepalaSekolahNotification;
+use App\Notifications\AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification;
 use App\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -33,6 +33,6 @@ class BroadcastDokumentasiKegiatanNotifyKepalaSekolah
         $user_kepalaSekolah = User::whereHas('Role', function($query){
             $query->where('id' , 2);
         })->first();
-        Notification::send($user_kepalaSekolah, new DokumentasiKegiatanNotifyKepalaSekolahNotification($event->dokumentasiKegiatan , $event->statusKegiatan));
+        Notification::send($user_kepalaSekolah, new AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification($event->dokumentasiKegiatan , $event->statusKegiatan));
     }
 }

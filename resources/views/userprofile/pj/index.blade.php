@@ -28,10 +28,14 @@
                     <div class="card-body">
                         <button type="button" class="btn btn-warning btn-sm rounded-pill float-md-right float-lg-right float-sm-left" id="edit" style="color:white;">Ubah Password</button>
                         <div class="row mt-5">
-                            <div class="col-sm-12 col-lg-3">
-                                <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" style=" width: 100%; max-width: 400px; height: auto;">
+                            <div class="col-sm-12 col-lg-4">
+                                @if (is_null($data_user->photo_user))
+                                    <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" style=" width: 100%; max-width: 400px; height: auto;">
+                                @else
+                                    <img class="rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.$data_user->photo_user) }}" alt="" srcset="" width="300" height="300" style="width: 100%">
+                                @endif
                             </div>
-                            <div class="col-sm-12 col-lg-9">
+                            <div class="col-sm-12 col-lg-8">
                                 <div class="form-group">
                                     {!! Form::label('nama_PJ' , "Nama Penanggung Jawab:" ) !!}
                                     <input type="text" name="nama_sekolah" id="nama_sekolah" value="{{ $data_user->name }}" class="form-control" disabled>
@@ -39,6 +43,10 @@
                                 <div class="form-group">
                                     {!! Form::label('username_id' , "Username ID:" ) !!}
                                     <input type="text" name="alamat_sekolah" id="alamat_sekolah" value="{{ $data_user->username_id }}" class="form-control" disabled>
+                                </div>
+                                <div class="form-group">
+                                    {!! Form::label('email_user' , "Email User:" ) !!}
+                                    <input type="text" name="email_user" id="email_user" value="{{ $data_user->email_user }}" class="form-control" disabled>
                                 </div>
                                 <div class="form-group">
                                     {!! Form::label('role' , "Jabatan User:" ) !!}
@@ -64,7 +72,7 @@
               </button>
             </div>
             <div class="modal-body">
-                <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
+                <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
                 <div class="form-group">
                     {!! Form::label('pass' , "Masukkan Password Anda:" ) !!}
                     <input type="password" name="password" class="form-control">
@@ -91,7 +99,7 @@
               </button>
             </div>
             <div class="modal-body">
-                <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
+                <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
                 <div class="form-group">
                     {!! Form::label('pass' , "Masukkan Password Baru Anda:" ) !!}
                     <input type="password" name="passwordBaru" class="form-control">
@@ -113,7 +121,7 @@
 
 @section('script')
     <script>
-        $("input[type=password]").empty();
+        // $("input[type=password]").empty();
         document.getElementById('edit').addEventListener('click', function(){
             let url_form = "{{route('pj.userprofile.check')}}";
             $("#modal_edit").modal();
@@ -121,10 +129,12 @@
         });
         $("#modal_edit").on('hidden.bs.modal' , function(){
             //remove attr form
-            $("input[type=password]").empty();
+            $("input[type='password']").val('');
+            emptyAlertsError();
         });
         $("#modal_ubah_pass").on('hidden.bs.modal', function(){
-            $("input[type=password]").empty();
+            $("input[type='password']").val('');
+            emptyAlertsError();
         });
         $('form').on('submit', function(e){
             e.preventDefault();
@@ -158,6 +168,7 @@
                     },
                     error: function(res){
                         loading_bar(false);
+                        $(".error_notification").removeClass('d-none');
                         if (res.status === 401) {
                             let loginInfo = JSON.parse(res.responseText);
                             knownNotificationAlerts(401, loginInfo.message);
@@ -183,21 +194,26 @@
                     data: $("#"+form_id).serialize(),
                     beforeSend: function(){
                         loading_bar(true);
-                        $(".error_notification").empty();
                     },
                     success: function(res){
                         loading_bar(false);
-                        $(".error_notification").empty();
+                        $("#modal_ubah_pass").modal('hide');
                         Swal.fire({
                             icon: 'success',
-                            title: 'Ubah Password Sukses, Silahkan Menunggu Browser Untuk Melakukan Refresh'
+                            title: 'Ubah Password Sukses, Silahkan Menunggu Browser Untuk Melakukan Refresh',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowEnterKey: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
                         }).then((result)=>{
-                            $("#modal_ubah_pass").modal('hide');
                             location.reload(true);
                         });
                     },
                     error: function(res){
                         loading_bar(false);
+                        $(".error_notification").removeClass('d-none');
                         if (res.status === 401) {
                             let loginInfo = JSON.parse(res.responseText);
                             knownNotificationAlerts(401, loginInfo.message);
@@ -235,7 +251,7 @@
                 title: 'Please Login',
                 text: infoLogin
             }).then((result)=>{
-                window.location = '/';
+                window.location.replace('/');
             });
         }
     }
@@ -265,11 +281,18 @@
                 allowEscapeKey: false,
                 allowEnterKey: false,
                 showConfirmButton: false
-            });   
+            });
+            emptyAlertsError();
         }
         else{
             Swal.close();
+            $(".error_notification").empty();
         }
+    }
+
+    function emptyAlertsError(){
+        $(".error_notification").empty();
+        $(".error_notification").addClass('d-none');
     }
     </script>
 @endsection

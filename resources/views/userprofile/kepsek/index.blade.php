@@ -41,6 +41,10 @@
                                     <input type="text" name="username_id" id="username_id" value="{{ $data_user->username_id }}" class="form-control" disabled>
                                 </div>
                                 <div class="form-group">
+                                    {!! Form::label('email_user' , "Email User:" ) !!}
+                                    <input type="text" name="email_user" id="email_user" value="{{ $data_user->email_user }}" class="form-control" disabled>
+                                </div>
+                                <div class="form-group">
                                     {!! Form::label('role' , "Jabatan User:" ) !!}
                                     <input type="text" name="role" id="role" value="{{ $role }}" class="form-control"  disabled>
                                 </div>
@@ -57,13 +61,13 @@
             <form action="" id="form_check_pass" method="POST">
                 @csrf
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Pengecekkan Password Lama</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
             </div>
             <div class="modal-body">
-                <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
+                <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
                 <div class="form-group">
                     {!! Form::label('pass' , "Masukkan Password Anda:" ) !!}
                     <input type="password" name="password" class="form-control">
@@ -90,7 +94,7 @@
               </button>
             </div>
             <div class="modal-body">
-                <ul class="error_notification" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
+                <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>
                 <div class="form-group">
                     {!! Form::label('pass' , "Masukkan Password Baru Anda:" ) !!}
                     <input type="password" name="passwordBaru" class="form-control">
@@ -112,18 +116,20 @@
 
 @section('script')
     <script>
-        $("input[type=password]").empty();
+        // $("input[type='password']").val('');
         document.getElementById('edit').addEventListener('click', function(){
-            let url_form = "{{route('pj.userprofile.check')}}";
+            let url_form = "{{route('kepsek.userprofile.check')}}";
             $("#modal_edit").modal();
             $("#form_check_pass").attr('action' , url_form);
         });
         $("#modal_edit").on('hidden.bs.modal' , function(){
             //remove attr form
-            $("input[type=password]").empty();
+            $("input[type='password']").val('');
+            emptyAlertsError();
         });
         $("#modal_ubah_pass").on('hidden.bs.modal', function(){
-            $("input[type=password]").empty();
+            $("input[type='password']").val('');
+            emptyAlertsError();
         });
         $('form').on('submit', function(e){
             e.preventDefault();
@@ -144,9 +150,8 @@
                     },
                     success: function(res){
                         loading_bar(false);
-                        console.log(true);
                         $("#modal_edit").modal('hide');
-                        let url_form_change_pass = '{{route("pj.userprofile.update")}}';
+                        let url_form_change_pass = '{{route("kepsek.userprofile.update")}}';
                         $("#form_change_pass").attr('action' , url_form_change_pass);
                         Swal.fire({
                             icon: 'success',
@@ -157,6 +162,7 @@
                     },
                     error: function(res){
                         loading_bar(false);
+                        $(".error_notification").removeClass('d-none');
                         if (res.status === 401) {
                             let loginInfo = JSON.parse(res.responseText);
                             knownNotificationAlerts(401, loginInfo.message);
@@ -182,21 +188,27 @@
                     data: $("#"+form_id).serialize(),
                     beforeSend: function(){
                         loading_bar(true);
-                        $(".error_notification").empty();
+                        
                     },
                     success: function(res){
                         loading_bar(false);
-                        $(".error_notification").empty();
+                        $("#modal_ubah_pass").modal('hide');
                         Swal.fire({
                             icon: 'success',
-                            title: 'Ubah Password Sukses, Silahkan Menunggu Browser Untuk Melakukan Refresh'
+                            title: 'Ubah Password Sukses, Silahkan Menunggu Browser Untuk Melakukan Refresh',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowEnterKey: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
                         }).then((result)=>{
-                            $("#modal_ubah_pass").modal('hide');
                             location.reload(true);
                         });
                     },
                     error: function(res){
                         loading_bar(false);
+                        $(".error_notification").removeClass('d-none');
                         if (res.status === 401) {
                             let loginInfo = JSON.parse(res.responseText);
                             knownNotificationAlerts(401, loginInfo.message);
@@ -234,7 +246,7 @@
                 title: 'Please Login',
                 text: infoLogin
             }).then((result)=>{
-                window.location = '/';
+                window.location.replace('/');
             });
         }
     }
@@ -265,10 +277,18 @@
                 allowEnterKey: false,
                 showConfirmButton: false
             });   
+           emptyAlertsError();
         }
         else{
             Swal.close();
+            $(".error_notification").empty();
+            // $(".error_notification").removeClass('d-none');
         }
+    }
+
+    function emptyAlertsError(){
+        $(".error_notification").empty();
+        $(".error_notification").addClass('d-none');
     }
     </script>
 @endsection

@@ -8,7 +8,7 @@ class PengajuanKegiatan extends Model
 {
     //
 
-    protected $fillable = ['user_id', 'PJ_nama_kegiatan', 'nilai_ppk', 
+    protected $fillable = ['user_id', 'nama_pj', 'PJ_nama_kegiatan', 'nilai_ppk', 
     'dokumen_kegiatan', 'mulai_kegiatan', 'akhir_kegiatan', 'kegiatan_berbasis', 'keterangan_json'];
 
     public function StatusKegiatan(){

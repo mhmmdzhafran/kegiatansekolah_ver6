@@ -27,7 +27,9 @@ class UserValidationRequest extends FormRequest
             //
             'name' => 'required',
             'role_id' => 'required',
-            'username_id' => 'required|unique:users|max:255',
+            'username_id' => 'required|unique:users,username_id|max:255',
+            'email_user' => 'required|unique:users,email_user|max:255',
+            'photo_user' => 'required|mimes:jpeg,png|max:5120',
             'password' => 'required',
             'passwordChecker' => 'required'
         ];
@@ -35,10 +37,15 @@ class UserValidationRequest extends FormRequest
     public function messages(){
         return[
             'name.required' => 'Masukkan nama user',
-            'useraname_id.unique' => 'Username telah diambil, silahkan coba kembali',
+            'username_id.unique' => 'Username telah diambil, silahkan coba kembali',
             'username_id.required' => 'Masukkan username user',
             'username_id.max' => 'Username melebihi 255 karakter',
-            'username_id.unique' => 'Username ID Telah Diambil, Silahkan Pilih Username Baru',
+            'email_user.unique' => 'Email telah diambil oleh User lain, silahkan coba kembali',
+            'email_user.required' => 'Masukkan Email user',
+            'email_user.max' => 'Email User melebihi 255 karakter',
+            'photo_user.required' => 'Silahkan Unggah Foto Pengguna!',
+            'photo_user.mimes' => 'Silahkan Unggah Foto Pengguna Dengan Ekstensi .jpeg atau .png',
+            'photo_user.max' => 'Sistem Hanya Menerima Ukuran Foto Sebesar 5MB',
             'role_id.required' => 'Pilih Peran User!',
             'password.required' => 'Masukkan password user',
             'passwordChecker.required' => 'Masukkan password kedua kalinya',

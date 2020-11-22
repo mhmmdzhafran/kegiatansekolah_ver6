@@ -45,9 +45,17 @@ class KeputusanProposalKegiatanToPJNotification extends Notification
      */
     public function toMail($notifiable)
     {
+        $user_pj = $this->pengajuan_kegiatan->user->name;
+        $url = url('/penanggung-jawab/mengelola-kegiatan');
+        $nama_status = $this->status_kegiatan->nama;
+        if ($nama_status == 'Pengajuan Ulang') {
+            $nama_status = 'Mengajukan Ulang Kembali';
+        }
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
+                    ->greeting('Hello, '.$user_pj)
+                    ->line('Proposal Kegiatan Dengan Nama Kegiatan: '.$this->pengajuan_kegiatan->PJ_nama_kegiatan
+                    .' Telah Diberikan Keputusan: '.$nama_status)
+                    ->action('Lihat Proposal', $url)
                     ->line('Thank you for using our application!');
     }
 
@@ -81,6 +89,7 @@ class KeputusanProposalKegiatanToPJNotification extends Notification
             "status_kegiatan" => $this->status_kegiatan->nama,
             "timestamp_pengiriman" => $this->pengajuan_kegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
             "link" => '/penanggung-jawab/mengelola-kegiatan',
+            "type_notification" => "Proposal Kegiatan"
         ];
     }
 }

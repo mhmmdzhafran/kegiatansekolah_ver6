@@ -18,9 +18,10 @@
       <li>{{ $status_kegiatan->nama }}</li>
     </ul>
   </div>
-  <div class="histori_kegiatan alert alert-info alert-heading font-weight-bolder" hidden>
-
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
   </div>
+  <div class="histori_kegiatan alert alert-info alert-heading font-weight-bolder d-none"></div>
 </div>
 <hr>
    <input type="hidden" name="id" value="{{ $id }}">
@@ -33,9 +34,13 @@
         {!! Form::text('PJ_nama_kegiatan', $pengajuan_kegiatan->PJ_nama_kegiatan , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
     </div>
 
-    <div class="form-group">
-        {!! Form::label('nilai_ppk', 'Nilai PPK:') !!}
-        <br>
+    {!! Form::label('nilai_ppk', 'Nilai PPK:') !!}
+    <br>
+    <div class="spinner-border" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+
+    <div class="form-group d-none" id="nilai_ppk_groups">
             {!! Form::checkbox('nilai_ppk[]', 'Religius', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Religius
             <br>
             {!! Form::checkbox('nilai_ppk[]', 'Integritas', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Integritas
@@ -56,16 +61,18 @@
     <div class="form-group">
         {!! Form::label('dokumen_kegiatan', 'Dokumen Proposal Yang Dikirim:') !!}
         <div class="col-lg-12 col-sm-12">
-
-        <div id="file_upload">
+          <div class="spinner-border" role="status">
+            <span class="sr-only">Loading...</span>
+          </div>
+        <div id="file_upload" class="d-none">
 
         </div>
       </div>
-      <div class="col-lg-12 col-sm-12">
+      {{-- <div class="col-lg-12 col-sm-12">
         <div id="show_docs" hidden>
           
         </div>
-      </div>
+      </div> --}}
     </div>
 
     <div class="row">
@@ -117,7 +124,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <ul class="keterangan_error">
+          <ul class="keterangan_error d-none">
 
           </ul>
             {!! Form::open(['method' => 'PUT', 'action' => ['KepalaSekolahMengelolaKegiatanController@update' , $pengajuan_kegiatan->id], 'files'=>true, "id" => 'modal_success']) !!}
@@ -156,7 +163,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <ul class="keterangan_error">
+          <ul class="keterangan_error d-none">
 
           </ul>
             {!! Form::open(['method' => 'PUT', 'action' => ['KepalaSekolahMengelolaKegiatanController@update' , $pengajuan_kegiatan->id], 'files'=>true, "id" => 'modal_pengajuan_ulang']) !!}
@@ -194,7 +201,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <ul class="keterangan_error">
+          <ul class="keterangan_error d-none">
 
           </ul>
             {!! Form::open(['method' => 'PUT', 'action' => ['KepalaSekolahMengelolaKegiatanController@update' , $pengajuan_kegiatan->id], 'files'=>true, "id" => 'modal_menolak']) !!}
@@ -225,47 +232,71 @@
 @section('script')
 <script>
       // var state = true;
-
       $("textarea").each(function(){
         $(this).val('');
       });
-      var url_redirect = "";
+      var url_back_to = '{{route("kepsek.kelola_kegiatan.index")}}';
+      let statusData = true;
+      // var url_redirect = "";
       var modal_state = "";
       $("#file_upload").empty();
-      var url = '{{route("pj.kelola_kegiatan.data_kegiatan", "id")}}';
-      url = url.replace("id", $("[name='id']").val());
+      var url = '{{route("kepsek.pengajuan_dokumentasi_kegiatan.get_kegiatan", ["dokumentasi_kegiatan" => "id_kegiatan", "type_kegiatan" => "tipe_kegiatan"])}}';
+      url = url.replace("id_kegiatan", $("[name='id']").val());
+      url = url.replace("tipe_kegiatan", "pengajuan");
 
       $.get(url, function(res){
         var data_nilai_ppk = $.parseJSON(res.data.nilai_ppk);
-
+        statusData = res.status;
         $.each(data_nilai_ppk, function(key, value){
           $("[value = '"+value.nilai_ppk+"']").attr('checked', value.nilai_ppk);
         });
         $.each(res.keterangan, function(key, value){
           if (value.no === 2) {
             if(value.keterangan_wajib_ulang !== "") {
-              $(".histori_kegiatan").attr('hidden', false);
+              $(".histori_kegiatan").removeClass('d-none');
               var label = '{!! Form::label("histori_keterangan" , "Histori Keterangan Pengajuan Ulang Kegiatan:") !!}';
               $(".histori_kegiatan").append('<h4>'+label+'</h4><ul><li>'+value.keterangan_wajib_ulang+'</li></ul>');              
             }
           }
         });
-        $.each(res.data_dokumen, function(key,value){
-          var url_dokumen = "{{asset('kegiatan/pengajuan_kegiatan/nama_dokumen')}}";
-          url_dokumen = url_dokumen.replace('nama_dokumen', value.nama_dokumen);
-          $("#file_upload").append('<i class="fas fa-file-alt"></i> <a href="'+url_dokumen+'" class="mr-2" target="_blank">'+value.nama_dokumen+'</a><button class="btn btn-primary btn-sm lihat_file mr-2" value="'+url_dokumen+'">Lihat File</button><a href="'+url_dokumen+'" download="'+value.nama_dokumen+'" class="btn btn-info btn-sm mr-2">Download File</a><br>');
-        });
+        if (statusData) {
+            $.each(res.data_dokumen, function(key,value){
+              var url_dokumen = "{{asset('kegiatan/pengajuan_kegiatan/nama_dokumen')}}";
+              url_dokumen = url_dokumen.replace('nama_dokumen', value.nama_dokumen);
+              $("#file_upload").append('<i class="fas fa-file-alt"></i> <a href="'+url_dokumen+'" class="mr-2" target="_blank">'+value.nama_dokumen+'</a><button class="btn btn-primary btn-sm lihat_file mr-2" value="'+url_dokumen+'">Lihat File</button><a href="'+url_dokumen+'" download="'+value.nama_dokumen+'" class="btn btn-info btn-sm mr-2">Download File</a><br>');
+            });  
+        } else {
+          $("#file_upload").append('<ol><li>'+res.data_dokumen+'</li></ol>');
+        }
+      }).done(function(){
+        const spinner = document.getElementsByClassName('spinner-border');
+        const nilaiPPK = document.getElementById('nilai_ppk_groups');
+        document.getElementById('file_upload').classList.remove('d-none');
+        nilaiPPK.classList.remove('d-none');
+        for (let index = 0; index < spinner.length; index++) {
+          const element = spinner[index];
+          element.classList.add('d-none');
+        }
+        if (statusData) {
+          $(document).on('click', '.lihat_file', function(){
+            var value_doc = $(this).val();
+            window.open(value_doc);
+              // $("#show_docs").empty();
+              // if (state === true) {
+              //   $("#show_docs").attr('hidden', false);
+              //   $("#show_docs").append('<iframe src="'+value_doc+'" height="500" width="1000"></iframe>');
+              //   state = false;
+              // } else{
+              //   $("#show_docs").attr('hidden', true);
+              //   $("#show_docs").empty();
+              //   state = true;
+              // }
+          });
+        }
       }).fail(function(error){
-        var url_back_to = '{{route("kepsek.kelola_kegiatan.index")}}';
         if (error.status === 401) {
           let response_error = $.parseJSON(error.responseText);
-          Swal.fire({
-            icon: 'info',
-            title: 'Please Login',
-            text : response_error.message
-          }).then((result)=>{
-            window.location = '/';
-          });
+          notificationAlerts(error.status, response_error.message, 'login');
         } else if(error.status === 404) {
           let response_error = $.parseJSON(error.responseText);
             Swal.fire({
@@ -278,30 +309,9 @@
               }).then((result)=>{
                 window.location = url_back_to;
             });
-        } else{
-          Swal.fire({
-            icon: 'error',
-            title : 'Error',
-            text: 'System Error Code: '+error.status+": "+error.statusText
-          }).then((result) =>{
-            window.location = url_back_to;
-          });
-          console.log(error);
+        } else {
+          notificationAlerts(error.status, error, 'getData');
         }
-      });
-      $(document).on('click', '.lihat_file', function(){
-        $("#show_docs").empty();
-          var value_doc = $(this).val();
-          window.open(value_doc);
-          // if (state === true) {
-          //   $("#show_docs").attr('hidden', false);
-          //   $("#show_docs").append('<iframe src="'+value_doc+'" height="500" width="1000"></iframe>');
-          //   state = false;
-          // } else{
-          //   $("#show_docs").attr('hidden', true);
-          //   $("#show_docs").empty();
-          //   state = true;
-          // }
       });
 
       $(document).on('click', '.button_show', function(){
@@ -311,7 +321,7 @@
       
       $('form').on('submit', function(e){
         e.preventDefault();
-        $(".keterangan_error").empty();
+        // $(".keterangan_error").empty();
         var modal = $(this).attr('id');
         var url_form = $(this).attr('action');
         $.ajaxSetup({
@@ -328,19 +338,20 @@
           },
           success: function(res){
             console.log(res);
-            url_redirect = '{{route("kepsek.kelola_kegiatan.index")}}';
+            // url_redirect = '{{route("kepsek.kelola_kegiatan.index")}}';
             loadingBar(false);  
+            $(modal_state).modal('hide');
             Swal.fire({
               icon: 'success',
-              title: 'Sukses',
+              title: 'Sukses Mengambil Keputusan Proposal Kegiatan',
               text: res.status_data,
               allowOutsideClick: false,
               allowEscapeKey: false,
               allowEnterKey: false
             }).then((result)=>{
                 if (result.value) {
-                  $(modal_state).modal('hide');
-                  window.location = url_redirect;
+                  // window.location = url_redirect;
+                  window.location.replace(url_back_to);
                   modal_state = "";
                 }
             });
@@ -349,13 +360,7 @@
             loadingBar(false);
             if (res.status === 401) {
               let error = JSON.parse(res.responseText);
-              Swal.fire({
-                icon: 'info',
-                title: 'Please Login',
-                text: error.message
-              }).then((result)=>{
-                  window.location = '/';
-              });
+              notificationAlerts(res.status, error.message, 'login');
             } else if(res.status === 422) {
               let error = $.parseJSON(res.responseText);
                 Swal.fire({
@@ -376,8 +381,7 @@
               $.each(error.errors, function(key, value){
                 $(".keterangan_error").append('<b>Terdapat Error: </b><li>'+value+'</li>');
               });
-            }
-            else{
+            } else{
               $.each(error.errors, function(key, value){
                   $(".keterangan_error").append('<b>Terdapat Error: </b><li>'+value+'</li>');
                 });
@@ -389,24 +393,20 @@
                   title: 'Error Data Tidak Ditemukan',
                   text: error.messages
                 });
-              }
-              else{
-                Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text: "Status Code: "+res.status+": "+res.statusText
-                });
+              } else {
+                // Swal.fire({
+                //   icon: 'error',
+                //   title: 'Error',
+                //   text: "Status Code: "+res.status+": "+res.statusText
+                // });
+                notificationAlerts(statusCode, res, 'form');
               }
             } else {
-              Swal.fire({
-                  icon: 'error',
-                  title: 'Error',
-                  text: "Status Code: "+res.status+": "+res.statusText
-                });
-            }
+              notificationAlerts(statusCode, res, 'form');
           }
-      });
+      }
     });
+  });
       function loadingBar(condition){
         if (condition) {
           Swal.fire({
@@ -417,46 +417,37 @@
                 allowEnterKey: false,
                 showConfirmButton: false
           });
+          $(".keterangan_error").empty();
+          $(".keterangan_error").addClass('d-none');
         }
         else{
           Swal.close();
+          $(".keterangan_error").removeClass('d-none');
         }
-      };
+      }
       $("#modal_success").on('hidden.bs.modal', function(){
-        $(".keterangan_error").empty();
-        document.querySelector('.keterangan').value = '';
-        $(".count_keterangan_opsional").html('0 / 255 Karakter');
-        $(".error_count_opsional").prop('hidden', true);
-        // $(".btn_keterangan_opsional").prop('disabled', false);
-        modal_state = "";
+        resetKeterangan('modal', 'success');
       });
       $("#modal_menolak").on('hidden.bs.modal', function(){
-        $(".keterangan_error").empty();
-        document.querySelector('.keterangan').value = '';
-        $(".count_keterangan_wajib").html('0 / 255 Karakter');
-        $(".error_count_wajib").prop('hidden', true);
-        modal_state = "";
+        resetKeterangan('modal', 'menolak');
       });
       $("#modal_pengajuan_ulang").on('hidden.bs.modal', function(){
-        $(".keterangan_error").empty();
-        document.querySelector('.keterangan').value = '';
-        $(".count_keterangan_ulang").html('0 / 255 Karakter');
-        $(".error_count_ulang").prop('hidden', true);
-        modal_state = "";
+        resetKeterangan('modal', 'pengajuan_ulang');
       });
 
       function characterCount(str , stateKeterangan) {
         var lng = str.length;
-        if (stateKeterangan ==="keterangan_wajib" ) {
+        if (stateKeterangan === "keterangan_wajib" ) {
           document.querySelector('.count_keterangan_wajib').innerHTML = lng + ' / 255 Karakter'
           if (lng > 255) {
             $(".error_count_wajib").html('Keterangan melebihi '+lng+' / 255 Karakter');
             $(".error_count_wajib").prop('hidden', false);
             $(".btn_keterangan_wajib").prop('disabled' , true);
           } else {
-            $(".error_count_wajib").empty();
-            $(".error_count_wajib").prop('hidden', true);
-            $(".btn_keterangan_wajib").prop('disabled' , false);
+            // $(".error_count_wajib").empty();
+            // $(".error_count_wajib").prop('hidden', true);
+            // $(".btn_keterangan_wajib").prop('disabled' , false);
+            resetKeterangan('counter', stateKeterangan);
           } 
         } else if(stateKeterangan === "keterangan_ulang"){
           document.querySelector('.count_keterangan_ulang').innerHTML = lng + ' / 255 Karakter'
@@ -465,9 +456,10 @@
             $(".error_count_ulang").prop('hidden', false);
             $(".btn_keterangan_ulang").prop('disabled', true);
           } else {
-            $(".error_count_ulang").empty();
-            $(".error_count_ulang").prop('hidden', true);
-            $(".btn_keterangan_ulang").prop('disabled', false);
+            // $(".error_count_ulang").empty();
+            // $(".error_count_ulang").prop('hidden', true);
+            // $(".btn_keterangan_ulang").prop('disabled', false);
+            resetKeterangan('counter', stateKeterangan);
           } 
         } else if(stateKeterangan === 'keterangan_opsional'){
           document.querySelector('.count_keterangan_opsional').innerHTML = lng + ' / 255 Karakter'
@@ -476,10 +468,77 @@
             $(".error_count_opsional").prop('hidden', false);
             $(".btn_keterangan_opsional").prop('disabled', true);
           } else {
+            // $(".error_count_opsional").empty();
+            // $(".error_count_opsional").prop('hidden', true);
+            // $(".btn_keterangan_opsional").prop('disabled', false);
+            resetKeterangan('counter', stateKeterangan);
+          } 
+        }
+      }
+
+      function notificationAlerts(statusCode, statusMessage, type){
+        if (statusCode === 401 && type === 'login') {
+          Swal.fire({
+            icon: 'info',
+            title: 'Please Login',
+            text: statusMessage
+          }).then((result)=>{
+              window.location = '/';
+          });
+        } else {
+           if (type === 'getData') {
+            Swal.fire({
+              icon: 'error',
+              title : 'Error',
+              text: 'System Error Code: '+statusMessage.status+": "+statusMessage.statusText,
+              allowOutsideClick: false,
+              allowEscapeKey: false,
+              allowEnterKey: false
+            }).then((result) =>{
+              window.location = url_back_to;
+            });
+           } else if(type === 'form') {
+            Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: "Status Code: "+statusMessage.status+": "+statusMessage.statusText
+            });
+           }
+          //  console.log(statusMessage);
+        }
+      }
+
+      function resetKeterangan(type, keteranganType){
+        if (type === 'modal') {
+          $(".keterangan_error").empty();
+          $(".keterangan_error").addClass('d-none');
+          document.querySelector('.keterangan').value = '';
+          modal_state = "";
+          if (keteranganType === 'success') {
+            $(".count_keterangan_opsional").html('0 / 255 Karakter');
+            $(".error_count_opsional").prop('hidden', true);
+            // $(".btn_keterangan_opsional").prop('disabled', false);
+          } else if(keteranganType === 'menolak'){
+            $(".count_keterangan_wajib").html('0 / 255 Karakter');
+            $(".error_count_wajib").prop('hidden', true);
+          } else if(keteranganType === 'pengajuan_ulang'){
+            $(".count_keterangan_ulang").html('0 / 255 Karakter');
+            $(".error_count_ulang").prop('hidden', true);
+          }
+        } else if(type === 'counter') {
+          if (keteranganType === 'keterangan_wajib') {
+            $(".error_count_wajib").empty();
+            $(".error_count_wajib").prop('hidden', true);
+            $(".btn_keterangan_wajib").prop('disabled' , false);
+          } else if(keteranganType === 'keterangan_ulang'){
+            $(".error_count_ulang").empty();
+            $(".error_count_ulang").prop('hidden', true);
+            $(".btn_keterangan_ulang").prop('disabled', false);
+          } else if(keteranganType === 'keterangan_opsional'){
             $(".error_count_opsional").empty();
             $(".error_count_opsional").prop('hidden', true);
             $(".btn_keterangan_opsional").prop('disabled', false);
-          } 
+          }
         }
       }
       

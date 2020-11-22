@@ -191,13 +191,30 @@
                 success: function(res){
                     loading_bar(false);
                     console.log(res);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Sukses Mendapatkan Password Sementara',
-                        text: 'Password Anda: '+res.tempPass,
-                    }).then((result) => {
-                        location.reload(true);
-                    });
+                    if (res.data === '') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses Mendapatkan Password Sementara!',
+                            text: 'Silahkan Lihat Email Anda',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            allowEnterKey: false,
+                            allowEscapeKey: false,
+                            allowOutsideClick: false
+                        }).then((result) => {
+                            location.reload(true);
+                        });    
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Sukses Mendapatkan Password Sementara!',
+                            text: 'Password Sementara Anda: '+res.data
+                        }).then((result) => {
+                            location.reload(true);
+                        });
+                    }
+                    
                 },
                 error: function(res){
                     loading_bar(false);

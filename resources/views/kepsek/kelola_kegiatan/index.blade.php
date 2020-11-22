@@ -14,11 +14,11 @@
                         <table class="table table-bordered" id="pengajuan_kegiatan">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>ID Kegiatan</th>
                                     <th width="15%">Nama Kegiatan</th>
                                     <th>Nilai PPK</th>                                  
                                     <th>Kegiatan Berbasis</th>
-                                    <th>Timestamp Proposal</th>
+                                    <th>Pengiriman Proposal</th>
                                     <th>Nama Penanggung Jawab</th>
                                     <th width="20%">Status Proposal Kegiatan</th>  
                                     <th width="15%">Aksi</th>
@@ -50,6 +50,10 @@
                             <ul class="keterangan_kegiatan">
 
                             </ul>
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('nama_pj', 'Nama Penanggung Jawab:') !!}
+                            <input type="text" name="nama_pj" id="nama_pj" value="" class="form-control" disabled>
                         </div>
                         <div class="form-group">
                             {!! Form::label('PJ_nama_kegiatan', 'Nama Kegiatan:') !!}
@@ -113,11 +117,11 @@
             ajax: '{{route("kepsek.kelola_kegiatan.index")}}',
             columns:[
                 {data: 'id', name:'id'},
-                {data: 'PJ_nama_kegiatan', name:'PJ_nama_kegiatan'},
+                {data: 'PJ_nama_kegiatan', name:'PJ_nama_kegiatan', width: '5%'},
                 {data: 'nilai_ppk', name:'nilai_ppk'},
                 {data: 'kegiatan_berbasis', name: 'kegiatan_berbasis'},
                 {data: 'updated_at' , name: 'updated_at'},
-                {data: 'user.name' , name: 'user.name' },
+                {data: 'nama_pj' , name: 'nama_pj' },
                 {data: 'statusKegiatan', name: 'statusKegiatan.nama', orderable: false},
                 {data: 'data_pengajuan' , name: 'data_pengajuan', orderable: false}
             ],
@@ -137,6 +141,7 @@
                 $.get(url, function(res){
                     $("#showModal").modal();
                     //untuk data pengajuan => res.data
+                    $("#nama_pj").attr('value' , res.username);
                     $("#PJ_nama_kegiatan").attr('value' , res.data.PJ_nama_kegiatan);
                     var data_ppk = $.parseJSON(res.data.nilai_ppk);
                     // $(".value_nilai_ppk").find('[value = "'+res.data.nilai_ppk+'"]').attr('selected', 'selected');    
@@ -152,7 +157,7 @@
                             "background-color": "#4e73df",
                             "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "3rem",
+                            // "padding-bottom": "3rem",
                             "font-weight": 'bold'
                         });
                     $.each(keterangan, function(key, value){
@@ -187,7 +192,7 @@
                             "background-color": "#36b9cc",
                             "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "3rem",
+                            // "padding-bottom": "3rem",
                             "font-weight": 'bold'
                         });
                         
@@ -198,7 +203,7 @@
                             "background-color": "#e74a3b",
                             "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "3rem",
+                            // "padding-bottom": "3rem",
                             "font-weight": 'bold'
                         });
                         $(".status_kegiatan").append('<li>'+res.status_kegiatan.nama+'</li>');   
@@ -208,7 +213,7 @@
                             "background-color": "#f6c23e",
                             "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "3rem",
+                            // "padding-bottom": "3rem",
                             "font-weight": 'bold'
                         });
                         $(".status_kegiatan").append('<li>Sedang Melakukan '+res.status_kegiatan.nama+'</li>');   
@@ -218,7 +223,7 @@
                             "background-color": "#858796",
                             "color": "white",
                             "border-radius": "10px",
-                            "padding-bottom": "3rem",
+                            // "padding-bottom": "3rem",
                             "font-weight": 'bold'
                         });
                         $(".status_kegiatan").append('<li>Tidak terdapat Status</li>');   

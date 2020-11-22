@@ -40,9 +40,11 @@ Route::group(['middleware' => 'Admin'], function(){
         'store' => 'admin.user.store',
         'edit' => 'admin.user.edit',
         // 'destroy' => 'admin.user.destroy',
-        'update' => 'admin.user.update'
+        // 'update' => 'admin.user.update'
     ]]);
     
+    Route::post('/admin/users-update/{id}', 'AdminUserController@update')->name('admin.user.update');
+
     Route::post('/admin/users/{id}/delete', 'AdminUserController@destroy')->name('admin.user.destroy');
 
 });
@@ -50,7 +52,6 @@ Route::group(['middleware' => 'Admin'], function(){
 Route::group(['middleware' => 'PenanggungJawab'], function(){
 
     // Route::get('/penanggungjawab-home', 'PJController@index');
-
     //Dokumentasi index
     Route::get('/penanggung-jawab/unggah-dokumentasi-kegiatan', 'PJMengelolaKegiatanController@indexDokumentasi')->name('pj.dokumentasi_kegiatan.index');
 
@@ -69,21 +70,21 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
         'update' => 'pj.kelola_kegiatan.update'
     ]]);
 
-    //show unggah dokumentasi
-    Route::get('/penanggung-jawab/unggah-dokumentasi-kegiatan/{dokumentasi_kegiatan}/edit', 'PJMengelolaKegiatanController@editDokumentasi')
-    ->name('pj.dokumentasi_kegiatan.edit');
 
+   
     //show unggah dokumentasi ulang
     // Route::get('/penanggung-jawab/mengelola-kegiatan/dokumentasi-kegiatan/{dokumentasi_kegiatan}/edit-ulang', 'PJMengelolaKegiatanController@editDokumentasiUlang')
     // ->name('pj.dokumentasi_kegiatan.edit_ulang');
-
+    Route::post('/penanggung-jawab/dokumentasi-kegiatan-ulang/{dokumentasi_kegiatan}/pengajuan-ulang', 'PJMengelolaKegiatanController@uploadDokumentasiUlang')->name('pj.dokumentasi_kegiatan.pengajuan_ulang');
     Route::post('/penanggung-jawab/unggah-dokumentasi-kegiatan/{dokumentasi_kegiatan}', 'PJMengelolaKegiatanController@uploadDokumentasi')->name('pj.dokumentasi_kegiatan.upload');
 
     Route::post('/penanggung-jawab/unggah-dokumentasi-kegiatan/dokumentasi-kegiatan/baru', 'PJMengelolaKegiatanController@uploadDokumentasiBaru')->name('pj.dokumentasi_kegiatan.upload_baru');
-
+     //Unggah Dokumentasi Ulang
     //show sukses unggah dokumentasi dan belum disetujui dokumentasi
     Route::get('/penanggung-jawab/unggah-dokumentasi-kegiatan/dokumentasi/{dokumentasi_kegiatan}', 'PJMengelolaKegiatanController@showDokumentasi')
     ->name('pj.dokumentasi_kegiatan.show');
+    Route::get('/penanggung-jawab/unggah-dokumentasi-kegiatan/{dokumentasi_kegiatan}/edit', 'PJMengelolaKegiatanController@editDokumentasi')
+    ->name('pj.dokumentasi_kegiatan.edit');
 
     Route::post('/penanggung-jawab/dokumentasi-kegiatan/upload-dokumen-baru/{id_dokumentasi}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiBaru')->name('pj.dokumentasi_kegiatan.uploadDokumenBaru');
     Route::post('/penanggung-jawab/dokumentasi-kegiatan/edit-dokumen-dokumentasi/{status_dokumen}/{id}/{id_dokumen}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiEdit')->name('pj.dokumentasi_kegiatan.editDokumenDokumentasi');
@@ -97,17 +98,15 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
     Route::post('/penanggung-jawab/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('pj.userprofile.check');
     Route::post('/penanggung-jawab/user-profile/change-pass' , 'UserProfileController@update')->name('pj.userprofile.update');
     
-    Route::get('/penanggung-jawab/search-notification/{search_notification}/search', 'UserProfileController@searchNotification')->name('pj.notification.searchNotify');
-    Route::get('/penanggung-jawab/notifications', 'UserProfileController@getAllNotifications')->name('pj.userprofile.getAllNotify');
-    Route::get('/penanggung-jawab/filter-notifications/{filterChoice}' , 'UserProfileController@orderByNotification')->name('pj.userprofile.orderNotify');
-    Route::get('/penanggung-jawab/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UserProfileController@orderByTwoChoiceNotifications')->name('pj.userprofile.orderTwoConditionNotify');
-    Route::put('/penanggung-jawab/read-notification/', 'UserProfileController@readNotification')->name('pj.userprofile.readNotificationFromProfile');
+    Route::get('/penanggung-jawab/search-notification/{search_notification}/search', 'UsersNotificationController@searchNotification')->name('pj.notification.searchNotify');
+    Route::get('/penanggung-jawab/notifications', 'UsersNotificationController@getAllNotifications')->name('pj.userprofile.getAllNotify');
+    Route::get('/penanggung-jawab/filter-notifications/{filterChoice}' , 'UsersNotificationController@orderByNotification')->name('pj.userprofile.orderNotify');
+    Route::get('/penanggung-jawab/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UsersNotificationController@orderByTwoChoiceNotifications')->name('pj.userprofile.orderTwoConditionNotify');
+    // Route::put('/penanggung-jawab/read-notification/', 'UserProfileController@readNotification')->name('pj.userprofile.readNotificationFromProfile');
+    Route::get('/penanggung-jawab/redirect', 'UsersNotificationController@linkAccessNotification')->name('pj.userprofile.links');
     /**
      * Commented Routes => For uses later
      */
-
-    //Unggah Dokumentasi Ulang
-    // Route::put('/penanggung-jawab/mengelola-kegiatan/dokumentasi-kegiatan-ulang/{dokumentasi_kegiatan}', 'PJMengelolaKegiatanController@uploadDokumentasiUlang');
 
     // Route::post('/penanggung-jawab/mengelola-kegiatan/delete', 'PJMengelolaKegiatanController@destroy');
 
@@ -154,11 +153,17 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
         'show' => 'kepsek.kelola_kegiatan.show',
         'update' => 'kepsek.kelola_kegiatan.update'
     ]]);
-    Route::get('/kepala-sekolah/mengelola-kegiatan/get-data/{id}', 'KepalaSekolahMengelolaKegiatanController@get_data_dan_dokumen_pengajuan')->name('pj.kelola_kegiatan.data_kegiatan');
+    // Route::get('/kepala-sekolah/mengelola-kegiatan/get-data/{id}', 'KepalaSekolahMengelolaKegiatanController@get_data_dan_dokumen_pengajuan')->name('pj.kelola_kegiatan.data_kegiatan');
 
     //route for showdokumentasi => alias sudahnya Acc/Not dokumentasi kegiatan, menunggu keputusan dari pj
     Route::get('/kepala-sekolah/dokumentasi-kegiatan/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@showDokumentasi')
     ->name('kepsek.pengajuan_dokumentasi_kegiatan.show');
+    Route::get('/kepala-sekolah/dokumentasi-kegiatan/{dokumentasi_kegiatan}/edit', 'KepalaSekolahMengelolaKegiatanController@editDokumentasi')
+    ->name('kepsek.pengajuan_dokumentasi_kegiatan.edit');
+    Route::get('/kepala-sekolah/get-kegiatan/{dokumentasi_kegiatan}/{type_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@get_data_kegiatan')
+    ->name('kepsek.pengajuan_dokumentasi_kegiatan.get_kegiatan');
+    Route::put('/kepala-sekolah/dokumentasi-kegiatan/{dokumentasi_kegiatan}/keputusan', 'KepalaSekolahMengelolaKegiatanController@updateDokumentasi')
+    ->name('kepsek.pengajuan_dokumentasi_kegiatan.update');
 
     // Route::get('/kepala-sekolah/dokumentasi-kegiatan/getDataDokumen/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@getDokumenDokumentasiPJ')
     // ->name('kepsek.pengajuan_dokumentasi_kegiatan.getDataDokumen');
@@ -185,18 +190,18 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
 
     Route::post('/kepala-sekolah/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('kepsek.userprofile.check');
     Route::post('/kepala-sekolah/user-profile/change-pass' , 'UserProfileController@update')->name('kepsek.userprofile.update');
-    Route::get('/kepala-sekolah/search-notification/{search_notification}/search', 'UserProfileController@searchNotification')->name('kepsek.notification.searchNotify');
-    Route::get('/kepala-sekolah/notifications', 'UserProfileController@getAllNotifications')->name('kepsek.userprofile.getAllNotify');
-    Route::get('/kepala-sekolah/filter-notifications/{filterChoice}' , 'UserProfileController@orderByNotification')->name('kepsek.userprofile.orderNotify');
-    Route::get('/kepala-sekolah/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UserProfileController@orderByTwoChoiceNotifications')->name('kepsek.userprofile.orderTwoConditionNotify');
-    Route::put('/kepala-sekolah/read-notification/', 'UserProfileController@readNotification')->name('kepsek.userprofile.readNotificationFromProfile');
+    Route::get('/kepala-sekolah/search-notification/{search_notification}/search', 'UsersNotificationController@searchNotification')->name('kepsek.notification.searchNotify');
+    Route::get('/kepala-sekolah/notifications', 'UsersNotificationController@getAllNotifications')->name('kepsek.userprofile.getAllNotify');
+    Route::get('/kepala-sekolah/filter-notifications/{filterChoice}' , 'UsersNotificationController@orderByNotification')->name('kepsek.userprofile.orderNotify');
+    Route::get('/kepala-sekolah/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UsersNotificationController@orderByTwoChoiceNotifications')->name('kepsek.userprofile.orderTwoConditionNotify');
+    // Route::put('/kepala-sekolah/read-notification/', 'UsersNotificationController@readNotification')->name('kepsek.userprofile.readNotificationFromProfile');
+    Route::get('/kepala-sekolah/redirect', 'UsersNotificationController@linkAccessNotification')->name('kepsek.userprofile.links');
     /**
      * Commented Routes => For uses later
      */
 
     //route for editdokumentasi => alias mengajukan acc/pengajuan ulang dokumentasi kegiatan dari pj
-    // Route::get('/kepala-sekolah/mengelola-kegiatan/dokumentasi-kegiatan/{dokumentasi_kegiatan}/edit', 'KepalaSekolahMengelolaKegiatanController@editDokumentasi')
-    // ->name('kepsek.pengajuan_dokumentasi_kegiatan.edit');
+    
 
     //for editdokumentasiulang => alias untuk pengajuan ulang dokumentasi kegiatan
     // Route::get('/kepala-sekolah/mengelola-kegiatan/dokumentasi-kegiatan-ulang/{dokumentasi_kegiatan}/edit', 'KepalaSekolahMengelolaKegiatanController@editDokumentasiUlang')
@@ -204,7 +209,6 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
 
     // Route::put('/kepala-sekolah/mengelola-kegiatan/dokumentasi-kegiatan/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@updateDokumentasi');
 
-    // Route::put('/kepala-sekolah/mengelola-kegiatan/dokumentasi-kegiatan-ulang/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@updateDokumentasiUlang');
     // Route::resource('/kepala-sekolah/mengelola-dokumentasi-kegiatan', 'KepalaSekolahDokumentasiController', ['names' => [
     //     'index' => 'kepsek.dokumentasi_kegiatan.index',
     //     'show' => 'kepsek.dokumentasi_kegiatan.show',
