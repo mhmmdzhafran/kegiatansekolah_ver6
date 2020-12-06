@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<b style="font-size: 5vh"><a class="btn btn-info rounded-pill float float-left" href="{{route("kepsek.pengajuan_dokumentasi_kegiatan.index")}}"><i class="fas fa-arrow-alt-circle-left mr-2"></i>Back</a></b><br>
+<b style="font-size: 5vh"><a class="btn btn-info rounded-pill float float-left" id="back-button" href="{{route("kepsek.pengajuan_dokumentasi_kegiatan.index")}}"><i class="fas fa-arrow-alt-circle-left mr-2"></i>Back</a></b><br>
     <div class="row">
       <div class="col-12">
         <h2 class="text-center">Penerimaan Laporan Kegiatan Penguatan Pendidikan Karakter</h2>
@@ -128,7 +128,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Persetujuan Laporan Kegiatan</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -147,12 +147,12 @@
                     {!! Form::label('keterangan', 'Keterangan(Opsional):') !!}
                     {!! Form::textarea('keterangan', null , ['class' => 'form-control keterangan', 'onkeyup' => 'characterCount(this.value, "keterangan_opsional")']) !!}
                     <div class="error_count_opsional alert alert-danger mt-2" hidden></div>
-                    <div class="float-right count_keterangan_opsional">0 / 225 Karakter</div>
+                    <div class="float-right count_keterangan_opsional">0 / 255 Karakter</div>
                 </div>
              
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
           {!! Form::submit('Menerima Kegiatan', ['class' => 'btn btn-success btn_keterangan_opsional']) !!}
           {!! Form::close() !!}
         </div>
@@ -165,7 +165,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Pengajuan Ulang Laporan Kegiatan</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -184,12 +184,12 @@
                 {!! Form::label('keterangan_wajib_ulang', 'Keterangan(Wajib):') !!}
                 {!! Form::textarea('keterangan', null , ['class' => 'form-control keterangan', 'onkeyup' => 'characterCount(this.value , "keterangan_ulang")']) !!}
                 <div class="error_count_ulang alert alert-danger mt-2" hidden></div>
-                <div class="float-right count_keterangan_ulang">0 / 225 Karakter</div>
+                <div class="float-right count_keterangan_ulang">0 / 255 Karakter</div>
             </div>
         
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
           {!! Form::submit('Lakukan Pengajuan Ulang Kegiatan', ['class' => 'btn btn-warning btn_keterangan_ulang']) !!}
           {!! Form::close() !!}
         </div>
@@ -197,7 +197,7 @@
     </div>
   </div>
 
- <!-- Modal to show file -->
+ {{-- <!-- Modal to show file -->
  <div class="modal fade" id="myModal" role="dialog">
   <div class="modal-dialog modal-dialog-centered">
   
@@ -214,7 +214,7 @@
                       </div>
                   </div>    
               </div>
-          </div>
+          </div> --}}
           
 @endsection
 
@@ -226,6 +226,7 @@
       let modalState = "";
       let url_get_data = '/kepala-sekolah/get-kegiatan/dokumentasi_kegiatan/type_kegiatan/';
       const value = document.getElementsByName('id-doc-evt').item(0).getAttribute('value');
+      const backButtonElement = document.getElementById('back-button');
       let statusData = true;
       url_get_data = url_get_data.replace('dokumentasi_kegiatan' , value);
       url_get_data = url_get_data.replace('type_kegiatan' , 'dokumentasi');
@@ -273,14 +274,12 @@
               const imgName = element.nama_foto_kegiatan;
               let assets = '{{asset("kegiatan/dokumentasi_kegiatan/image")}}';
               assets = assets.replace('image' , imgName);
-              $("#img_upload").append('<img class="rounded-circle mb-2 mt-2 mr-2" src="'+assets+'" alt="" width="150" height="150">'+imgName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+assets+'">Lihat Dokumen</button><a href="'+assets+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+imgName+'">Download File</a><br>');
+              $("#img_upload").append('<img class="rounded-circle mb-2 mt-2 mr-2" src="'+assets+'" alt="" width="150" height="150">'+imgName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+assets+'">Lihat File</button><a href="'+assets+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+imgName+'">Download File</a><br>');
             });  
           } else {
             $("#img_upload").append('<ol><li class="mb-2">'+image_kegiatan+'</li></ol>');
-          }
-          
+          } 
         }
-        
       }).done(function(){
         const spinner = document.getElementsByClassName('spinner-border');
         const nilaiPPK = document.getElementById('nilai_ppk_group');
@@ -307,6 +306,12 @@
         } else {
           errorNotifications(responseError.status, responseError, 'getData');
         }
+      });
+
+      backButtonElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        const link = backButtonElement.getAttribute('href');
+        window.location.replace(link);
       });
 
       $(document).on('click', '.button_show', function(){
@@ -396,6 +401,8 @@
         });
       });
 
+      
+
       function loadingBar(condition){
         if (condition) {
           Swal.fire({
@@ -418,18 +425,18 @@
       function characterCount(str , stateKeterangan) {
         var lng = str.length;
         if(stateKeterangan === "keterangan_ulang"){
-          document.querySelector('.count_keterangan_ulang').innerHTML = lng + ' / 225 Karakter'
-          if (lng > 225) {
-            $(".error_count_ulang").html('Keterangan melebihi '+lng+' / 225 Karakter');
+          document.querySelector('.count_keterangan_ulang').innerHTML = lng + ' / 255 Karakter'
+          if (lng > 255) {
+            $(".error_count_ulang").html('Keterangan melebihi '+lng+' / 255 Karakter');
             $(".error_count_ulang").prop('hidden', false);
             $(".btn_keterangan_ulang").prop('disabled', true);
           } else {
             resetKeterangan('counter' , stateKeterangan);
           } 
         } else if(stateKeterangan === 'keterangan_opsional'){
-          document.querySelector('.count_keterangan_opsional').innerHTML = lng + ' / 225 Karakter'
-          if (lng > 225) {
-            $(".error_count_opsional").html('Keterangan melebihi '+lng+' / 225 Karakter');
+          document.querySelector('.count_keterangan_opsional').innerHTML = lng + ' / 255 Karakter'
+          if (lng > 255) {
+            $(".error_count_opsional").html('Keterangan melebihi '+lng+' / 255 Karakter');
             $(".error_count_opsional").prop('hidden', false);
             $(".btn_keterangan_opsional").prop('disabled', true);
           } else {
@@ -514,12 +521,15 @@
           document.querySelector('.keterangan').value = '';
           modalState = "";
           if (keteranganType === 'menerima') {  
-            $(".count_keterangan_opsional").html('0 / 225 Karakter');
+            $(".count_keterangan_opsional").html('0 / 255 Karakter');
             $(".error_count_opsional").prop('hidden', true);
           } else if(keteranganType === 'pengajuan_ulang'){
-            $(".count_keterangan_ulang").html('0 / 225 Karakter');
+            $(".count_keterangan_ulang").html('0 / 255 Karakter');
             $(".error_count_ulang").prop('hidden', true);
           }
+          $("textarea").each(function(){
+            $(this).val('');
+          });
         } else if(type === 'counter'){
           if (keteranganType === 'keterangan_opsional') {
             $(".error_count_opsional").empty();

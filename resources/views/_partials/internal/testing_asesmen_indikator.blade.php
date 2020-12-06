@@ -151,7 +151,7 @@
             @method("PUT")
             <div class="row">
             <div class="col-lg-12 col-sm-12">
-            <ul id="error_indikator_{{$counter_modal_asesmen}}" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
+            <ul id="error_indikator_{{$counter_modal_asesmen}}" class="d-none" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
               @foreach ($json_assessmen as $item)
               @if ($item->no == $counter_modal_asesmen)
                   @if (!empty($item->penjelasan_assessment))
@@ -162,6 +162,7 @@
                               Skor Asesmen: {{ $item->skor_penilaian_assessment }}
                           </li>
                           
+                        <input type="hidden" id="previous-score_{{$counter_modal_asesmen}}" value="{{ $item->skor_penilaian_assessment }}">
                        {{-- <input type="hidden" name="indikator" value="{{ $item->skor_penilaian_assessment }}"> --}}
                       </ul>
                   </div>
@@ -206,7 +207,7 @@
               <input type="hidden" value="{{ $assessment->id }}" id="id_assessmen" name="id">
               <input type="hidden" name="assessment" value="{{ $counter_modal_asesmen }}">
               <hr>
-              <div class="alert alert-info alert-heading font-weight-bolder mb-2">*Jika Ingin Menambah Dokumen Asesmen PPK / Mengubah Nilai Asesmen PPK, Isi bagian yang diperlukan!</div>
+              <div class="alert alert-info alert-heading font-weight-bolder mb-2 information-asesment d-none"></div>
               <h4 class="font-weight-bolder text-dark">Pilih Skor Asesmen</h4>
               <div class="checkbox-keterangan-indikator"></div>
               <hr>

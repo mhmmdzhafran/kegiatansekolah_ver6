@@ -9995,7 +9995,8 @@ a:focus {
   padding: 0;
   border: none;
   overflow-y: scroll;
-  height: 80vh;
+  max-height: 80vh;
+  min-height: auto;
 }
 
 .topbar .dropdown-list .dropdown-header {

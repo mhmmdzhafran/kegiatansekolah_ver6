@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-<b style="font-size: 5vh"><a class="btn btn-info rounded-pill float float-left" href="{{route("kepsek.kelola_kegiatan.index")}}"><i class="fas fa-arrow-alt-circle-left mr-2"></i>Back</a></b><br>
+<b style="font-size: 5vh"><a class="btn btn-info rounded-pill float float-left" id="back-button" href="{{route("kepsek.kelola_kegiatan.index")}}"><i class="fas fa-arrow-alt-circle-left mr-2"></i>Back</a></b><br>
 <div class="row">
   <div class="col-12">
     <h2 class="text-center">Penerimaan Proposal Kegiatan Penguatan Pendidikan Karakter</h2>
@@ -144,7 +144,7 @@
              
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
           {!! Form::submit('Menerima Kegiatan', ['class' => 'btn btn-success btn_keterangan_opsional']) !!}
           {!! Form::close() !!}
         </div>
@@ -181,7 +181,7 @@
         
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
           {!! Form::submit('Lakukan Pengajuan Ulang Kegiatan', ['class' => 'btn btn-warning btn_keterangan_ulang']) !!}
           {!! Form::close() !!}
         </div>
@@ -219,14 +219,14 @@
             
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
           {!! Form::submit('Menolak Kegiatan', ['class' => 'btn btn-danger btn_keterangan_wajib']) !!}
           {!! Form::close() !!}
         </div>
       </div>
     </div>
   </div>
-  {!! Form::close() !!}
+  {{-- {!! Form::close() !!} --}}
 @endsection
 
 @section('script')
@@ -235,6 +235,7 @@
       $("textarea").each(function(){
         $(this).val('');
       });
+      const backButtonElement = document.getElementById('back-button');
       var url_back_to = '{{route("kepsek.kelola_kegiatan.index")}}';
       let statusData = true;
       // var url_redirect = "";
@@ -425,6 +426,13 @@
           $(".keterangan_error").removeClass('d-none');
         }
       }
+
+      backButtonElement.addEventListener('click', (e) => {
+        e.preventDefault();
+        const links = backButtonElement.getAttribute('href');
+        window.location.replace(links);
+      });
+
       $("#modal_success").on('hidden.bs.modal', function(){
         resetKeterangan('modal', 'success');
       });
@@ -525,6 +533,9 @@
             $(".count_keterangan_ulang").html('0 / 255 Karakter');
             $(".error_count_ulang").prop('hidden', true);
           }
+          $("textarea").each(function(){
+            $(this).val('');
+          });
         } else if(type === 'counter') {
           if (keteranganType === 'keterangan_wajib') {
             $(".error_count_wajib").empty();

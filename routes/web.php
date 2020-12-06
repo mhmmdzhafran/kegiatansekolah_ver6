@@ -176,8 +176,8 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     ]]);
     
     Route::post('/kepala-sekolah/asesmen-ppk/store', 'KepalaSekolahAssessmenController@store')->name('kepsek.asesmen.store');
-    Route::get('/kepala-sekolah/asesmen-ppk/dokumen/{id_asesmen}/{id}', 'KepalaSekolahAssessmenController@ambil_data_dan_dokumen_table')->name('kepsek.asesmen.ambilDoc');
-    Route::get('/kepala-sekolah/asesmen-ppk/get-skor/{id_asesmen}/{id_indikator}/{skor_indikator}', 'KepalaSekolahAssessmenController@ambil_skor_dan_dokumen_table')->name('kepsek.asesmen.ambilSkor');
+    Route::get('/kepala-sekolah/asesmen-ppk/dokumen/{id_asesmen}/{id}', 'KepalaSekolahAssessmenController@ambil_data_detail_asesmen')->name('kepsek.asesmen.ambilDetail');
+    Route::get('/kepala-sekolah/asesmen-ppk/get-skor/{id_asesmen}/{id_indikator}/{skor_indikator}', 'KepalaSekolahAssessmenController@getSaranSkorDanDokumenAsesmen')->name('kepsek.asesmen.ambilSkor');
     Route::put('/kepala-sekolah/asesmen-ppk/save/{id}', 'KepalaSekolahAssessmenController@update')->name('kepsek.asesmen.update');
     Route::put('/kepala-sekolah/asesmen-ppk/save_info/{id_info}', 'KepalaSekolahAssessmenController@update_informasi')->name('kepsek.asesmen.update_informasi');
     Route::put('/kepala-sekolah/asesmen-ppk/update_dokumen/{file_name}/{id_indikator}/{id_asesmen}', 'KepalaSekolahAssessmenController@updateDokumen')->name('kepsek.asesmen.updateDoc');

@@ -191,6 +191,8 @@
                 success: function(res){
                     loading_bar(false);
                     console.log(res);
+                    $('#modal_forget_pass').modal('hide');
+                    $('[name = "username_id_user"]').empty();
                     if (res.data === '') {
                         Swal.fire({
                             icon: 'success',

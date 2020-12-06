@@ -7,7 +7,7 @@
 @section('content')
     <div class="row">
         <div class="col-lg-12">
-            <h1>Dokumentasi Kegiatan Penanggung Jawab</h1>
+            <h1>Laporan Kegiatan Penanggung Jawab</h1>
         </div>
     </div>
         <div class="row">
@@ -370,7 +370,7 @@
                         res.image_kegiatan.forEach(item_image => {
                             let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
                             asset_url = asset_url.replace("asset_dokumen" , item_image.nama_foto_kegiatan);
-                            $(".dokumentasi_kegiatan").append('<li class="mb-2"><img class="rounded-circle mb-2 mt-2 mr-2" src="'+asset_url+'" alt="" width="150" height="150">'+item_image.nama_foto_kegiatan+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_image.nama_foto_kegiatan+'">Download File</a></li>');                                
+                            $(".dokumentasi_kegiatan").append('<li class="mb-2"><img class="rounded-circle mb-2 mt-2 mr-2" src="'+asset_url+'" alt="" width="150" height="150">'+item_image.nama_foto_kegiatan+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat File</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_image.nama_foto_kegiatan+'">Download File</a></li>');                                
                         });
                     }
                 }).done(function(){

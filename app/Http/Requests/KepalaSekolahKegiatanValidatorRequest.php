@@ -25,13 +25,13 @@ class KepalaSekolahKegiatanValidatorRequest extends FormRequest
     {
         return [
             //
-            'keterangan' => 'max:225'
+            'keterangan' => 'max:255'
         ];
     }
     public function messages()
     {
         return [
-            'keterangan.max' => 'Karakter dalam Keterangan melebihi 225 kata'
+            'keterangan.max' => 'Karakter dalam Keterangan melebihi 255 kata'
         ];
     }
 }

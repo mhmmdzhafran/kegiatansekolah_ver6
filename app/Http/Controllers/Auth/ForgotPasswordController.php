@@ -41,7 +41,7 @@ class ForgotPasswordController extends Controller
     public function changeUserPassword(TempPasswordValidationRequest $request){
         $user = User::where('username_id' , $request->username_id_user)->first();
         if (is_null($user)) {
-            return Response::json(['errors' => ['Tidak Menemukan User Dengan Nama: '.$request->username_id_user." Silahkan Masukkan Username Kembali"]], 422);
+            return Response::json(['errors' => ['Tidak Menemukan User Dengan Username: '.$request->username_id_user." Silahkan Masukkan Username Kembali!"]], 422);
         }
         $passGenerate = $this->createTempPassword();
         $input['password'] = bcrypt($passGenerate);

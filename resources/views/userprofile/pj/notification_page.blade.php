@@ -113,7 +113,7 @@
         if (searchData !== "") {
             if (state_2 !== "") {
                 //masuk ke two conditions  
-                url = '/penanggung-jawab/filter-two/notifications/'+searchData+'/'+text_state_2;
+                url = '/penanggung-jawab/filter-notifications-by/'+searchData+'/'+text_state_2;
                 window.axios.get(url)
                     .then((response) => {
                         console.log(response.data);
@@ -124,6 +124,7 @@
                         textSearch.innerText="Pencarian: "+searchData;
                         page = 1;
                     }).catch((responseError) => {
+                        console.log(responseError);
                         errorNotifications(responseError.response.status, responseError.response);
                     });
             } else {

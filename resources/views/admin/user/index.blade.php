@@ -35,161 +35,161 @@
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal fade" id="DeleteModal"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog " role="document">
-          <!-- Modal content-->
-          <form action="" id="deleteForm" method="post">
-            {{-- @method("DELETE") --}}
-              <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Penghapusan User</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
+        <div class="modal fade" id="DeleteModal"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog " role="document">
+              <!-- Modal content-->
+              <form action="" id="deleteForm" method="post">
+                {{-- @method("DELETE") --}}
+                  <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Penghapusan User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                          {{ csrf_field() }}
+                          <p class="user_data"></p>
+                          <input type="hidden" name="id_value" id="ids" value = "">
+                      </div>
+                      <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+                              <button type="submit" name="" class="btn btn-danger">Yes, Delete</button>
+                      </div>
                   </div>
-                  <div class="modal-body">
-                      {{ csrf_field() }}
-                      <p class="user_data"></p>
-                      <input type="hidden" name="id_value" id="ids" value = "">
-                  </div>
-                  <div class="modal-footer">
-                          <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                          <button type="submit" name="" class="btn btn-danger">Yes, Delete</button>
-                  </div>
-              </div>
-          </form>
+              </form>
+            </div>
         </div>
-       </div>
-       
-      <div class="modal fade" id="createModal"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog " role="document">
-          <!-- Modal content-->
-          <form action="" id="createUserForm" method="post" autocomplete="off">
-            {{-- {{ method_field('POST') }} --}}
-              <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Pembuatan User</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
+           
+          <div class="modal fade" id="createModal"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog " role="document">
+              <!-- Modal content-->
+              <form action="" id="createUserForm" method="post" autocomplete="off">
+                {{-- {{ method_field('POST') }} --}}
+                  <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Pembuatan User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                          {{ csrf_field() }}
+                          <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
+    
+                          </ul>
+                          <div class="form-group">
+                            {!! Form::label('name', 'Name:') !!}
+                            {!! Form::text('name', null , ['class' => 'form-control']) !!}
+                        </div>
+                    
+                        <div class="form-group">
+                            {!! Form::label('username_id', 'Username:') !!}
+                            {!! Form::text('username_id', null , ['class' => 'form-control']) !!}
+                        </div>
+    
+                        <div class="form-group">
+                            {!! Form::label('email_user', 'Email User:') !!}
+                            {!! Form::email('email_user', null , ['class' => 'form-control']) !!}
+                        </div>
+                    
+                        <div class="form-group">
+                            {!! Form::label('role_id', 'Role:') !!}
+                            {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control']) !!}
+                        </div>
+    
+                        <div class="form-group">
+                            {!! Form::label('image_user', 'Upload Foto User:') !!}
+                            <div class="form-group text-center">
+                                <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="250" height="250" style="border-radius: 50%; border: 1px solid black" class="change_foto mb-2">
+                                {!! Form::file('photo_user', ['class' => 'file_img ml-5' , 'id' => '1']) !!}
+                            </div>
+                        </div>
+    
+                        <div class="form-group">
+                            {!! Form::label('password', 'Masukkan Password:') !!}
+                            {!! Form::password('password', ['class' => 'form-control password']) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('passwordChecker', 'Masukkan Password Kembali:') !!}
+                            {!! Form::password('passwordChecker', ['class' => 'form-control passwordChecker']) !!}
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary bentuk_user">Buat User Baru</button>
+                      </div>
                   </div>
-                  <div class="modal-body">
-                      {{ csrf_field() }}
-                      <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
-
-                      </ul>
-                      <div class="form-group">
-                        {!! Form::label('name', 'Name:') !!}
-                        {!! Form::text('name', null , ['class' => 'form-control']) !!}
-                    </div>
-                
-                    <div class="form-group">
-                        {!! Form::label('username_id', 'Username:') !!}
-                        {!! Form::text('username_id', null , ['class' => 'form-control']) !!}
-                    </div>
-
-                    <div class="form-group">
-                        {!! Form::label('email_user', 'Email User:') !!}
-                        {!! Form::email('email_user', null , ['class' => 'form-control']) !!}
-                    </div>
-                
-                    <div class="form-group">
-                        {!! Form::label('role_id', 'Role:') !!}
-                        {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control']) !!}
-                    </div>
-
-                    <div class="form-group">
-                        {!! Form::label('image_user', 'Upload Foto User:') !!}
+              </form>
+            </div>
+        </div>
+    
+        <div class="modal fade" id="editForm"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-keyboard="false" data-backdrop="static">
+            <div class="modal-dialog " role="document">
+              <!-- Modal content-->
+              <form action="" id="editUserForm" autocomplete="off">
+                {{-- @method("PUT") --}}
+                {{ csrf_field() }}
+                  <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Pengubahan User</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                          
+                          <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
+    
+                          </ul>
+                          <div class="form-group">
+                            {!! Form::label('name', 'Name:') !!}
+                            <input type="text" name="name" value="" class="form-control nama_user">
+                        </div>
+                    
+                        <div class="form-group">
+                            {!! Form::label('username_id', 'Username:') !!}
+                            <input type="text" name="username_id" value="" class="form-control username_id">                        
+                        </div>
+    
+                        <div class="form-group">
+                            {!! Form::label('email_user', 'Email User:') !!}
+                            {!! Form::email('email_user', null , ['class' => 'form-control email_user']) !!}
+                        </div>
+                    
+                        <div class="form-group">
+                            {!! Form::label('role_id', 'Role:') !!}
+                            {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control role_user']) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('last_file','File Sebelumnya: ') !!}
+                            <ol class="load-file"></ol>
+                        </div>
+                        {!! Form::label('image_user','Upload Foto User: ') !!}
                         <div class="form-group text-center">
                             <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="250" height="250" style="border-radius: 50%; border: 1px solid black" class="change_foto mb-2">
-                            {!! Form::file('photo_user', ['class' => 'file_img ml-5' , 'id' => '1']) !!}
+                            {!! Form::file('photo_user', ['class' => 'file_img ml-5' , 'id' => '2']) !!}
                         </div>
-                    </div>
-
-                    <div class="form-group">
-                        {!! Form::label('password', 'Masukkan Password:') !!}
-                        {!! Form::password('password', ['class' => 'form-control password']) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('passwordChecker', 'Masukkan Password Kembali:') !!}
-                        {!! Form::password('passwordChecker', ['class' => 'form-control passwordChecker']) !!}
-                    </div>
+    
+                        <div class="form-group">
+                            {!! Form::label('password', 'Masukkan Password:') !!}
+                            {!! Form::password('password', ['class' => 'form-control password']) !!}
+                        </div>
+                        <div class="form-group">
+                            {!! Form::label('passwordChecker', 'Masukkan Password Kembali:') !!}
+                            {!! Form::password('passwordChecker', ['class' => 'form-control passwordChecker']) !!}
+                        </div>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning edit_user">Edit User</button>
+                      </div>
                   </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary bentuk_user">Buat User Baru</button>
-                  </div>
-              </div>
-          </form>
+              </form>
+            </div>
         </div>
-       </div>
-
-       <div class="modal fade" id="editForm"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-        <div class="modal-dialog " role="document">
-          <!-- Modal content-->
-          <form action="" id="editUserForm" autocomplete="off">
-            {{-- @method("PUT") --}}
-            {{ csrf_field() }}
-              <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Pengubahan User</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                      
-                      <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
-
-                      </ul>
-                      <div class="form-group">
-                        {!! Form::label('name', 'Name:') !!}
-                        <input type="text" name="name" value="" class="form-control nama_user">
-                    </div>
-                
-                    <div class="form-group">
-                        {!! Form::label('username_id', 'Username:') !!}
-                        <input type="text" name="username_id" value="" class="form-control username_id">                        
-                    </div>
-
-                    <div class="form-group">
-                        {!! Form::label('email_user', 'Email User:') !!}
-                        {!! Form::email('email_user', null , ['class' => 'form-control email_user']) !!}
-                    </div>
-                
-                    <div class="form-group">
-                        {!! Form::label('role_id', 'Role:') !!}
-                        {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control role_user']) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('last_file','File Sebelumnya: ') !!}
-                        <ol class="load-file"></ol>
-                    </div>
-                    {!! Form::label('image_user','Upload Foto User: ') !!}
-                    <div class="form-group text-center">
-                        <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="250" height="250" style="border-radius: 50%; border: 1px solid black" class="change_foto mb-2">
-                        {!! Form::file('photo_user', ['class' => 'file_img ml-5' , 'id' => '2']) !!}
-                    </div>
-
-                    <div class="form-group">
-                        {!! Form::label('password', 'Masukkan Password:') !!}
-                        {!! Form::password('password', ['class' => 'form-control password']) !!}
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('passwordChecker', 'Masukkan Password Kembali:') !!}
-                        {!! Form::password('passwordChecker', ['class' => 'form-control passwordChecker']) !!}
-                    </div>
-                  </div>
-                  <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          <button type="submit" class="btn btn-primary edit_user">Edit User</button>
-                  </div>
-              </div>
-          </form>
-        </div>
-       </div>
+    </div>
 @endsection
 @section('script')
 <script>
@@ -232,20 +232,26 @@
         url = '{{route("admin.user.update", "id")}}';
         url = url.replace('id', value);
         $("#editUserForm").attr('action', url);        
-        let data_table = table.row($(this).parents('tr')).data();
-        $(".nama_user").prop('value' , data_table.name);
-        $(".email_user").prop('value', data_table.email_user);
-        $(".username_id").prop('value' , data_table.username_id);
-        $(".role_user").find("[value='"+data_table.role.id+"']").prop('selected' , true);
+        // let data_table = table.row($(this).parents('tr')).data();
+        // $(".nama_user").prop('value' , data_table.name);
+        // $(".email_user").prop('value', data_table.email_user);
+        // $(".username_id").prop('value' , data_table.username_id);
+        // $(".role_user").find("[value='"+data_table.role.id+"']").prop('selected' , true);
         // $("#editForm").modal();
         modalState = "#editForm";
+        loading_bar(true);
         $.get(url_edit, function(res){
-            loading_bar(true);
-            if (res.data !== null) {
+            let users = res.data;
+            let picture = res.data_foto;
+            $(".nama_user").prop('value' , users.name);
+            $(".email_user").prop('value', users.email_user);
+            $(".username_id").prop('value' , users.username_id);
+            $(".role_user").find("[value='"+users.role_id+"']").prop('selected' , true);
+            if (picture !== null) {
                 let fileLoc = '{{asset("kegiatan/admin/foto_user/images")}}';
-                fileLoc = fileLoc.replace('images' , res.data);
+                fileLoc = fileLoc.replace('images' , picture);
                 sourceFile = fileLoc;
-                $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>'+res.data+'<button type="button" class="btn btn-sm btn-primary preview-image mr-2 ml-2">Lihat Foto</button><a href="'+sourceFile+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+res.data+'">Download File</a></li>');
+                $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>'+picture+'<button type="button" class="btn btn-sm btn-primary preview-image mr-2 ml-2">Lihat Foto</button><a href="'+sourceFile+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+picture+'">Download File</a></li>');
                 for (let index = 0; index < photo.length; index++) {
                     const element = photo[index];
                     element.src = fileLoc;
@@ -282,7 +288,7 @@
         $("#ids").attr("value", id);
         $("#deleteForm").attr('action' , url);
         let data = table.row( $(this).parents('tr')).data();
-        document.querySelector('.user_data').innerHTML = "Apakah Anda Yakin Ingin Menghapus: <br> <ul class='alert alert-danger'><li>Nama: "+data.name+"</li><li>Username: "+data.username_id+"</li><li>Dengan Peran: "+data.role.role_title+"</li></ul>";
+        document.querySelector('.user_data').innerHTML = "Apakah Anda Yakin Ingin Menghapus: <br> <ul class='alert alert-danger'><li>Nama: "+data.name+"</li><li>Username: "+data.username_id+"</li><li>Email: "+data.email_user+"</li><li>Dengan Peran: "+data.role.role_title+"</li></ul>";
         $("#DeleteModal").modal();
         modalState = "#DeleteModal";
     });
@@ -490,8 +496,7 @@
                 allowEnterKey: false,
                 showConfirmButton: false
             });   
-        }
-        else{
+        } else{
             Swal.close();
         }
     }
@@ -534,14 +539,14 @@
     }
     function loadImage(){
         for (let index = 0; index < fileIMG.length; index++) {
-        const element = fileIMG[index];
-        element.addEventListener('change', (e) => {
-            for (let index = 0; index < photo.length; index++) {
-                const element = photo[index];
-                element.src = URL.createObjectURL(e.target.files[0]);
-            }
-        });
-    }
+            const element = fileIMG[index];
+            element.addEventListener('change', (e) => {
+                for (let index = 0; index < photo.length; index++) {
+                    const element = photo[index];
+                    element.src = URL.createObjectURL(e.target.files[0]);
+                }
+            });
+        }
     }
     </script>
 @endsection

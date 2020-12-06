@@ -7,10 +7,10 @@
 @section('content')
 <div class="row">
 <div class="col-lg-8 col-sm-12">
-    <h1>Kelola Dokumentasi Kegiatan PPK</h1>
+    <h1>Kelola Laporan Kegiatan PPK</h1>
 </div>
 <div class="col-sm-12 col-lg-4">
-    <button type="button" class="btn btn-primary rounded-pill float-md-left float-lg-right float-sm-left mb-2" id="unggah_baru">Tambah Dokumentasi Historis</button>
+    <button type="button" class="btn btn-primary rounded-pill float-md-left float-lg-right float-sm-left mb-2" id="unggah_baru">Ajukan Laporan Historis</button>
 </div>
 </div>
     <div class="row">
@@ -39,7 +39,7 @@
             <div class="modal-dialog modal-xl" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Data Dokumentasi</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Data Laporan Kegiatan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -145,7 +145,7 @@
                 <form action="" method="POST" class="form_unggah" enctype="multipart/form-data" autocomplete="off">
                     {{ csrf_field() }}
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Unggah Data Dokumentasi</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Unggah Data Laporan</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                       <span aria-hidden="true">&times;</span>
                     </button>
@@ -235,7 +235,7 @@
                 <form action="" method="post" enctype="multipart/form-data" class="unggah_form_dokumentasi" autocomplete="off">
                     {{ csrf_field() }}
                 <div class="modal-header">
-                  <h5 class="modal-title" id="staticBackdropLabel">Unggah Dokumentasi</h5>
+                  <h5 class="modal-title" id="staticBackdropLabel">Unggah Laporan Kegiatan Historis</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -266,7 +266,7 @@
                       </div>
                       <div class="row">
                           <div class="col-sm-12 col-lg-6">
-                              {!! Form::label('lihat-file', "Unggah Dokumentasi Kegiatan (ekstensi .pdf dan total seluruh file sebesar 5MB): ") !!}
+                              {!! Form::label('lihat-file', "Unggah Laporan Kegiatan (ekstensi .pdf dan total seluruh file sebesar 5MB): ") !!}
                               <br>
                               <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Add More</button>
                               <br>

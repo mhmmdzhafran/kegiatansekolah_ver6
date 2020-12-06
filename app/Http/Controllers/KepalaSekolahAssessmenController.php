@@ -121,7 +121,7 @@ class KepalaSekolahAssessmenController extends Controller
         return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json', 'dokumen' , 'id_asesmen', 'kategori_asesmen'));
     }
 
-    public function ambil_skor_dan_dokumen_table($id_asesmen, $indikator_asesmen , $skor_asesmen){
+    public function getSaranSkorDanDokumenAsesmen($id_asesmen, $indikator_asesmen , $skor_asesmen){
         if (request()->ajax()) {
             try {
                 $asesmen_internal = AssessmentInternal::findOrFail($id_asesmen);
@@ -163,7 +163,7 @@ class KepalaSekolahAssessmenController extends Controller
         }
     }
 
-    public function ambil_data_dan_dokumen_table($id_asesmen, $body_indikator_dokumen){
+    public function ambil_data_detail_asesmen($id_asesmen, $body_indikator_dokumen){
         //ambil dokumen terkait asesmen
         if (request()->ajax()) {
             // if (Auth::check()) {

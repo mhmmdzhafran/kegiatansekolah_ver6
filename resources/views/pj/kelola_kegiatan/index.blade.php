@@ -34,162 +34,158 @@
                 </div>
             </div>
         </div>
-    </div>
-
-     <!-- Modal -->
-     <div class="modal fade" id="showModal" tabindex="-1" role="dialog" aria-labelledby="showModal" aria-hidden="true">
-        <div class="modal-dialog modal-xl" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="showModalTitle">Lihat Proposal</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
+            <!-- Modal -->
+        <div class="modal fade" id="showModal" tabindex="-1" role="dialog" aria-labelledby="showModal" aria-hidden="true">
+            <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                <h5 class="modal-title" id="showModalTitle">Lihat Proposal</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        {!! Form::label('status_kegiatan_ini' , 'Status Proposal Kegiatan: ') !!}
+                        <ul class="status-proposal"></ul>
+                    </div>
+                    {!! Form::label('keterangan_kegiatan_ini' , 'Histori Keterangan Proposal Kegiatan: ') !!}
+                    <div class="form-group card bg-info text-white">
+                        <ul class="keterangan-show"></ul>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        {!! Form::label('PJ_nama_kegiatan', 'Nama Kegiatan:') !!}
+                        <input type="text" name="PJ_nama_kegiatan" id="PJ_nama_kegiatan" value="" class="form-control" disabled>
+                    </div>
+                
+                    <div class="form-group">
+                        {!! Form::label('nilai_ppk', 'Nilai PPK:') !!}
+                        <br>
+                        {!! Form::checkbox('nilai_ppk[]', 'Religius', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Religius
+                        <br>
+                        {!! Form::checkbox('nilai_ppk[]', 'Integritas', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Integritas
+                        <br>
+                        {!! Form::checkbox('nilai_ppk[]', 'Nasionalis', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Nasionalis
+                        <br>
+                        {!! Form::checkbox('nilai_ppk[]', 'Mandiri', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Mandiri
+                        <br>
+                        {!! Form::checkbox('nilai_ppk[]', 'Gotong Royong', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Gotong Royong
+                    </div>
+                
+                    <div class="form-group">
+                        {!! Form::label('kegiatan_berbasis', 'Kegiatan Berbasis:') !!}
+                        <select class="form-control kegiatan_berbasis" disabled>
+                            <option value="not_found" disabled>N/A</option>
+                            <option value="Berbasis Kelas" disabled>Berbasis Kelas</option>
+                            <option value="Berbasis Budaya Sekolah" disabled>Berbasis Budaya Sekolah</option>
+                            <option value="Berbasis Masyarakat" disabled>Berbasis Masyarakat</option>
+                        </select>
+                    </div>
+                    {!! Form::label('dokumen_kegiatan', 'Unggah Proposal Pengajuan Kegiatan: ') !!}
+                <div class="row">
+                    <div class="col-sm-12 col-lg-12">
+                        <div class="form-group" id="upload-file"></div>
+                    </div>
+                </div>
+                    <div class="row">
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group">
+                                {!! Form::label('mulai_kegiatan', 'Mulai Melaksanakan Kegiatan:') !!}
+                                {!! Form::date('mulai_kegiatan', null , ['class' => 'form-control mulai_kegiatan', 'disabled']) !!}    
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-lg-6">
+                            <div class="form-group">
+                                {!! Form::label('akhir_kegiatan', 'Akhir dari Kegiatan:') !!}
+                                {!! Form::date('akhir_kegiatan', null , ['class' => 'form-control akhir_kegiatan' , 'disabled']) !!}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    {!! Form::label('status_kegiatan_ini' , 'Status Proposal Kegiatan: ') !!}
-                    <ul class="status-proposal"></ul>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <form action="" id="createPengajuanForm" method="post" enctype="multipart/form-data" autocomplete="off">
+                    {{ method_field('POST') }}
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalTitle">Pengajuan Proposal Kegiatan</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                {!! Form::label('keterangan_kegiatan_ini' , 'Histori Keterangan Proposal Kegiatan: ') !!}
-                <div class="form-group card bg-info text-white">
-                    <ul class="keterangan-show"></ul>
-                </div>
-                <hr>
-                <div class="form-group">
+                <div class="modal-body">
+                    <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
+
+                    </ul>
+                    <div class="form-group">
                     {!! Form::label('PJ_nama_kegiatan', 'Nama Kegiatan:') !!}
-                    <input type="text" name="PJ_nama_kegiatan" id="PJ_nama_kegiatan" value="" class="form-control" disabled>
+                    {!! Form::text('PJ_nama_kegiatan', null , ['class' => 'form-control']) !!}
                 </div>
             
                 <div class="form-group">
-                    {!! Form::label('nilai_ppk', 'Nilai PPK:') !!}
+                    <label for="recipient-name" class="col-form-label">Nilai PPK:</label>
                     <br>
-                    {!! Form::checkbox('nilai_ppk[]', 'Religius', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Religius
+                    {!! Form::checkbox('nilai_ppk[]', 'Religius', null, ['class' => 'value_nilai_ppk']) !!} Religius
                     <br>
-                    {!! Form::checkbox('nilai_ppk[]', 'Integritas', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Integritas
+                    {!! Form::checkbox('nilai_ppk[]', 'Integritas', null, ['class' => 'value_nilai_ppk']) !!} Integritas
                     <br>
-                    {!! Form::checkbox('nilai_ppk[]', 'Nasionalis', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Nasionalis
+                    {!! Form::checkbox('nilai_ppk[]', 'Nasionalis', null, ['class' => 'value_nilai_ppk']) !!} Nasionalis
                     <br>
-                    {!! Form::checkbox('nilai_ppk[]', 'Mandiri', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Mandiri
+                    {!! Form::checkbox('nilai_ppk[]', 'Mandiri', null, ['class' => 'value_nilai_ppk']) !!} Mandiri
                     <br>
-                    {!! Form::checkbox('nilai_ppk[]', 'Gotong Royong', null, ['class' => 'nilai_ppk' , 'disabled']) !!} Gotong Royong
+                    {!! Form::checkbox('nilai_ppk[]', 'Gotong Royong', null, ['class' => 'value_nilai_ppk']) !!} Gotong Royong
                 </div>
             
                 <div class="form-group">
                     {!! Form::label('kegiatan_berbasis', 'Kegiatan Berbasis:') !!}
-                    <select class="form-control kegiatan_berbasis" disabled>
-                        <option value="not_found" disabled>N/A</option>
-                        <option value="Berbasis Kelas" disabled>Berbasis Kelas</option>
-                        <option value="Berbasis Budaya Sekolah" disabled>Berbasis Budaya Sekolah</option>
-                        <option value="Berbasis Masyarakat" disabled>Berbasis Masyarakat</option>
-                      </select>
+                    {!! Form::select('kegiatan_berbasis', array('' => 'Choose Options', 'Berbasis Kelas' => 'Berbasis Kelas', 'Berbasis Budaya Sekolah' => 'Berbasis Budaya Sekolah', 'Berbasis Masyarakat' => 'Berbasis Masyarakat') ,null , ['class' => 'form-control']) !!}
                 </div>
-                {!! Form::label('dokumen_kegiatan', 'Unggah Proposal Pengajuan Kegiatan: ') !!}
-            <div class="row">
-                <div class="col-sm-12 col-lg-12">
-                    <div class="form-group" id="upload-file"></div>
+                {!! Form::label('dokumen_kegiatan', 'Unggah Proposal Pengajuan Kegiatan (ekstensi .pdf dan total file sebesar 5MB): ') !!}
+                <div class="row">
+                    <div class="col-sm-12 col-lg-12">
+                        <div class="form-group" id="upload-file">
+                            {!! Form::file('dokumen_kegiatan') !!}
+                        </div>
+                    </div>
                 </div>
-            </div>
                 <div class="row">
                     <div class="col-sm-12 col-lg-6">
                         <div class="form-group">
                             {!! Form::label('mulai_kegiatan', 'Mulai Melaksanakan Kegiatan:') !!}
-                            {!! Form::date('mulai_kegiatan', null , ['class' => 'form-control mulai_kegiatan', 'disabled']) !!}    
+                            {!! Form::date('mulai_kegiatan', \Carbon\Carbon::now() , ['class' => 'form-control']) !!}    
                         </div>
                     </div>
                     <div class="col-sm-12 col-lg-6">
                         <div class="form-group">
-                            {!! Form::label('akhir_kegiatan', 'Akhir dari Kegiatan:') !!}
-                            {!! Form::date('akhir_kegiatan', null , ['class' => 'form-control akhir_kegiatan' , 'disabled']) !!}
+                            {!! Form::label('akhir_kegiatan', 'Akhir Melaksanakan Kegiatan:') !!}
+                            {!! Form::date('akhir_kegiatan', \Carbon\Carbon::tomorrow() , ['class' => 'form-control']) !!}
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-   <!-- Modal -->
-   <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-lg" role="document">
-      <div class="modal-content">
-        <form action="" id="createPengajuanForm" method="post" enctype="multipart/form-data" autocomplete="off">
-            {{ method_field('POST') }}
-        <div class="modal-header">
-            <h5 class="modal-title" id="createModalTitle">Pengajuan Proposal Kegiatan</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body">
-            <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
-
-            </ul>
-            <div class="form-group">
-              {!! Form::label('PJ_nama_kegiatan', 'Nama Kegiatan:') !!}
-              {!! Form::text('PJ_nama_kegiatan', null , ['class' => 'form-control']) !!}
-          </div>
-      
-          <div class="form-group">
-            <label for="recipient-name" class="col-form-label">Nilai PPK:</label>
-            <br>
-            {!! Form::checkbox('nilai_ppk[]', 'Religius', null, ['class' => 'value_nilai_ppk']) !!} Religius
-            <br>
-            {!! Form::checkbox('nilai_ppk[]', 'Integritas', null, ['class' => 'value_nilai_ppk']) !!} Integritas
-            <br>
-            {!! Form::checkbox('nilai_ppk[]', 'Nasionalis', null, ['class' => 'value_nilai_ppk']) !!} Nasionalis
-            <br>
-            {!! Form::checkbox('nilai_ppk[]', 'Mandiri', null, ['class' => 'value_nilai_ppk']) !!} Mandiri
-            <br>
-            {!! Form::checkbox('nilai_ppk[]', 'Gotong Royong', null, ['class' => 'value_nilai_ppk']) !!} Gotong Royong
-        </div>
-      
-          <div class="form-group">
-              {!! Form::label('kegiatan_berbasis', 'Kegiatan Berbasis:') !!}
-              {!! Form::select('kegiatan_berbasis', array('' => 'Choose Options', 'Berbasis Kelas' => 'Berbasis Kelas', 'Berbasis Budaya Sekolah' => 'Berbasis Budaya Sekolah', 'Berbasis Masyarakat' => 'Berbasis Masyarakat') ,null , ['class' => 'form-control']) !!}
-          </div>
-          {!! Form::label('dokumen_kegiatan', 'Unggah Proposal Pengajuan Kegiatan (ekstensi .pdf dan total file sebesar 5MB): ') !!}
-          <div class="row">
-              <div class="col-sm-12 col-lg-12">
-                  <div class="form-group" id="upload-file">
-                      {!! Form::file('dokumen_kegiatan') !!}
-                  </div>
-              </div>
-          </div>
-          <div class="row">
-            <div class="col-sm-12 col-lg-6">
-                <div class="form-group">
-                    {!! Form::label('mulai_kegiatan', 'Mulai Melaksanakan Kegiatan:') !!}
-                    {!! Form::date('mulai_kegiatan', \Carbon\Carbon::now() , ['class' => 'form-control']) !!}    
+                <div class="progress" hidden>
+                    <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated myprogress" role="progressbar" style="width:0%">0%</div>
                 </div>
-            </div>
-            <div class="col-sm-12 col-lg-6">
-                <div class="form-group">
-                    {!! Form::label('akhir_kegiatan', 'Akhir Melaksanakan Kegiatan:') !!}
-                    {!! Form::date('akhir_kegiatan', \Carbon\Carbon::tomorrow() , ['class' => 'form-control']) !!}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary new_proposal">Kirim Proposal</button>
                 </div>
+                </div>
+                </form>
+            </div>
             </div>
         </div>
-        <div class="progress" hidden>
-            <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated myprogress" role="progressbar" style="width:0%">0%</div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Cancel</button>
-            <button type="submit" class="btn btn-primary new_proposal">Kirim Proposal</button>
-          </div>
-        </div>
-        </form>
-      </div>
+        <!-- Modal -->
+        @include('pj/kelola_kegiatan/form_pengajuan_ulang')
     </div>
-  </div>
-
-
-<!-- Modal -->
-@include('pj/kelola_kegiatan/form_pengajuan_ulang')
-
 @endsection
 
 @section('script')

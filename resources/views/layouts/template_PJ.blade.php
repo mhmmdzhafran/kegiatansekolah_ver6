@@ -226,7 +226,7 @@
                     </div>
                   </a> --}}
                 </div>
-                <a class="dropdown-item text-center small text-gray-500" href="{{ route('pj.userprofile.getAllNotify') }}">Show All Alerts</a>
+                <a class="dropdown-item text-center small text-gray-500" href="{{ route('pj.userprofile.getAllNotify') }}">Lihat Notifikasi Anda</a>
               </div>
             </li>
             <div class="topbar-divider d-none d-sm-block"></div>

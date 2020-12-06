@@ -84,7 +84,7 @@
           <div class="modal-body">
               <div class="row">
                 <div class="col-lg-12 col-sm-12">
-                  <ul id="kurang_indikator_asesmen_dokumen" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
+                  <ul id="kurang_indikator_asesmen_dokumen" class="d-none" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
                   <div class="lihat_dokumen">
                     {!! Form::label('dokumen_sebelumnya' , 'Dokumen Sebelumnya:') !!}
                     <br>
@@ -126,7 +126,7 @@
         <div class="modal-body">
             <div class="row">
               <div class="col-lg-12 col-sm-12">
-                  <ul id="kurang_indikator" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
+                  <ul id="kurang_indikator" class="d-none" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
                   <input type="hidden" value="{{ $assessment->id }}" id="id_assessmen">
                   <div class="form-group">
                     <label for="nama_sekolah">Nama Sekolah:</label>

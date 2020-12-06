@@ -150,7 +150,7 @@ class AdminUserController extends Controller
             if (gettype($user) == 'array') {
                 return $user;
             }
-            return Response::json(['data' => $user->photo_user], 200);
+            return Response::json(['data' => $user, 'data_foto' => $user->photo_user], 200);
         }
         
     }
@@ -197,17 +197,17 @@ class AdminUserController extends Controller
             }
         } else {
             $customNameFile = $this->photoUserChecker($fileImage->getClientOriginalName(), $request->username_id);
-            if (gettype($customNameFile) == 'array') {
-                return $customNameFile;
-            }
-            $moveImage = $fileImage->move('kegiatan/admin/foto_user/',$customNameFile);
-            if (!$moveImage) {
-                return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
-            }
+            // if (gettype($customNameFile) == 'array') {
+            //     return $customNameFile;
+            // }
             if (!is_null($user->photo_user)) {
                 if (file_exists(public_path('kegiatan/admin/foto_user/'.$user->photo_user))) {
                     unlink(public_path('kegiatan/admin/foto_user/'.$user->photo_user));
                 }  
+            }
+            $moveImage = $fileImage->move('kegiatan/admin/foto_user/',$customNameFile);
+            if (!$moveImage) {
+                return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
             }
         }
         $input['password'] = bcrypt($request->password);
@@ -260,7 +260,7 @@ class AdminUserController extends Controller
         if (!$delete) {
             return Response::json(['message' => 'data is not deleted', 'notification' => "Penghapusan User Tidak Berhasil, Silahkan Coba Kembali"], 422);
         }
-        return Response::json(['message' => 'data is deleted', 'notification' => "Penghapusan User sukses"], 200);
+        return Response::json(['message' => 'data is deleted', 'notification' => "Berhasil Menghapus Data Pengguna!"], 200);
     }
 
     private function getUserData($name, $username_id, $email_user, $role_id){
@@ -278,10 +278,11 @@ class AdminUserController extends Controller
     }
 
     private function photoUserChecker($photo, $username){
-        $customNameFile = Carbon::now()->toDateString()."USER-ACC-".$username."-".$photo;
-        if(file_exists(public_path('kegiatan/admin/foto_user/'.$customNameFile))){
-            return response()->json(['errors' => ['File dengan nama yang sama telah diunggah, Silahkan Mengganti Penamaan File / Mengganti Foto User Yang Lain']], 422);
-        }
+        // $customNameFile = Carbon::now()->toDateString()."USER-ACC-".$username."-".$photo;
+        // if(file_exists(public_path('kegiatan/admin/foto_user/'.$customNameFile))){
+            //     return response()->json(['errors' => ['File dengan nama yang sama telah diunggah, Silahkan Mengganti Penamaan File / Mengganti Foto User Yang Lain']], 422);
+            // }
+        $customNameFile = "USER-ACC-".$username."-".$photo;
         return $customNameFile;
     }
 

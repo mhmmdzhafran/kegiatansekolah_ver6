@@ -352,7 +352,7 @@ class PJMengelolaKegiatanController extends Controller
                             $button = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm status_pengajuan rounded-pill" value ="belum_disetujui">Lihat Detail</button>';
                         }
                         elseif($status->pivot->status_kegiatanable_id == $data->id && $status->pivot->status_kegiatan_id == 4){
-                            $button = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-primary btn-sm status_pengajuan rounded-pill" value ="pengajuan_ulang">Lihat Detail</button>';
+                            $button = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-danger btn-sm status_pengajuan rounded-pill" value ="pengajuan_ulang">Lihat Detail</button>';
                         }
                         return $button;
                     }
