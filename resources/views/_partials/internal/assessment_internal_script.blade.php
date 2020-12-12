@@ -30,11 +30,11 @@
                     $("#form_"+indikator_asesmen).attr('action' , url); 
                     $(".lihat-dokumen").show();
                     if (result.data.length >= 1) {
-                        $(".lihat-dokumen").append('<b>History Dokumen Asesmen</b>');
+                        $(".lihat-dokumen").append('<b>Histori Dokumen Asesmen</b>');
                         let assets = "{{ asset('kegiatan/asesmen_internal/asset_dokumen')}}";
                         $.each(result.data, function(key, value){
                             assets = assets.replace('asset_dokumen', value.nama_dokumen_asesmen);
-                            $(".lihat-dokumen").append('<li><i class="fas fa-file-alt"></i>'+value.nama_dokumen_asesmen+'<button class="btn btn-primary btn-sm ml-2 lihat_file" value="'+assets+'"type="button">Lihat File</button><a href="'+assets+'" class="btn btn-sm btn-info ml-2" download="'+value.nama_dokumen_asesmen+'">Download File</a><button type="button" class="btn btn-warning btn-sm ml-2 edit_file" value="'+id_asesmen+'" data-target="'+value.nama_dokumen_asesmen+'" data-target2="'+indikator_asesmen+'">Edit File</button><button class="btn btn-danger btn-sm ml-2 delete_file" value="'+value.nama_dokumen_asesmen+'" data-target="'+indikator_asesmen+'" data-target2="'+id_asesmen+'"type="button">Delete File</button></li>');
+                            $(".lihat-dokumen").append('<li class="mb-2"><i class="fas fa-file-alt mr-2"></i>'+value.nama_dokumen_asesmen+'<button class="btn btn-primary btn-sm ml-2 lihat_file" value="'+assets+'"type="button">Lihat File</button><a href="'+assets+'" class="btn btn-sm btn-info ml-2" download="'+value.nama_dokumen_asesmen+'">Download File</a><button type="button" class="btn btn-warning btn-sm ml-2 edit_file" value="'+id_asesmen+'" data-target="'+value.nama_dokumen_asesmen+'" data-target2="'+indikator_asesmen+'">Ubah File</button><button class="btn btn-danger btn-sm ml-2 delete_file" value="'+value.nama_dokumen_asesmen+'" data-target="'+indikator_asesmen+'" data-target2="'+id_asesmen+'"type="button">Hapus File</button></li>');
                             $(".lihat-dokumen").append('<input type="hidden" name="nama_dokumen_asesmen[]" value="'+value.nama_dokumen_asesmen+'">');
                         });   
                     }
@@ -150,12 +150,12 @@
                 } else if(result.status === 422){
                     let value_error = JSON.parse(result.responseText);
                     $.each(value_error.errors, function(key, value){
-                        $("#error_indikator_"+value_indikator).append('<li>'+value+'</li>');
+                        $("#error_indikator_"+value_indikator).append('<li class="mb-2">'+value+'</li>');
                     });   
                     Swal.fire({
                         icon: 'error',
                         title: 'Terdapat Error',
-                        text : 'Terdapat Error ketika ingin mengunggah Form, Silahkan cek error diatas form'
+                        text : 'Terdapat Error ketika Mengunggah Form, Silahkan Cek Error Diatas Form'
                     }).then((result)=>{
                         $("#modalForm"+value_indikator).scrollTop(0);
                     });
@@ -228,7 +228,7 @@
                     } else if(res.status === 422){
                         let value_error = $.parseJSON(res.responseText);
                         $.each(value_error.errors, function(key, value){
-                            $("#kurang_indikator_asesmen_dokumen").append('<li>'+value+'</li>');
+                            $("#kurang_indikator_asesmen_dokumen").append('<li class="mb-2">'+value+'</li>');
                         }); 
                         Swal.fire({
                             icon: 'error',
@@ -279,7 +279,7 @@
                         Swal.fire({
                             icon: 'success',
                             title: 'Sukses',
-                            text: 'Berhasil melakukan pergantian Informasi Assessmen!'
+                            text: 'Berhasil Mengubah Informasi Assessmen!'
                         }).then((result)=>{
                             $("#edit_informasi").modal('hide');
                             location.reload(true);
@@ -300,7 +300,7 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: error_informasi.message
+                                text: 'Terdapat Error ketika melakukan Pengubahan data Informasi Asesmen, Silahkan Cek Error diatas Form!'
                             }).then((result)=>{
                                 $("#pergantian_informasi").scrollTop(0);
                             });  
@@ -459,7 +459,7 @@
                     $(".submit_delete").attr('disabled', false);
                     Swal.fire({
                         icon: 'success',
-                        title: 'Sukses Menghapus Dokumen',
+                        title: 'Sukses Menghapus Dokumen Asesmen',
                         timer: 1000,
                         timerProgressBar: true,                        
                         allowEscapeKey: false,

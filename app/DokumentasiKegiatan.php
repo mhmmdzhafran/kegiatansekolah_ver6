@@ -8,7 +8,7 @@ class DokumentasiKegiatan extends Model
 {
     //
 
-    protected $fillable = ['folder_dokumentasi_id' , 'user_id' , 'nama_pj','nama_kegiatan' , 'nilai_kegiatan_ppk' , 'keterangan_dokumentasi', 'nilai_ppk', 'kegiatan_berbasis', 'mulai_kegiatan', 'akhir_kegiatan' , 'tipe_kegiatan'];
+    protected $fillable = ['folder_dokumentasi_id' , 'user_id' , 'nama_pj','nama_kegiatan' , 'nilai_kegiatan_ppk' , 'keterangan_dokumentasi', 'nilai_ppk', 'kegiatan_berbasis', 'mulai_kegiatan', 'akhir_kegiatan' , 'tipe_kegiatan', 'add_link_video', 'add_link_article'];
 
 
     public function folderDokumentasi(){

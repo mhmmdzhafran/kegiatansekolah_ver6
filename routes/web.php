@@ -176,6 +176,7 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     ]]);
     
     Route::post('/kepala-sekolah/asesmen-ppk/store', 'KepalaSekolahAssessmenController@store')->name('kepsek.asesmen.store');
+    Route::delete('/kepala-sekolah/asesmen-ppk/{id_asesmen}/delete' , 'KepalaSekolahAssessmenController@destroyAsesmen')->name('kepsek.asesmen.deleteAsesmenFull');
     Route::get('/kepala-sekolah/asesmen-ppk/dokumen/{id_asesmen}/{id}', 'KepalaSekolahAssessmenController@ambil_data_detail_asesmen')->name('kepsek.asesmen.ambilDetail');
     Route::get('/kepala-sekolah/asesmen-ppk/get-skor/{id_asesmen}/{id_indikator}/{skor_indikator}', 'KepalaSekolahAssessmenController@getSaranSkorDanDokumenAsesmen')->name('kepsek.asesmen.ambilSkor');
     Route::put('/kepala-sekolah/asesmen-ppk/save/{id}', 'KepalaSekolahAssessmenController@update')->name('kepsek.asesmen.update');

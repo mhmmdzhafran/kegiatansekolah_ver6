@@ -24,7 +24,7 @@
                       <h6 class="m-0 font-weight-bold text-primary">Informasi Assessmen</h6>
                     </div>
                     <div class="card-body">
-                        <button type="button" class="btn btn-warning btn-sm rounded-pill float-md-right float-lg-right float-sm-left" id="edit" style="color:white;">Edit Informasi</button>
+                        <button type="button" class="btn btn-warning btn-sm rounded-pill float-md-right float-lg-right float-sm-left" id="edit" style="color:white;">Ubah Informasi</button>
                         <br>
                           <label for="nama_sekolah">Nama Sekolah: </label>
                           <input type="text" name="nama_sekolah" id="nama_sekolah" class="form-control mb-2" value="{{ $assessment->nama_sekolah }}" disabled>
@@ -102,7 +102,7 @@
             <div class="progress-bar progress-bar-striped progress-bar-animated myprogress" role="progressbar" style="width: 0%">0%</div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" id="close_btn" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-secondary" id="close_btn" data-dismiss="modal">Tutup</button>
             <button type="submit" class="btn btn-primary" id="submit_dokumen">Ubah Dokumen</button>
           </div>
       </form>
@@ -153,7 +153,7 @@
         </div>
     </form>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Tutup</button>
           <button type="submit" class="btn btn-primary submit">Ubah Informasi</button>
         </div>
       </div>
@@ -165,7 +165,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle">Pengubahan Data Assessmen</h5>
+          <h5 class="modal-title" id="exampleModalCenterTitle">Hapus Dokumen Assessmen</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -184,7 +184,7 @@
         </div>
     </form>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Tutup</button>
           <button type="submit" class="btn btn-danger submit_delete">Hapus Dokumen</button>
         </div>
       </div>

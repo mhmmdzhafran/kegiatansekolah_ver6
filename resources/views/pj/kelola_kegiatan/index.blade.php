@@ -82,7 +82,7 @@
                             <option value="Berbasis Masyarakat" disabled>Berbasis Masyarakat</option>
                         </select>
                     </div>
-                    {!! Form::label('dokumen_kegiatan', 'Unggah Proposal Pengajuan Kegiatan: ') !!}
+                    {!! Form::label('dokumen_kegiatan', 'Proposal Kegiatan Yang Telah Diunggah: ') !!}
                 <div class="row">
                     <div class="col-sm-12 col-lg-12">
                         <div class="form-group" id="upload-file"></div>
@@ -104,7 +104,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                 </div>
             </div>
             </div>
@@ -112,7 +112,7 @@
 
         <!-- Modal -->
         <div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="createModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
                 <form action="" id="createPengajuanForm" method="post" enctype="multipart/form-data" autocomplete="off">
                     {{ method_field('POST') }}
@@ -175,7 +175,7 @@
                     <div class="progress-bar progress-bar-success progress-bar-striped progress-bar-animated myprogress" role="progressbar" style="width:0%">0%</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary new_proposal">Kirim Proposal</button>
                 </div>
                 </div>
@@ -538,7 +538,7 @@ $('#pengajuan-table').DataTable({
                     let error_notifikasi = $.parseJSON(res.responseText);
                     // $(".error_notification").css('padding-bottom: 3rem');
                     $.each(error_notifikasi.errors, function(key, value){
-                        $(".error_notification").append('<li>'+value+'</li>');
+                        $(".error_notification").append('<li class="mb-2">'+value+'</li>');
                     });   
                     Swal.fire({
                         icon: 'error',
@@ -606,7 +606,7 @@ $('#pengajuan-table').DataTable({
                         });
                     } else {
                         $.each(error_notifikasi.errors, function(key, value){
-                            $(".error_notification").append('<li>'+value+'</li>');
+                            $(".error_notification").append('<li class="mb-2">'+value+'</li>');
                         }); 
                         Swal.fire({
                             icon: 'error',

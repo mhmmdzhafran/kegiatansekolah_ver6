@@ -5,7 +5,7 @@
 @endsection
 
 @section('content')
-    <h1>Profil Kepala Sekolah {{ Auth::user()->name }}</h1>
+    <h1>Profil Kepala Sekolah {{ ucwords(Auth::user()->name) }}</h1>
     <div class="container">
         <div class="row">
             <div class="col-lg-12 col-sm-12">
@@ -23,7 +23,7 @@
                   </ul>
                   <div class="card shadow mb-4 mb-2" id="card-profile">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Profil Penanggung Jawab {{ Auth::user()->name }}</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Profil Penanggung Jawab {{ ucwords(Auth::user()->name) }}</h6>
                     </div>
                     <div class="card-body">
                         <button type="button" class="btn btn-warning btn-sm rounded-pill float-md-right float-lg-right float-sm-left" id="edit" style="color:white;">Ubah Password</button>
@@ -61,7 +61,7 @@
             <form action="" id="form_check_pass" method="POST">
                 @csrf
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Pengecekkan Password Lama</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Pengecekkan Password</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -73,8 +73,8 @@
                     <input type="password" name="password" class="form-control">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Cek Password</button>
                 </div>
             </div>
             </form>
@@ -88,7 +88,7 @@
             <form action="" id="form_change_pass" method="POST">
                 @csrf
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Pengubahan Password</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -104,8 +104,8 @@
                     <input type="password" name="passwordChecker" class="form-control">
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary">Unggah Perubahan</button>
                 </div>
             </div>
             </form>
@@ -155,7 +155,8 @@
                         $("#form_change_pass").attr('action' , url_form_change_pass);
                         Swal.fire({
                             icon: 'success',
-                            title: 'Password Cocok, Silahkan Ubah Password Anda'
+                            title: 'Password Cocok, Silahkan Ubah Password Anda',
+                            confirmButtonText: 'Lanjut'
                         }).then((result)=>{
                             $("#modal_ubah_pass").modal();
                         });
@@ -173,7 +174,7 @@
                             let errorValues = JSON.parse(res.responseText);
                             const ErrorMessageCheckPass = "Terdapat Error ketika Mengunggah Data, Silahkan Lihat Error diatas Form";
                             $.each(errorValues.errors, function(key, item){
-                                document.querySelector(".error_notification").innerHTML = "<li>"+item+"</li>";
+                                document.querySelector(".error_notification").innerHTML = "<li class='mb-2'>"+item+"</li>";
                             });
                             knownNotificationAlerts(422, ErrorMessageCheckPass);
                         } else {
@@ -220,7 +221,7 @@
                             let errorMessages = errorValues.errors;
                             const messageError = "Terdapat Error ketika Mengunggah Data, Silahkan Lihat Error diatas Form";
                             $.each(errorMessages , function(key, item){
-                                $(".error_notification").append('<li>'+item+'</li>');
+                                $(".error_notification").append('<li class="mb-2">'+item+'</li>');
                             });
                             knownNotificationAlerts(422, messageError);
                         } else {

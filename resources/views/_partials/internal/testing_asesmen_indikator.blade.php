@@ -228,8 +228,8 @@
           <div class="progress-bar progress-bar-striped progress-bar-animated myprogress" role="progressbar" style="width:0%">0%</div>
       </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary submit_form">Submit</button>
+          <button type="button" class="btn btn-secondary close_modal" data-dismiss="modal">Tutup</button>
+          <button type="submit" class="btn btn-primary submit_form">Unggah Asesmen</button>
           </div>
         </form>
       </div>

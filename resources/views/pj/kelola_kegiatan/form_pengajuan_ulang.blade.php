@@ -67,7 +67,7 @@
             <div class="progress-bar progress-bar-success myprogress progress-bar-striped progress-bar-animated" role="progressbar" style="width:0%">0%</div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-secondary close_proposal" data-dismiss="modal">Tutup</button>
             <button type="submit" class="btn btn-primary new_proposal">Kirim Proposal Ulang</button>
           </div>
         </div>

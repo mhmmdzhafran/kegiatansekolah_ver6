@@ -21,10 +21,10 @@
                             <thead>
                                 <tr>
                                     <th>ID</th>
-                                    <th>Name</th>
+                                    <th>Nama</th>
                                     <th>Username</th>
                                     <th>Email</th>
-                                    <th width="10%">Role</th>
+                                    <th width="10%">Peran</th>
                                     <th width="10%">Dibentuk Tanggal</th>
                                     <th width="10%">Diperbarui Tanggal</th>
                                     <th>Aksi</th>
@@ -54,8 +54,8 @@
                           <input type="hidden" name="id_value" id="ids" value = "">
                       </div>
                       <div class="modal-footer">
-                              <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-                              <button type="submit" name="" class="btn btn-danger">Yes, Delete</button>
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Tutup</button>
+                              <button type="submit" name="" class="btn btn-danger">Ya, Hapus</button>
                       </div>
                   </div>
               </form>
@@ -80,7 +80,7 @@
     
                           </ul>
                           <div class="form-group">
-                            {!! Form::label('name', 'Name:') !!}
+                            {!! Form::label('name', 'Nama:') !!}
                             {!! Form::text('name', null , ['class' => 'form-control']) !!}
                         </div>
                     
@@ -95,7 +95,7 @@
                         </div>
                     
                         <div class="form-group">
-                            {!! Form::label('role_id', 'Role:') !!}
+                            {!! Form::label('role_id', 'Peran User:') !!}
                             {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control']) !!}
                         </div>
     
@@ -117,7 +117,7 @@
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary bentuk_user">Buat User Baru</button>
                       </div>
                   </div>
@@ -144,7 +144,7 @@
     
                           </ul>
                           <div class="form-group">
-                            {!! Form::label('name', 'Name:') !!}
+                            {!! Form::label('name', 'Nama:') !!}
                             <input type="text" name="name" value="" class="form-control nama_user">
                         </div>
                     
@@ -159,7 +159,7 @@
                         </div>
                     
                         <div class="form-group">
-                            {!! Form::label('role_id', 'Role:') !!}
+                            {!! Form::label('role_id', 'Peran User:') !!}
                             {!! Form::select('role_id', array('' => 'Choose Options') + $roles ,null , ['class' => 'form-control role_user']) !!}
                         </div>
                         <div class="form-group">
@@ -182,8 +182,8 @@
                         </div>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-warning edit_user">Edit User</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-warning edit_user">Ubah User</button>
                       </div>
                   </div>
               </form>
@@ -251,7 +251,7 @@
                 let fileLoc = '{{asset("kegiatan/admin/foto_user/images")}}';
                 fileLoc = fileLoc.replace('images' , picture);
                 sourceFile = fileLoc;
-                $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>'+picture+'<button type="button" class="btn btn-sm btn-primary preview-image mr-2 ml-2">Lihat Foto</button><a href="'+sourceFile+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+picture+'">Download File</a></li>');
+                $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>'+picture+'<button type="button" class="btn btn-sm btn-primary preview-image mr-2 ml-2">Lihat Foto</button><a href="'+sourceFile+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+picture+'">Download Foto</a></li>');
                 for (let index = 0; index < photo.length; index++) {
                     const element = photo[index];
                     element.src = fileLoc;
@@ -288,7 +288,7 @@
         $("#ids").attr("value", id);
         $("#deleteForm").attr('action' , url);
         let data = table.row( $(this).parents('tr')).data();
-        document.querySelector('.user_data').innerHTML = "Apakah Anda Yakin Ingin Menghapus: <br> <ul class='alert alert-danger'><li>Nama: "+data.name+"</li><li>Username: "+data.username_id+"</li><li>Email: "+data.email_user+"</li><li>Dengan Peran: "+data.role.role_title+"</li></ul>";
+        document.querySelector('.user_data').innerHTML = "Apakah Anda Yakin Ingin Menghapus: <br> <ul class='alert alert-danger'><li>Nama: "+data.name+"</li><li>Username: "+data.username_id+"</li><li>Email: "+data.email_user+"</li><li>Dengan Peran User: "+data.role.role_title+"</li></ul>";
         $("#DeleteModal").modal();
         modalState = "#DeleteModal";
     });
@@ -358,7 +358,7 @@
                     } else if(result.status === 422){
                         let error_notification = $.parseJSON(result.responseText);
                             $.each(error_notification.errors, function(key, value){
-                                $(".error_notification").append('<li>'+value+'</li>');
+                                $(".error_notification").append('<li class="mb-2">'+value+'</li>');
                             });
                             Swal.fire({
                                 icon: 'error',
@@ -413,7 +413,7 @@
                     } else if(result.status === 422) {
                         let error_notification = JSON.parse(result.responseText);   
                             $.each(error_notification.errors, function(key, value){
-                                $(".error_notification").append('<li>'+value+'</li>');
+                                $(".error_notification").append('<li class="mb-2">'+value+'</li>');
                             });
                             Swal.fire({
                                 icon: 'error',

@@ -37,7 +37,7 @@
                 <div class="modal-dialog modal-xl" role="document">
                   <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Lihat Data Dokumentasi</h5>
+                        <h5 class="modal-title" id="exampleModalLabel">Data Laporan Kegiatan</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                           <span aria-hidden="true">&times;</span>
                         </button>
@@ -49,13 +49,13 @@
 
                             </ul>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group status_kegiatan_group d-none">
                             {!! Form::label('status_kegiatan', 'Status Kegiatan:') !!}
                             <ul class="status_kegiatan">
 
                             </ul>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group keterangan_kegiatan_group d-none">
                             {!! Form::label('status_kegiatan', 'Histori Keterangan Kegiatan:') !!}
                             <ul class="keterangan_kegiatan" style="background-color: #36b9cc; color: white; border-radius: 10px; font-weight: bold">
 
@@ -95,18 +95,26 @@
                             </a>   
                             <div class="collapse show" id="collapseCardExample">
                               <div class="card-body">
-                                {!! Form::label('label_data_pengajuan_dokumentasi' , 'Laporan Kegiatan Yang Telah Diunggah') !!}
+                                {!! Form::label('label_data_pengajuan_dokumentasi' , 'Laporan Kegiatan Yang Telah Diunggah:') !!}
                                 {{-- <b class="text-danger">*Jika Data Dokumen Hanya Satu, Maka Dokumen Tersebut Tidak Dapat Dihapus</b> --}}
                                 <br>
                                 <ol class="laporan_kegiatan">
     
                                 </ol>
                                 <hr>
-                                {!! Form::label('label_data_pengajuan_dokumentasi' , 'Dokumentasi Yang Telah Diunggah') !!}        
+                                {!! Form::label('label_data_pengajuan_dokumentasi' , 'Dokumentasi Yang Telah Diunggah:') !!}        
                                 <ol class="dokumentasi_kegiatan">
     
                                 </ol>
-                               
+                                <hr>
+                                {!! Form::label('label_data_link_video' , 'Link Video Kegiatan Yang Telah Diunggah:') !!}        
+                                <ol class="link_video">
+    
+                                </ol>
+                                {!! Form::label('label_data_link_article' , 'Link Article Kegiatan Yang Telah Diunggah:') !!}        
+                                <ol class="link_article">
+    
+                                </ol>
                               </div>
                             </div>
                           </div>
@@ -169,7 +177,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
                     </div>
                   </div>
                 </div>
@@ -311,6 +319,8 @@
             $(".dokumentasi_kegiatan").empty();
             $(".status_kegiatan").empty();
             $(".keterangan_kegiatan").empty();
+            $(".link_video").empty();
+            $(".link_article").empty();
             value_checked.length = 0;
         });
         $(document).on('click', '.lihat_file', function(){
@@ -323,7 +333,7 @@
             if (statusKegiatanType === 'unggah_dokumentasi' || statusKegiatanType === 'sudah_unggah' || statusKegiatanType === 'pengajuan_ulang') {
                 loadingBar('show');
                 $.get(url, function(res){
-                    console.log(res);
+                    // console.log(res);
                     $(".pengajuan_kegiatan").empty();
                     const status_kegiatan = res.status_kegiatan;
                     const keteranganKegiatan = JSON.parse(res.data_dokumentasi.keterangan_dokumentasi);
@@ -334,7 +344,15 @@
                     if (tipe_kegiatan === 'Pengajuan Historis') {
                         $(".tipe_kegiatan").removeClass('d-none');
                         $(".pengajuan_kegiatan").append('<li>'+tipe_kegiatan+'</li>');
+                        $(".keterangan_kegiatan_group").addClass('d-none');
+                        $(".keterangan_kegiatan").addClass('d-none');
+                        $(".status_kegiatan_group").addClass('d-none');
+                        $(".status_kegiatan").addClass('d-none');
                     } else {
+                        $(".keterangan_kegiatan_group").removeClass('d-none');
+                        $(".keterangan_kegiatan").removeClass('d-none');
+                        $(".status_kegiatan_group").removeClass('d-none');
+                        $(".status_kegiatan").removeClass('d-none');
                         $(".tipe_kegiatan").addClass('d-none');
                     }
                     nilai_ppk.forEach(element => {
@@ -350,9 +368,11 @@
                     if (statusKegiatanType === 'unggah_dokumentasi') {
                         $(".laporan_kegiatan").append('<li>Belum Mengunggah Laporan Kegiatan</li>');   
                         $(".dokumentasi_kegiatan").append('<li>Belum Mengunggah Dokumentasi Kegiatan</li>');  
+                        $(".link_video").append('<li>Belum Mengunggah Link Video Kegiatan</li>');
+                        $(".link_article").append('<li>Belum Mengunggah Link Artikel Kegiatan</li>');
                     } else if(statusKegiatanType === 'sudah_unggah' || statusKegiatanType === 'pengajuan_ulang'){
-                        let count_dokumen = 1;
-                        let count_image = 1;
+                        // let count_dokumen = 1;
+                        // let count_image = 1;
                          res.dokumen_dokumentasi.forEach(item_dokumen => {
                             const fileName = item_dokumen.nama_dokumen;
                             let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
@@ -372,6 +392,22 @@
                             asset_url = asset_url.replace("asset_dokumen" , item_image.nama_foto_kegiatan);
                             $(".dokumentasi_kegiatan").append('<li class="mb-2"><img class="rounded-circle mb-2 mt-2 mr-2" src="'+asset_url+'" alt="" width="150" height="150">'+item_image.nama_foto_kegiatan+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat File</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_image.nama_foto_kegiatan+'">Download File</a></li>');                                
                         });
+                        const linkVideo = JSON.parse(res.data_dokumentasi.add_link_video);
+                        if (linkVideo.length > 0) {
+                            linkVideo.forEach(element => {
+                                $(".link_video").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+                            });
+                        } else {
+                            $(".link_video").append('<li>Belum Mengunggah Link Video Kegiatan</li>');
+                        }
+                        const linkArticle = JSON.parse(res.data_dokumentasi.add_link_article);
+                        if (linkArticle.length > 0) {
+                            linkArticle.forEach(element => {
+                                $(".link_article").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+                            });
+                        } else {
+                            $(".link_article").append('<li>Belum Mengunggah Link Artikel Kegiatan</li>');
+                        }
                     }
                 }).done(function(){
                     $("#showDokumentasi").modal();
@@ -428,14 +464,14 @@
         function addKeteranganElement(keterangan){
             if (keterangan !== null) {
                 keterangan.forEach(element => {
-                    console.log(element.no);
+                    // console.log(element.no);
                     if (element.no === 1) {
                         if(element.keterangan_opsional === ""){
                             $(".keterangan_kegiatan").append('<li>Tidak Ada Keterangan Sukses</li>');
                         }  else {
                             $(".keterangan_kegiatan").append('<li>Keterangan Persetujuan Laporan Kegiatan:'+element.keterangan_opsional+'</li>');
                         }   
-                        console.log(element.keterangan_opsional);
+                        // console.log(element.keterangan_opsional);
                     } 
                     else if(element.no === 2){
                         if(element.keterangan_wajib_ulang === ""){
@@ -443,7 +479,7 @@
                         }  else {
                             $(".keterangan_kegiatan").append('<li>Keterangan Pengajuan Ulang: '+element.keterangan_wajib_ulang+'</li>');
                         }
-                        console.log(element.keterangan_wajib_ulang);
+                        // console.log(element.keterangan_wajib_ulang);
                     }
                 });
             } else {

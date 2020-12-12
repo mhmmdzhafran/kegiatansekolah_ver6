@@ -76,7 +76,7 @@ Echo.private('App.User.'+userID)
                 createSpanExtraDetailsElement.innerText = notification.type_notification+" "+notification.nama_kegiatan+" Mohon Mengajukan Ulang Kembali Sesuai Dengan Keterangan Yang Diberikan";
                 $.notify({
                     title: "Ada Notifikasi Baru <hr>",
-                    message: "Ada Notifikasi Baru terkait Proposal Kegiatan: "+notification.nama_kegiatan
+                    message: "Ada Notifikasi Baru terkait "+notification.type_notification+" "+notification.nama_kegiatan
                 }, {
                     type: 'warning',
                     newest_on_top: true,

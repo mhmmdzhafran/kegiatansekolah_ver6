@@ -26,7 +26,19 @@
                             <div class="h6 mb-0 font-weight-bold mt-1 mb-1">
                               Tipe Kegiatan:
                               @if ($item->data['type_notification'] != "")
-                              {{ $item->data['type_notification'] }}
+                                @if ($item->data['type_notification'] == 'Laporan Kegiatan')
+                                    @if ($item->data['tipe_pengajuan'] == 'Pengajuan Historis')
+                                    {{ $item->data['type_notification'] }} (Historis)
+                                    @elseif($item->data['tipe_pengajuan'] == 'Pengajuan')
+                                      ({{ $item->data['tipe_pengajuan'] }})
+                                    @else
+                                      N/A
+                                    @endif
+                                @elseif($item->data['type_notification'] == 'Proposal Kegiatan')
+                                  {{ $item->data['type_notification'] }}    
+                                @else
+                                N/A  
+                                @endif
                               @else
                               N/A
                               @endif

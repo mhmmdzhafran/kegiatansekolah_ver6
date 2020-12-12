@@ -37,15 +37,15 @@ class AdminUserController extends Controller
         if (request()->ajax()) {
             return datatables()->of($user)->addColumn('Aksi', function($data){
                 if (Auth::user()->username_id == $data->username_id) {
-                    $aksi = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-warning rounded-pill btn-sm">Edit</button>';
-                    $aksi.= '&nbsp;&nbsp;';
+                    $aksi = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-warning rounded-pill btn-sm mb-2">Edit</button>';
+                    // $aksi.= '&nbsp;&nbsp;';
                     $aksi.= '<button type="button" data-toggle="modal" id="'.$data->id.'" 
-                    data-target="#DeleteModal" class="btn btn-sm btn-danger rounded-pill delete" disabled>Delete</button>';    
+                    data-target="#DeleteModal" class="btn btn-sm btn-danger rounded-pill delete mb-2" disabled>Delete</button>';    
                 } else {
-                    $aksi = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-warning rounded-pill btn-sm">Edit</button>';
-                    $aksi.= '&nbsp;&nbsp;';
+                    $aksi = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-warning rounded-pill btn-sm mb-2">Edit</button>';
+                    // $aksi.= '&nbsp;&nbsp;';
                     $aksi.= '<button type="button" data-toggle="modal" id="'.$data->id.'" 
-                    data-target="#DeleteModal" class="btn btn-sm btn-danger rounded-pill delete">Delete</button>';    
+                    data-target="#DeleteModal" class="btn btn-sm btn-danger rounded-pill delete" mb-2>Delete</button>';    
                 }
                 return $aksi;
             })
@@ -87,8 +87,8 @@ class AdminUserController extends Controller
             'email_user',
             'photo_user',
             'role_id',
-            'password',
-            'passwordChecker'
+            'password'
+            // 'passwordChecker'
         ]);
         if ($request->password != $request->passwordChecker) {
             return Response::json(['data' => 'data is not valid', 'errors' => ['Password yang diberikan tidak cocok, Silahkan masukkan password kembali']], 422);
@@ -185,8 +185,8 @@ class AdminUserController extends Controller
             'email_user',
             'photo_user',
             'role_id',
-            'password',
-            'passwordChecker'
+            'password'
+            // 'passwordChecker'
         ]);
         $fileImage = $request->file('photo_user');
         if (empty($fileImage)) {

@@ -53,7 +53,7 @@ Echo.private('App.User.'+userID)
         createStatusPartition.className = 'mr-3';
         switch (notification.status_kegiatan_id) {
             case 3:
-                let kegiatanType = "";
+                // let kegiatanType = "";
                 createCircleStatusElement.className = 'icon-circle bg-warning';
                 createIconElement.className= 'fa fa-exclamation text-white';
                 // if (notification.type_notification === "Pengajuan Kegiatan") {
@@ -63,10 +63,10 @@ Echo.private('App.User.'+userID)
                 //     kegiatanType = "Dokumentasi Kegiatan:";
                 //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+notification.nama_kegiatan+" Yang diunggah oleh "+notification.user_pj+" "+notification.status_kegiatan;
                 // }
-                createSpanExtraDetailsElement.innerText = notification.type_notification+" "+notification.nama_kegiatan+" Telah diunggah oleh "+notification.user_pj;
+                createSpanExtraDetailsElement.innerText = notification.type_notification+" "+notification.nama_kegiatan+" Telah diunggah oleh "+notification.user_pj+", Silahkan Beri Keputusan terkait "+notification.type_notification;
                 $.notify({
                     title: "Ada Notifikasi Baru <hr>",
-                    message: "Ada Notifikasi Baru terkait "+kegiatanType+" "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
+                    message: "Ada Notifikasi Baru terkait "+notification.type_notification+" "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
                 }, {
                     type: 'success',
                     newest_on_top: true,
@@ -81,27 +81,27 @@ Echo.private('App.User.'+userID)
                     },
                 });
                 break;
-            // case 6:
-            //     createCircleStatusElement.className = 'icon-circle bg-success';
-            //     createIconElement.className= 'fa fa-check text-white';
-            //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+notification.nama_kegiatan+" Sudah Diunggah oleh "+notification.user_pj;
-            //     $.notify({
-            //         title: "Ada Notifikasi Baru <hr>",
-            //         message: "Ada Notifikasi Baru terkait Dokumentasi Kegiatan: "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
-            //     }, {
-            //         type: 'success',
-            //         newest_on_top: true,
-            //         offset: {
-            //             x: 20,
-            //             y: 60
-            //         },
-            //         delay: 100,
-            //         animate: {
-            //             enter: 'animate__animated animate__fadeInRight',
-            //             exit: 'animate__animated animate__fadeOutRight'
-            //         },
-            //     });
-            //     break;
+            case 6:
+                createCircleStatusElement.className = 'icon-circle bg-success';
+                createIconElement.className= 'fa fa-check text-white';
+                createSpanExtraDetailsElement.innerText = "Laporan Kegiatan Historis "+notification.nama_kegiatan+" Sudah Diunggah oleh "+notification.user_pj;
+                $.notify({
+                    title: "Ada Notifikasi Baru <hr>",
+                    message: "Ada Notifikasi Baru terkait Laporan Kegiatan Historis: "+notification.nama_kegiatan+" Yang Diunggah oleh "+notification.user_pj
+                }, {
+                    type: 'success',
+                    newest_on_top: true,
+                    offset: {
+                        x: 20,
+                        y: 60
+                    },
+                    delay: 100,
+                    animate: {
+                        enter: 'animate__animated animate__fadeInRight',
+                        exit: 'animate__animated animate__fadeOutRight'
+                    },
+                });
+                break;
             default:
                 break;
         }
@@ -194,7 +194,7 @@ function initializeNotifications(status){
                 const createDivDetailsElement = document.createElement('div');
                 const createSpanExtraDetailsElement = document.createElement('span');
         
-                let {data: {kegiatan_id,nama_kegiatan, status_kegiatan, status_kegiatan_id, user_pj , type_notification}} = element;
+                let {data: {kegiatan_id,nama_kegiatan, status_kegiatan_id, user_pj , type_notification}} = element;
                 notificationID.push(element.id);
                 createLinkElement.className='dropdown-item d-flex align-items-center notify-test notification-'+element.id;
                 createLinkElement.setAttribute('id' , element.id);
@@ -216,13 +216,13 @@ function initializeNotifications(status){
                         // } else if(type_notification === "Dokumentasi Kegiatan") {
                         //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Yang diunggah oleh "+user_pj+" "+status_kegiatan;
                         // }
-                        createSpanExtraDetailsElement.innerText = type_notification+" "+nama_kegiatan+" Telah diunggah oleh "+user_pj;
+                        createSpanExtraDetailsElement.innerText = type_notification+" "+nama_kegiatan+" Telah diunggah oleh "+user_pj+", Silahkan Beri Keputusan terkait "+type_notification;
                         break;
-                    // case 6:
-                    //     createCircleStatusElement.className = 'icon-circle bg-success';
-                    //     createIconElement.className= 'fa fa-check text-white';
-                    //     createSpanExtraDetailsElement.innerText = "Dokumentasi Kegiatan "+nama_kegiatan+" Sudah Diunggah oleh "+user_pj;
-                    //     break;
+                    case 6:
+                        createCircleStatusElement.className = 'icon-circle bg-success';
+                        createIconElement.className= 'fa fa-check text-white';
+                        createSpanExtraDetailsElement.innerText = "Laporan Kegiatan Historis "+nama_kegiatan+" Sudah Diunggah oleh "+user_pj;
+                        break;
                     default:
                         createCircleStatusElement.className = 'icon-circle bg-secondary';
                         createIconElement.className= 'fa fa-question text-white';

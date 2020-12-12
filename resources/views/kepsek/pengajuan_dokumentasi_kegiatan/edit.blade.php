@@ -76,7 +76,7 @@
           </div>
         </div> --}}
       </div>
-      <div class="form-group">
+    <div class="form-group">
         {!! Form::label('foto_kegiatan', 'Dokumentasi Kegiatan Yang Dikirim:') !!}
         <div class="col-lg-12 col-sm-12">
           <div class="spinner-border" role="status">
@@ -86,12 +86,29 @@
 
         </div>
       </div>
-      {{-- <div class="col-lg-12 col-sm-12">
-        <div id="show_docs" hidden>
-          
-        </div>
-      </div> --}}
     </div>
+    <div class="form-group">
+      {!! Form::label('link-video', 'Link Video Kegiatan Yang Dikirim:') !!}
+      <div class="col-lg-12 col-sm-12">
+        <div class="spinner-border" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      <ol id="link-video-sent" class="d-none">
+
+      </ol>
+    </div>
+  </div>
+  <div class="form-group">
+    {!! Form::label('link-article', 'Link Artikel Kegiatan Yang Dikirim:') !!}
+    <div class="col-lg-12 col-sm-12">
+      <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+    <ol id="link-article-sent" class="d-none">
+
+    </ol>
+  </div>
+</div>
     <div class="row">
         <div class="col-sm-12 col-lg-6">
             <div class="form-group">
@@ -248,6 +265,26 @@
         nilai_ppk.forEach(element => {
           $("[value = '"+element.nilai_ppk+"']").attr('checked' , true);
         });
+
+        const linkVideo = JSON.parse(res.data.add_link_video);
+        console.log(linkVideo);
+        if (linkVideo.length > 0) {
+          linkVideo.forEach(element => {
+              $("#link-video-sent").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+          });  
+        } else {
+          $("#link-video-sent").append('Tidak Terdapat Link Video yang dikirim');
+        }
+        
+        const linkArticle = JSON.parse(res.data.add_link_article);
+        if (linkArticle.length > 0) {
+          linkArticle.forEach(element => {
+            $("#link-article-sent").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+          });  
+        } else {
+          $("#link-article-sent").append('<li>Tidak Terdapat Link Artikel yang Dikirim');
+        }
+
         if (!statusData) {
           $("#file_upload").append('<li class="mb-2">'+res.dokumen+'</li>');
           $("#img_upload").append(res.image);
@@ -285,6 +322,8 @@
         const nilaiPPK = document.getElementById('nilai_ppk_group');
         document.getElementById('img_upload').classList.remove('d-none');
         document.getElementById('file_upload').classList.remove('d-none');
+        document.getElementById('link-video-sent').classList.remove('d-none');
+        document.getElementById('link-article-sent').classList.remove('d-none');
         nilaiPPK.classList.remove('d-none');
         for (let index = 0; index < spinner.length; index++) {
           const element = spinner[index];

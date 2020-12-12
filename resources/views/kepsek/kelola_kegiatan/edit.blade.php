@@ -367,7 +367,7 @@
                 Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: "Terdapat Error, silahkan lihat diatas form!",
+                text: "Terdapat Error, Silahkan lihat diatas form!",
               }).then((result)=>{
                 if (result.value) {
                   $("#"+modal).scrollTop(0);
@@ -380,11 +380,11 @@
               });
             if (error.state) {
               $.each(error.errors, function(key, value){
-                $(".keterangan_error").append('<b>Terdapat Error: </b><li>'+value+'</li>');
+                $(".keterangan_error").append('<li class="mb-2">'+value+'</li>');
               });
             } else{
               $.each(error.errors, function(key, value){
-                  $(".keterangan_error").append('<b>Terdapat Error: </b><li>'+value+'</li>');
+                  $(".keterangan_error").append('<li class="mb-2">'+value+'</li>');
                 });
               }
             } else if(res.status === 404){

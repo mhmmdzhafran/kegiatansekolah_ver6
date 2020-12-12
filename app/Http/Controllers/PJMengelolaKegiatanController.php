@@ -479,20 +479,25 @@ class PJMengelolaKegiatanController extends Controller
                 );
                 $id_nilai_ppk++;
             }
-            $json_nilai_ppk = json_encode($json_ppk);
+        $json_nilai_ppk = json_encode($json_ppk);
 
-            $dokumentasi_kegiatan_baru = new DokumentasiKegiatan([
-                "nama_kegiatan" => $request->nama_kegiatan,
-                "user_id" => Auth::user()->id,
-                "nama_pj" => Auth::user()->name,
-                "mulai_kegiatan" => $dateMulai,
-                "akhir_kegiatan" => $dateAkhir,
-                "nilai_ppk" => $json_nilai_ppk,
-                "kegiatan_berbasis" => $request->kegiatan_berbasis,
-                "keterangan_dokumentasi" => $keterangan_json,
-                "tipe_kegiatan" => 'Pengajuan Historis'
-            ]);
-            $create_dokumentasi = $dokumentasi_kegiatan_baru->save();
+        $videoLinks = $this->dataLinks($request->add_link_video);
+        $articleLinks = $this->dataLinks($request->add_link_article);
+
+        $dokumentasi_kegiatan_baru = new DokumentasiKegiatan([
+            "nama_kegiatan" => $request->nama_kegiatan,
+            "user_id" => Auth::user()->id,
+            "nama_pj" => Auth::user()->name,
+            "mulai_kegiatan" => $dateMulai,
+            "akhir_kegiatan" => $dateAkhir,
+            "nilai_ppk" => $json_nilai_ppk,
+            "kegiatan_berbasis" => $request->kegiatan_berbasis,
+            "keterangan_dokumentasi" => $keterangan_json,
+            "add_link_video" => $videoLinks,
+            "add_link_article" => $articleLinks,
+            "tipe_kegiatan" => 'Pengajuan Historis'
+        ]);
+        $create_dokumentasi = $dokumentasi_kegiatan_baru->save();
             if ($create_dokumentasi) {
                 $cari_dokumentasi = DokumentasiKegiatan::where([
                     "nama_kegiatan" => $request->nama_kegiatan,
@@ -547,11 +552,14 @@ class PJMengelolaKegiatanController extends Controller
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan dan Dokumentasi Kegiatan, Silahkan Coba Kembali files']], 422);
                 }elseif (!$kumpulan_foto) {
-                    $this->failedUploadKegiatan($kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
+                    $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+                    $this->failedUploadKegiatan($res_kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan dan Dokumentasi Kegiatan, Silahkan Coba Kembali dokumentasi']], 422);
                 }
-                $statusDefault = StatusKegiatan::findOrFail(3);
+                $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+                $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
+                $statusDefault = StatusKegiatan::findOrFail(6);
                 $save_status = $cari_dokumentasi->statusKegiatan()->save($statusDefault);
                 if (!$save_status) {
                     //delete dokumentasi serta dokumennya
@@ -560,8 +568,8 @@ class PJMengelolaKegiatanController extends Controller
                     //     $cari_dokumentasi->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $cari_dokumentasi->id, "nama_dokumen" => $nama_dokumen, "status_unggah_dokumen" => "Pengajuan"])->delete();
                     // }
                     //dokumentasi delete
-                    $this->failedUploadKegiatan($kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
-                    $this->failedUploadKegiatan($kumpulan_foto, $cari_dokumentasi, "image", "Pengajuan Historis");
+                    $this->failedUploadKegiatan($res_kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
+                    $this->failedUploadKegiatan($res_kumpulan_foto, $cari_dokumentasi, "image", "Pengajuan Historis");
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Berhasil Membentuk Dokumentasi dan unggah Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
                 }
@@ -604,10 +612,13 @@ class PJMengelolaKegiatanController extends Controller
             $sizeFileToMB = round(($imageSize / 1000) / 1000 , 2);
             return Response::json(['errors' => ['Total File Size melebihi kapasitas yang sudah ditetapkan (Total Max: 5MB), Total File Ada: '.$sizeFileToMB." MB"]], 422);
         }
+        $input['add_link_video'] = $this->dataLinks($request->add_link_video);
+        $input['add_link_article']= $this->dataLinks($request->add_link_article);
         // elseif($file){
         foreach ($dokumentasi_kegiatan->statusKegiatan as $status) {
             $statusSebelumnya = $status->pivot->status_kegiatan_id;
         }
+        $status_update = StatusKegiatan::findOrFail(3);
                 // foreach ($file as $dokumentasi) {
                 //     $dokumen_name = $dokumentasi->getClientOriginalName();
                 //     $new_dokumen_name = $request->mulai_kegiatan."_".$dokumentasi_kegiatan->nama_kegiatan."_Dokumentasi_".$dokumen_name;
@@ -651,14 +662,21 @@ class PJMengelolaKegiatanController extends Controller
         $kumpulan_foto = $this->storeFileLaporanKegiatan($img, $dokumentasi_kegiatan->mulai_kegiatan, $dokumentasi_kegiatan, "Pengajuan" , "image");
 
         if (!$kumpulan_dokumen) {
-            return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
+            return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
+        } elseif (!$kumpulan_foto) {
+            $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+            $this->failedUploadKegiatan($res_kumpulan_dokumen, $dokumentasi_kegiatan, "dokumen", "Pengajuan");
+            return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
         }
-        elseif (!$kumpulan_foto) {
-            $this->failedUploadKegiatan($kumpulan_dokumen, $dokumentasi_kegiatan, "dokumen", "Pengajuan");
-            return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
+        $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+        $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
+        $updateLinksDokumentasi = $dokumentasi_kegiatan->update($input); 
+        if (!$updateLinksDokumentasi) {
+            $this->failedUploadKegiatan($res_kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
+            $this->failedUploadKegiatan($res_kumpulan_foto, $dokumentasi_kegiatan, "image", "Pengajuan");
+            return Response::json(['errors' => ['sistem tidak dapat memproseskan data, silahkan dicoba kembali']], 422); 
         }
         
-        $status_update = StatusKegiatan::findOrFail(3);
         $status_update_dokumentasi = $dokumentasi_kegiatan->statusKegiatan()->updateExistingPivot($statusSebelumnya, [
             'status_kegiatan_id' => $status_update->id
         ]);
@@ -668,8 +686,8 @@ class PJMengelolaKegiatanController extends Controller
             //     $dokumentasi_kegiatan->dokumenKegiatan()->where(["dokumentasi_kegiatan_id" => $id, "nama_dokumen" => $nama_delete_dokumen, "status_unggah_dokumen" => 'Pengajuan'])->delete();
             // }
             // return Response::json(['errors' => ['sistem tidak dapat memproseskan data, silahkan dicoba kembali']], 422);
-                $this->failedUploadKegiatan($kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
-                $this->failedUploadKegiatan($kumpulan_foto, $dokumentasi_kegiatan, "image", "Pengajuan");
+                $this->failedUploadKegiatan($res_kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
+                $this->failedUploadKegiatan($res_kumpulan_foto, $dokumentasi_kegiatan, "image", "Pengajuan");
                 return Response::json(['errors' => ['sistem tidak dapat memproseskan data, silahkan dicoba kembali']], 422); 
         }
         event(new UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent($dokumentasi_kegiatan, $status_update));
@@ -728,46 +746,46 @@ class PJMengelolaKegiatanController extends Controller
             $file_img_lama [] = $img_lama->nama_foto_kegiatan;
         }
         
-        if ($status_unggah_laporan == "Pengajuan Historis") {
-            $input = $request->only([
-                'nama_kegiatan',
-                'nilai_ppk',
-                'kegiatan_berbasis',
-                'mulai_kegiatan',
-                'akhir_kegiatan'
-            ]);
+        // if ($status_unggah_laporan == "Pengajuan Historis") {
+        //     $input = $request->only([
+        //         'nama_kegiatan',
+        //         'nilai_ppk',
+        //         'kegiatan_berbasis',
+        //         'mulai_kegiatan',
+        //         'akhir_kegiatan'
+        //     ]);
 
-            Validator::make($input , [
-                "nama_kegiatan" => 'required|unique:pengajuan_kegiatans,PJ_nama_kegiatan',
-                "nilai_ppk" => 'required',
-                "kegiatan_berbasis" => 'required',
-                "mulai_kegiatan" => 'required',
-                "akhir_kegiatan" => 'required'
-            ], [
-                "nama_kegiatan.required" => 'Nama Kegiatan Harus Dimasukkan!',
-                "nama_kegiatan.unique" => 'Nama Kegiatan Sudah Diambil, Silahkan Isi Nama Kegiatan Yang Lain!',
-                "nilai_ppk.required" => 'Nilai PPK Wajib Dipilih!',
-                "kegiatan_berbasis.required" => 'Kegiatan Berbasis Wajib Dipilih!',
-                'mulai_kegiatan.required' => 'Awal Kegiatan Wajib Diisi!',
-                'akhir_kegiatan.required' => 'Akhir Kegiatan Wajib Diisi!'
-            ])->validate();
+        //     Validator::make($input , [
+        //         "nama_kegiatan" => 'required|unique:pengajuan_kegiatans,PJ_nama_kegiatan',
+        //         "nilai_ppk" => 'required',
+        //         "kegiatan_berbasis" => 'required',
+        //         "mulai_kegiatan" => 'required',
+        //         "akhir_kegiatan" => 'required'
+        //     ], [
+        //         "nama_kegiatan.required" => 'Nama Kegiatan Harus Dimasukkan!',
+        //         "nama_kegiatan.unique" => 'Nama Kegiatan Sudah Diambil, Silahkan Isi Nama Kegiatan Yang Lain!',
+        //         "nilai_ppk.required" => 'Nilai PPK Wajib Dipilih!',
+        //         "kegiatan_berbasis.required" => 'Kegiatan Berbasis Wajib Dipilih!',
+        //         'mulai_kegiatan.required' => 'Awal Kegiatan Wajib Diisi!',
+        //         'akhir_kegiatan.required' => 'Akhir Kegiatan Wajib Diisi!'
+        //     ])->validate();
             
-            //validate rules => karena ini historis
-            $dateMulai = Carbon::parse($request->mulai_kegiatan);
-            $dateAkhir = Carbon::parse($request->akhir_kegiatan);
-            if ($dateAkhir < $dateMulai) {
-                return response()->json(['errors' => ['Tanggal Kegiatan Akhir Melewati Masa Lampau dibanding dengan Tanggal Kegiatan Awal']], 422);
-            }
-            $id_nilai_ppk = 1;
-            for ($i=0; $i < count($request->nilai_ppk) ; $i++) { 
-                $json_ppk[] = array(
-                    'no' => $id_nilai_ppk,
-                    'nilai_ppk' => $request->nilai_ppk[$i]
-                );
-                $id_nilai_ppk++;
-            }
-            $input['nilai_ppk'] = json_encode($json_ppk);
-        } 
+        //     //validate rules => karena ini historis
+        //     $dateMulai = Carbon::parse($request->mulai_kegiatan);
+        //     $dateAkhir = Carbon::parse($request->akhir_kegiatan);
+        //     if ($dateAkhir < $dateMulai) {
+        //         return response()->json(['errors' => ['Tanggal Kegiatan Akhir Melewati Masa Lampau dibanding dengan Tanggal Kegiatan Awal']], 422);
+        //     }
+        //     $id_nilai_ppk = 1;
+        //     for ($i=0; $i < count($request->nilai_ppk) ; $i++) { 
+        //         $json_ppk[] = array(
+        //             'no' => $id_nilai_ppk,
+        //             'nilai_ppk' => $request->nilai_ppk[$i]
+        //         );
+        //         $id_nilai_ppk++;
+        //     }
+        //     $input['nilai_ppk'] = json_encode($json_ppk);
+        // } 
 
         foreach ($file as $kumpulan_file) {
             $dokumen_name = $kumpulan_file->getClientOriginalName();
@@ -780,41 +798,44 @@ class PJMengelolaKegiatanController extends Controller
             $new_img_name = $dokumentasi_ulang->mulai_kegiatan."_".$dokumentasi_ulang->nama_kegiatan."_Dokumentasi_".$img_name;
             $tempFileImg [] = $new_img_name;
         }
+        $input['add_link_video'] = $this->dataLinks($request->add_link_video);
+        $input['add_link_article'] = $this->dataLinks($request->add_link_article);
              
         foreach ($dokumentasi_ulang->statusKegiatan as $status) {
             $statusSebelumnya = $status->pivot->status_kegiatan_id;
         }
         $status_update = StatusKegiatan::findOrFail(3);
 
-        if ($status_unggah_laporan == "Pengajuan Historis") {
-            $kumpulan_dokumen = $this->storeFileLaporanKegiatan($file, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan, "dokumen");
-            $kumpulan_foto = $this->storeFileLaporanKegiatan($img, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan , "image");
-            if (!$kumpulan_dokumen) {
-                return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali files']], 422);
-            } elseif (!$kumpulan_foto) {
-                $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
-                $this->failedUploadKegiatan($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
-                return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali images']], 422);
-            }
-            $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
-            $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
-            $update_dokumentasi = $dokumentasi_ulang->update($input);
-            if ($update_dokumentasi) {
-                $pembuatan_laporan_kegiatan = $this->storePengajuanUlangLaporanKegiatan($dokumentasi_ulang, $file_dokumen_lama, $file_img_lama, $tempFileDocs, $tempFileImg, $statusSebelumnya, $status_unggah_laporan, $status_update);
-                if (!$pembuatan_laporan_kegiatan) {
-                    $this->failedUploadKegiatan($res_kumpulan_dokumen , $dokumentasi_ulang , "dokumen", $status_unggah_laporan);
-                    $this->failedUploadKegiatan($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
-                    return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Pengajuan Ulang Laporan Kegiatan, Silahkan Coba Kembali']], 422);
+        // if ($status_unggah_laporan == "Pengajuan Historis") {
+        //     $kumpulan_dokumen = $this->storeFileLaporanKegiatan($file, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan, "dokumen");
+        //     $kumpulan_foto = $this->storeFileLaporanKegiatan($img, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan , "image");
+        //     if (!$kumpulan_dokumen) {
+        //         return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali files']], 422);
+        //     } elseif (!$kumpulan_foto) {
+        //         $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+        //         $this->failedUploadKegiatan($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
+        //         return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali images']], 422);
+        //     }
+        //     $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+        //     $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
+        //     $update_dokumentasi = $dokumentasi_ulang->update($input);
+        //     if ($update_dokumentasi) {
+        //         $pembuatan_laporan_kegiatan = $this->storePengajuanUlangLaporanKegiatan($dokumentasi_ulang, $file_dokumen_lama, $file_img_lama, $tempFileDocs, $tempFileImg, $statusSebelumnya, $status_unggah_laporan, $status_update);
+        //         if (!$pembuatan_laporan_kegiatan) {
+        //             $this->failedUploadKegiatan($res_kumpulan_dokumen , $dokumentasi_ulang , "dokumen", $status_unggah_laporan);
+        //             $this->failedUploadKegiatan($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
+        //             return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Pengajuan Ulang Laporan Kegiatan, Silahkan Coba Kembali']], 422);
 
-                }
-                event(new UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent($dokumentasi_ulang , $status_update));
-                return response()->json(['data' => 'Sukses Pengajuan Ulang Laporan Kegiatan Historis'], 200);
-            } else {
-                $this->failedUploadKegiatan($res_kumpulan_dokumen, $dokumentasi_ulang , "dokumen" ,  $status_unggah_laporan);
-                $this->failedUploadKegiatan($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
-                return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Pengajuan Ulang Laporan Kegiatan, Silahkan Coba Kembali']], 422);
-            }
-        } elseif($status_unggah_laporan == "Pengajuan"){
+        //         }
+        //         event(new UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent($dokumentasi_ulang , $status_update));
+        //         return response()->json(['data' => 'Sukses Pengajuan Ulang Laporan Kegiatan Historis'], 200);
+        //     } else {
+        //         $this->failedUploadKegiatan($res_kumpulan_dokumen, $dokumentasi_ulang , "dokumen" ,  $status_unggah_laporan);
+        //         $this->failedUploadKegiatan($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
+        //         return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Pengajuan Ulang Laporan Kegiatan, Silahkan Coba Kembali']], 422);
+        //     }
+        // } else
+        if($status_unggah_laporan == "Pengajuan"){
             $kumpulan_dokumen = $this->storeFileLaporanKegiatan($file, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan, "dokumen");
             $kumpulan_foto = $this->storeFileLaporanKegiatan($img, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan , "image");
             if (!$kumpulan_dokumen) {
@@ -827,6 +848,12 @@ class PJMengelolaKegiatanController extends Controller
             }
             $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
             $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
+            $update_links_dokumentasi = $dokumentasi_ulang->update($input);
+            if (!$update_links_dokumentasi) {
+                $this->failedUploadKegiatan($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
+                $this->failedUploadKegiatan($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
+                return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Pengajuan Ulang Laporan Kegiatan, Silahkan Coba Kembali']], 422);
+            }
             $pembuatan_laporan_kegiatan = $this->storePengajuanUlangLaporanKegiatan($dokumentasi_ulang, $file_dokumen_lama, $file_img_lama, $tempFileDocs, $tempFileImg, $statusSebelumnya , $status_unggah_laporan, $status_update);
             if (!$pembuatan_laporan_kegiatan) {
                 $this->failedUploadKegiatan($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
@@ -837,6 +864,10 @@ class PJMengelolaKegiatanController extends Controller
             return response()->json(['data' => 'Sukses Pengajuan Ulang Laporan Kegiatan'], 200);
         }
     }
+
+    /**
+     * Helper Functions
+     */
 
     private function storePengajuanUlangLaporanKegiatan($data_laporan, $dokumen_laporan_sebelumnya, $foto_kegiatan_sebelumnya, $tempDokumen, $tempFoto, $status_laporan_sebelumnya , $statusUnggah, $status_baru){
         $update_pivot = $data_laporan->statusKegiatan()->updateExistingPivot($status_laporan_sebelumnya, [
@@ -873,6 +904,7 @@ class PJMengelolaKegiatanController extends Controller
                 ]);
                 return false;
             }
+            $data_laporan->touch();
             return true;
         } else {
             return false;
@@ -933,30 +965,43 @@ class PJMengelolaKegiatanController extends Controller
 
                 if(file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name)) && !is_null($checker)){
                     if ($file_type == "dokumen") {
-                        $update_dokumen = $kegiatan->dokumenKegiatan()->where([
-                            ["nama_dokumen" , $new_dokumen_name], 
-                            ["status_unggah_dokumen" , $type]
-                        ])->update(["nama_dokumen" => $new_dokumen_name]);
-                        if (!$update_dokumen) {
-                            $this->failedUploadKegiatan($kumpulan_dokumen, $kegiatan, $file_type, $type);
-                            // return response()->json(['data' => $update_dokumen, 'tes' => $kegiatan->fotoKegiatan()->where(["dokumentasi_kegiatan_id" => $kegiatan->id, "nama_foto_kegiatan" => $new_dokumen_name, "status_unggah_foto" => $type])->first()], 200);
-                            // return $update_dokumen;
-                            return false;
-                        }
+                        $input["nama_dokumen"] = $new_dokumen_name;
+                        $kegiatan->dokumenKegiatan()->where([
+                            ["nama_dokumen", '=', $new_dokumen_name], 
+                            ["status_unggah_dokumen", '=', $type]
+                        ])->touch();
+                       
+                        // if ($update_dokumen) {
+                        //     return $update_dokumen;
+                        //     //$masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
+                        //      $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/',$new_dokumen_name);
+                            
+                        //     continue;
+                        // } else {
+                        //     $this->failedUploadKegiatan($kumpulan_dokumen, $kegiatan, $file_type, $type);
+                        //     // return response()->json(['data' => $update_dokumen, 'tes' => $kegiatan->fotoKegiatan()->where(["dokumentasi_kegiatan_id" => $kegiatan->id, "nama_foto_kegiatan" => $new_dokumen_name, "status_unggah_foto" => $type])->first()], 200);
+                        //     // return $update_dokumen;
+                        //    return false;
+                        // }
                        
                     } elseif($file_type == "image") {
-                        $update_dokumen = $kegiatan->fotoKegiatan()->where([
-                            ["nama_foto_kegiatan" , $new_dokumen_name], 
-                            ["status_unggah_foto" , $type]
-                        ])->update(["nama_foto_kegiatan" => $new_dokumen_name]);
-                        if (!$update_dokumen) {
-                            $this->failedUploadKegiatan($kumpulan_dokumen, $kegiatan, $file_type, $type);
-                            // return $update_dokumen;
-                            return false;
-                        }
+                        $input["nama_foto_kegiatan"] = $new_dokumen_name;
+                        $kegiatan->fotoKegiatan()->where([
+                            ["nama_foto_kegiatan", '=', $new_dokumen_name], 
+                            ["status_unggah_foto", '=', $type]
+                        ])->touch();
+                        // if ($update_dokumen) {
+                        //     $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+                            
+                        //     continue;
+                        // } else {
+                        //     $this->failedUploadKegiatan($kumpulan_dokumen, $kegiatan, $file_type, $type);
+                        //     // return $update_dokumen;
+                        //     return false;
+                        // }
                     }
                     // unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name));
-                    $simpan_file = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/' , $new_dokumen_name);
+                    $simpan_file = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
                     if (!$simpan_file) {
                         $this->failedUploadKegiatan($kumpulan_dokumen, $kegiatan, $file_type, $type);
                         return false;
@@ -1033,6 +1078,25 @@ class PJMengelolaKegiatanController extends Controller
             return false;
         }
         return true;
+    }
+
+    private function dataLinks($linkRequest){
+        $links = [];
+        $jsonStore = [];
+        $numberOfLinks = 1;
+        foreach ($linkRequest as $key => $values) {
+           $links[$values] = true;
+        }
+        $links = array_keys($links);
+        foreach ($links as $linkData) {
+            $jsonStore [] = array(
+                'no' => $numberOfLinks,
+                'link_data' => $linkData,
+            );
+            $numberOfLinks++;
+        }
+        $jsonData = json_encode($jsonStore);
+        return $jsonData;
     }
 
     private function fileArrTypeChecker($fileArr){

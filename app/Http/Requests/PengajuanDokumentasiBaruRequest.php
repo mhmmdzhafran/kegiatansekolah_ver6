@@ -30,6 +30,8 @@ class PengajuanDokumentasiBaruRequest extends FormRequest
             "kegiatan_berbasis" => 'required',
             "dokumentasi_kegiatan_ppk.*" => 'required|mimes:pdf,doc,docx|max:5120',
             'image_kegiatan_ppk.*' => 'required|mimes:jpeg,png|max:5120',
+            'add_link_video.*' => 'required|url',
+            'add_link_article.*' => 'required|url',
             "mulai_kegiatan" => 'required',
             "akhir_kegiatan" => 'required'
         ];
@@ -44,9 +46,13 @@ class PengajuanDokumentasiBaruRequest extends FormRequest
             'dokumentasi_kegiatan_ppk.*.required' => 'Dokumen Kegiatan Wajib Diunggah dengan ekstensi .pdf, .doc, atau .docx',
             'dokumentasi_kegiatan_ppk.*.mimes' => 'Dokumen Kegiatan yang diunggah harus berekstensi .pdf, .doc, atau .docx',
             'dokumentasi_kegiatan_ppk.*.max' => 'Dokumen Kegiatan harap tidak melebihi dari 5MB',
-            'image_kegiatan_ppk.*.mimes' => 'Sistem dapat menerima dokumen dengan ekstensi .jpeg atau .png',
-            'image_kegiatan_ppk.*.required' => 'Dokumen Kegiatan Harap Diunggah dengan ekstensi .jpeg atau .png',
+            'image_kegiatan_ppk.*.mimes' => 'Sistem dapat menerima foto dengan ekstensi .jpeg atau .png',
+            'image_kegiatan_ppk.*.required' => 'Foto Kegiatan Harap Diunggah dengan ekstensi .jpeg atau .png',
             'image_kegiatan_ppk.*.max' => 'Foto Kegiatan harap tidak melebihi dari 5MB',
+            'add_link_video.*.required' => 'Link Video Kegiatan harap dicantumkan!',
+            'add_link_video.*.url' => 'Link Video Kegiatan tidak valid!',
+            'add_link_article.*.required' => 'Link Artikel Kegiatan harap dicantumkan!',
+            'add_link_article.*.url' => 'Link Arikel Kegiatan tidak valid!',
             'mulai_kegiatan.required' => 'Awal Kegiatan Wajib Diisi',
             'akhir_kegiatan.required' => 'Akhir Kegiatan Wajib Diisi'
         ];

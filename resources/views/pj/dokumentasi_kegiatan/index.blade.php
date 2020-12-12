@@ -21,12 +21,12 @@
                         <table class="table table-bordered" id="dokumentasi_kegiatan">
                             <thead>
                                 <tr>
-                                    <th>ID Dokumentasi</th>
+                                    <th>ID Laporan</th>
                                     <th>Nama Kegiatan</th>
                                     <th>Nilai PPK</th>                                  
                                     <th>Kegiatan Berbasis</th>
-                                    <th>Pengiriman Dokumentasi</th>
-                                    <th width="15%">Status Proposal Kegiatan</th>  
+                                    <th>Pengiriman Laporan</th>
+                                    <th width="15%">Status Laporan Kegiatan</th>  
                                     <th width="15%">Aksi</th>
                                 </tr>
                             </thead>
@@ -48,6 +48,11 @@
                       {{-- <div class="button_kelola_dokumentasi">
                         <a class="btn btn-warning btn-sm rounded-pill float float-right button_show_dokumentasi" href="#show_kelola_dokumentasi">Lakukan Pengelolaan Dokumentasi</a>
                       </div> --}}
+                      <div class="form-group kegiatan-type d-none">
+                        {!! Form::label('tipe_kegiatan', 'Tipe Kegiatan: ') !!}
+                        <ul class="tipe_kegiatan_diajukan" style="background-color: #ffc107; color: white; border-radius: 10px; font-weight: bold">                            
+                        </ul>
+                      </div>
                       <div class="form-group">
                         {!! Form::label('status_kegiatan', 'Status Dokumentasi Kegiatan:') !!}
                         <ul class="status_dokumentasi">                            
@@ -101,6 +106,15 @@
                             <ol class="dokumentasi_kegiatan">
 
                             </ol>
+                            <hr>
+                            {!! Form::label('label_link_video_dokumentasi' , 'Link Video Kegiatan: ') !!}        
+                            <ol class="link-video">
+
+                            </ol>
+                            {!! Form::label('label_link_artikel_dokumentasi' , 'Link Artikel Kegiatan: ') !!}        
+                            <ol class="link-article">
+
+                            </ol>
                             {{-- <ul class="error_notification_upload_baru" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>                            
                             <button class="btn btn-success btn-sm rounded-pill float float-right mb-3" id="add_new_dokumentasi">Tambah Dokumen</button>                            
                                 <form action="" method="POST" class="form-pengelolaan-kegiatan">
@@ -133,7 +147,7 @@
                    
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Tutup</button>
                   </div>
               </div>
             </div>
@@ -182,25 +196,42 @@
                           {!! Form::label('kegiatan_berbasis', 'Kegiatan Berbasis PPK:') !!}
                           {!! Form::select('kegiatan_berbasis', array('' => 'Choose Options', 'Berbasis Kelas' => 'Berbasis Kelas', 'Berbasis Budaya Sekolah' => 'Berbasis Budaya Sekolah', 'Berbasis Masyarakat' => 'Berbasis Masyarakat') ,null , ['class' => 'form-control kegiatan_berbasis' , 'disabled']) !!}
                       </div>
+                      <hr>
                       <div class="row">
                           <div class="col-sm-12 col-lg-6">
                               {!! Form::label('lihat-file', "Unggah Laporan Kegiatan (ekstensi .pdf /.docx / .doc dan total seluruh file sebesar 5MB): ") !!}
                               <br>
-                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Add More</button>
+                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Tambah</button>
                               <br>
                               {!! Form::file('dokumentasi_kegiatan_ppk[]') !!}
-                              <div class="form-group doc-file" id="doc-file">
-                              </div>
-                              <hr>
+                              <div class="form-group doc-file" id="doc-file"></div>
+                              
                               {!! Form::label('lihat-file', "Unggah Dokumentasi Kegiatan (ekstensi .jpeg atau .png dan total seluruh file sebesar 5MB): ") !!}
                               <br>
-                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_img">Add More</button>
+                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_img">Tambah</button>
                               <br>
                               {!! Form::file('image_kegiatan_ppk[]') !!}
-                              <div class="form-group img-file" id="img-file">
-
-                              </div>
+                              <div class="form-group img-file" id="img-file"></div>
                           </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            {!! Form::label('lihat-link-video', "Masukkan Link Video Kegiatan: ") !!}
+                            <br>
+                            <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_video">Tambah</button>
+                            <br>
+                            {!! Form::text('add_link_video[]', null , ['class' => 'form-control add_link_video']) !!}
+                            <div class="form-group links-video"></div>
+                            
+                            {!! Form::label('lihat-link-article', "Masukkan Link Artikel Kegiatan: ") !!}
+                            <br>
+                            <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_article">Tambah</button>
+                            <br>
+                            {!! Form::text('add_link_article[]', null , ['class' => 'form-control add_link_article']) !!}
+                            <div class="form-group links-article"></div>
+                            <hr>
+                        </div>
                       </div>
                           <div class="row">
                               <div class="col-sm-12 col-lg-6">
@@ -220,7 +251,7 @@
                             <div class="progress-bar progress-bar-striped progress-bar-animated myProgress" role="progressbar" style="width: 0%">0%</div>
                         </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary submit_dokumentasi">Unggah Dokumentasi</button>
                   </div>
                 </div>
@@ -268,7 +299,7 @@
                           <div class="col-sm-12 col-lg-6">
                               {!! Form::label('lihat-file', "Unggah Laporan Kegiatan (ekstensi .pdf dan total seluruh file sebesar 5MB): ") !!}
                               <br>
-                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Add More</button>
+                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Tambah</button>
                               <br>
                               {!! Form::file('dokumentasi_kegiatan_ppk[]') !!}
                               <div class="form-group doc-file" id="doc-file">
@@ -276,13 +307,32 @@
                               <hr>
                               {!! Form::label('lihat-file', "Unggah Dokumentasi Kegiatan (ekstensi .jpeg atau .png dan total seluruh file sebesar 5MB): ") !!}
                               <br>
-                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_img">Add More</button>
+                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_img">Tambah</button>
                               <br>
                               {!! Form::file('image_kegiatan_ppk[]') !!}
                               <div class="form-group img-file" id="img-file">
 
                               </div>
                           </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            {!! Form::label('lihat-link-video', "Masukkan Link Video Kegiatan: ") !!}
+                            <br>
+                            <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_video">Tambah</button>
+                            <br>
+                            {!! Form::text('add_link_video[]', null , ['class' => 'form-control add_link_video']) !!}
+                            <div class="form-group links-video"></div>
+                            
+                            {!! Form::label('lihat-link-article', "Masukkan Link Artikel Kegiatan: ") !!}
+                            <br>
+                            <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_article">Tambah</button>
+                            <br>
+                            {!! Form::text('add_link_article[]', null , ['class' => 'form-control add_link_article']) !!}
+                            <div class="form-group links-article"></div>
+                            <hr>
+                        </div>
                       </div>
                           <div class="row">
                               <div class="col-sm-12 col-lg-6">
@@ -302,7 +352,7 @@
                             <div class="progress-bar progress-bar-striped progress-bar-animated myProgress" role="progressbar" style="width: 0%">0%</div>
                         </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Tutup</button>
                     <button type="submit" class="btn btn-primary submit_dokumentasi">Unggah Dokumentasi</button>
                   </div>
                 </div>
@@ -378,16 +428,23 @@
                             <ol class="foto_kegiatan_unggah">
 
                             </ol>
+                            <hr>
+                            {!! Form::label('label_link_video_dokumentasi' , 'Link Video Kegiatan: ') !!}        
+                            <ol class="link-video-unggah">
+
+                            </ol>
+                            {!! Form::label('label_link_artikel_dokumentasi' , 'Link Artikel Kegiatan: ') !!}        
+                            <ol class="link-article-unggah">
+
+                            </ol>
                           </div>
                         </div>
                       </div>
-
-
                       <div class="row">
                           <div class="col-sm-12 col-lg-6">
                               {!! Form::label('lihat-file', "Unggah Laporan Kegiatan (ekstensi .pdf /.docx / .doc dan total seluruh file sebesar 5MB): ") !!}
                               <br>
-                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Add More</button>
+                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Tambah</button>
                               <br>
                               {!! Form::file('dokumentasi_kegiatan_ppk[]') !!}
                               <div class="form-group doc-file" id="doc-file">
@@ -395,13 +452,32 @@
                               <hr>
                               {!! Form::label('lihat-file', "Unggah Dokumentasi Kegiatan (ekstensi .jpeg atau .png dan total seluruh file sebesar 5MB): ") !!}
                               <br>
-                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_img">Add More</button>
+                              <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_img">Tambah</button>
                               <br>
                               {!! Form::file('image_kegiatan_ppk[]') !!}
                               <div class="form-group img-file" id="img-file">
 
                               </div>
                           </div>
+                      </div>
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-12 col-lg-12">
+                            {!! Form::label('lihat-link-video', "Masukkan Link Video Kegiatan: ") !!}
+                            <br>
+                            <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_video">Tambah</button>
+                            <br>
+                            {!! Form::text('add_link_video[]', null , ['class' => 'form-control add_link_video']) !!}
+                            <div class="form-group links-video"></div>
+                            
+                            {!! Form::label('lihat-link-article', "Masukkan Link Artikel Kegiatan: ") !!}
+                            <br>
+                            <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_article">Tambah</button>
+                            <br>
+                            {!! Form::text('add_link_article[]', null , ['class' => 'form-control add_link_article']) !!}
+                            <div class="form-group links-article"></div>
+                            <hr>
+                        </div>
                       </div>
                           <div class="row">
                               <div class="col-sm-12 col-lg-6">
@@ -421,8 +497,8 @@
                             <div class="progress-bar progress-bar-striped progress-bar-animated myProgress" role="progressbar" style="width: 0%">0%</div>
                         </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-warning submit_dokumentasi">Ajukan Ulang</button>
+                    <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Tutup</button>
+                    <button type="submit" class="btn btn-primary submit_dokumentasi">Ajukan Ulang</button>
                   </div>
                 </div>
                 </form>
@@ -437,7 +513,11 @@
     <script>
         var doc_row = 1;
         var img_row = 1;
-        var doc_added_dokumentasi_baru = 1;
+        var video_row = 1;
+        var article_row = 1;
+        // var placeholderChoice = "";
+        // var videoChoice 
+        // var doc_added_dokumentasi_baru = 1;
         var value_checked  = [];
         var kegiatan_berbasis = "";
         var modalState = "";
@@ -550,16 +630,33 @@
                         $(".akhir_kegiatan").prop('disabled', true);
                         $(".kegiatan_berbasis").prop('disabled', true);
                         console.log(true);
-                    } else if(res.state_dokumentasi === "Pengajuan Historis"){
-                        nama_kegiatan.disabled = false;
-                        for (let index = 0; index < nilai_ppk.length; index++) {
-                            const element = nilai_ppk[index];
-                            element.disabled = false;
-                        }
-                        $(".mulai_kegiatan").prop('disabled', false);
-                        $(".akhir_kegiatan").prop('disabled', false);
-                        $(".kegiatan_berbasis").prop('disabled', false);
+                    } 
+                    const previewLinkVideo = JSON.parse(res.data_dokumentasi.add_link_video);
+                    if (previewLinkVideo.length > 0) {
+                        previewLinkVideo.forEach(element => {
+                            $(".link-video-unggah").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
+                        });
+                    } else {
+                        $(".link-video-unggah").append('<li>Tidak Ada Link Video yang Tercantum</li>');
                     }
+                    const previewLinkArticle = JSON.parse(res.data_dokumentasi.add_link_article);
+                    if (previewLinkArticle.length > 0) {
+                        previewLinkArticle.forEach(element => {
+                            $(".link-article-unggah").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
+                        });
+                    } else {
+                        $(".link-article-unggah").append('<li>Tidak Ada Link Article yang Tercantum</li>');
+                    }
+                    // else if(res.state_dokumentasi === "Pengajuan Historis"){
+                    //     nama_kegiatan.disabled = false;
+                    //     for (let index = 0; index < nilai_ppk.length; index++) {
+                    //         const element = nilai_ppk[index];
+                    //         element.disabled = false;
+                    //     }
+                    //     $(".mulai_kegiatan").prop('disabled', false);
+                    //     $(".akhir_kegiatan").prop('disabled', false);
+                    //     $(".kegiatan_berbasis").prop('disabled', false);
+                    // }
                     const dokumen_kegiatan = res.dokumen;
                     if (dokumen_kegiatan.length > 0) {
                         dokumen_kegiatan.forEach(element => {
@@ -662,6 +759,16 @@
             } else if(btn_value === "add_img") {
                 img_row++;
                 $(".img-file").append('<input type="file" name="image_kegiatan_ppk[]" id="row-img'+img_row+'" placeholder="Enter your Name" /><button type="button" name="remove" id="'+img_row+'" class="btn btn-danger btn_remove mb-2" data-id="image">X</button>');  
+            } else if(btn_value === 'add_link_video') {
+                video_row++;
+                // placeholderChoice = document.getElementsByClassName('links')[0].getAttribute('id');
+                // console.log(placeholderChoice);
+                $(".links-video").append('<div class="input-group mt-2"><input type="text" name="add_link_video[]" id="row-video'+video_row+'" class="form-control"/> <div class="input-group-append"> <button type="button" name="remove" id="'+video_row+'" class="btn btn-danger btn_remove" data-id="video">X</button></div></div>');
+            } else if(btn_value === 'add_link_article'){
+                article_row++;
+                // placeholderChoice = document.getElementsByClassName('links')[1].getAttribute('id');
+                $(".links-article").append('<div class="input-group mt-2"><input type="text" name="add_link_article[]" id="row-article'+article_row+'" class="form-control"/> <div class="input-group-append"> <button type="button" name="remove" id="'+article_row+'" class="btn btn-danger btn_remove" data-id="article">X</button></div></div>');
+                // $(".img-file").append('<input type="file" name="image_kegiatan_ppk[]" id="row-img'+img_row+'" placeholder="Enter your Name" /><button type="button" name="remove" id="'+img_row+'" class="btn btn-danger btn_remove mb-2" data-id="image">X</button>');  
             }
            
         });  
@@ -677,7 +784,13 @@
                 // $("#row-img"+button_id).remove();
                 $(this).remove();
                 $(".img-file").find('[id = "row-img'+button_id+'"]').remove();
-            }            
+            } else if(button_type === 'video'){
+                $(this).remove();
+                $(".links-video").find('[id = "row-video'+button_id+'"]').remove();
+            } else if(button_type === 'article'){
+                $(this).remove();
+                $(".links-article").find('[id = "row-article'+button_id+'"]').remove();
+            }
         });  
         
         // $(document).on('click', '.btn_remove_doc_baru', function(){
@@ -747,6 +860,7 @@
             modalState = "";
             $(".doc-file").empty();
             $(".img-file").empty();
+            
             // $(".waktu_status_unggah").empty();
         });
 
@@ -776,6 +890,8 @@
             $(".img-file").empty();
             $(".laporan_kegiatan_unggah").empty();
             $(".foto_kegiatan_unggah").empty();
+            $(".link-video-unggah").empty();
+            $(".link-article-unggah").empty();
         });
 
         // $(".unggah_dokumentasi_baru").on('hidden.bs.modal' , function(){
@@ -798,6 +914,10 @@
             // $(".form-pengelolaan-kegiatan")[0].reset();
             // $(".error_notification_upload_baru").empty();
             $(".status_laporan_kegiatan").empty();
+            $(".link-video").empty();
+            $(".link-article").empty();
+            $(".kegiatan-type").addClass('d-none');
+            $(".tipe_kegiatan_diajukan").empty();
             value_checked.length = 0;
             kegiatan_berbasis = "";
             // doc_added_dokumentasi_baru = 1;
@@ -992,7 +1112,7 @@
                         let value_error = JSON.parse(res.responseText);
                         $(".error_notification").append('<h5>Error Pengisian Form:</h5>');
                         $.each(value_error.errors, function(key, value){
-                            $(".error_notification").append('<li>'+value+'</li>');
+                            $(".error_notification").append('<li class="mb-2">'+value+'</li>');
                         });                       
                         Swal.fire({
                             icon: 'error',
@@ -1030,6 +1150,13 @@
             loadingBar('show');
             $.get(url, function(res){         
                 console.log(res);
+                const kegiatanType = res.dokumentasi_kegiatan.tipe_kegiatan;
+                if (kegiatanType === 'Pengajuan Historis') {
+                    $(".kegiatan-type").removeClass('d-none');
+                    $(".tipe_kegiatan_diajukan").append('<li>'+kegiatanType+'</li>');
+                } else {
+                    $(".kegiatan-type").addClass('d-none');
+                }
                 const keteranganElement = document.querySelector('.keterangan_kegiatan_ppk');
                 if (res.isKeterangan) {
                     keteranganElement.classList.remove('d-none');
@@ -1038,13 +1165,13 @@
                         if (element.no === 1) {
                             if (element.keterangan_opsional !== "") {
                                 $('.status_laporan_kegiatan').append('<li>Keterangan Sukses: '+element.keterangan_opsional+'</li>')
-                            } else {
+                            } else if(element.keterangan_opsional === "" || typeof element.keterangan_opsional === null) {
                                 $('.status_laporan_kegiatan').append('<li>Keterangan Sukses: Tidak Terdapat Keterangan Sukses</li>')
                             }
                         } else if(element.no === 2){
                             if (element.keterangan_wajib_ulang !== "") {
                                 $('.status_laporan_kegiatan').append('<li>Keterangan Pengajuan Ulang: '+element.keterangan_wajib_ulang+'</li>')
-                            } else {
+                            } else if(element.keterangan_wajib_ulang === "" || typeof element.keterangan_wajib_ulang === null) {
                                 $('.status_laporan_kegiatan').append('<li>Keterangan Pengajuan Ulang: Tidak Terdapat Keterangan Pengajuan Ulang</li>')
                             }
                         }
@@ -1070,7 +1197,11 @@
                         "border-radius": "10px",
                         "font-weight": 'bold',
                     });
-                    $(".status_dokumentasi").append('<li>Laporan dan Dokumentasi Kegiatan Telah Disetujui!</li>');
+                    if (kegiatanType === 'Pengajuan Historis') {
+                        $(".status_dokumentasi").append('<li>Laporan dan Dokumentasi Kegiatan Historis Telah Diunggah!</li>');
+                    } else {
+                        $(".status_dokumentasi").append('<li>Laporan dan Dokumentasi Kegiatan Telah Disetujui!</li>');
+                    }
                 } else if(res.status === 3){
                     $(".status_dokumentasi").css({
                         "background-color": "#4e73df",
@@ -1090,7 +1221,7 @@
                         if (fileKegiatan.search('.pdf') === -1) {
                             $(".laporan_kegiatan").append('<li class="mb-2"><i class="fa fa-file-alt mr-2"></i>'+fileKegiatan+'<a href="'+dokumen_asset+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+fileKegiatan+'">Download File</a></li>');
                         } else if(fileKegiatan.search('.docx') === -1 || fileKegiatan.search('.doc') === -1){
-                            $(".laporan_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+fileKegiatan+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+fileKegiatan+"'>Unduh Dokumen</a></li>");                           
+                            $(".laporan_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+fileKegiatan+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm ml-2 mr-2 mb-2' download='"+fileKegiatan+"'>Unduh Dokumen</a></li>");                           
                         }
 
                     });
@@ -1106,10 +1237,27 @@
                     $.each(res.image , function(key,item){
                         let dokumen_asset = fileAssets(item.nama_foto_kegiatan);
                         // $(".dokumentasi_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_foto_kegiatan+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_foto_kegiatan+"'>Unduh Dokumen</a><button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_foto_kegiatan+"' data-target2='"+item.status_foto+"' data-target3='"+item.id+"'>Edit File</button><button type='button' class='btn btn-danger btn-sm delete_dokumen ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_foto_kegiatan+"' data-target2='"+item.status_unggah_foto+"' data-target3='"+item.id+"'>Delete Dokumen</button></li>");                        
-                        $(".dokumentasi_kegiatan").append("<li><img class='rounded-circle mb-2 mt-2 mr-2' src='"+dokumen_asset+"' alt='' width='150' height='150'>"+item.nama_foto_kegiatan+"<button class='btn btn-primary btn-sm lihat_file ml-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mb-2' download='"+item.nama_foto_kegiatan+"'>Unduh Dokumentasi</a>");                        
+                        $(".dokumentasi_kegiatan").append("<li><img class='rounded-circle mb-2 mt-2 mr-2' src='"+dokumen_asset+"' alt='' width='150' height='150'>"+item.nama_foto_kegiatan+"<button class='btn btn-primary btn-sm lihat_file ml-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm ml-2 mb-2' download='"+item.nama_foto_kegiatan+"'>Unduh Dokumentasi</a>");                        
                     });
                 } else {
                     $(".dokumentasi_kegiatan").append('<li>Tidak Ada Foto Kegiatan</li>');
+                }
+                const linkVideo = JSON.parse(res.dokumentasi_kegiatan.add_link_video);
+                if (linkVideo.length > 0) {
+                    linkVideo.forEach(element => {
+                        $(".link-video").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
+                    });
+                    
+                } else {
+                    $(".link-video").append('<li>Tidak Terdapat Link Video</li>');
+                }
+                const linkArticle= JSON.parse(res.dokumentasi_kegiatan.add_link_article);
+                if (linkArticle.length > 0) {
+                    linkArticle.forEach(element => {
+                        $(".link-article").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
+                    });
+                } else {
+                    $(".link-article").append('<li>Tidak Terdapat Link Artikel</li>');
                 }
                 modalState = modalStartLihatDokumentasi;
             }).done(function(){

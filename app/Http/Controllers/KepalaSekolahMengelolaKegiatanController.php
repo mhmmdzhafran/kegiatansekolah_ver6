@@ -457,6 +457,9 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         foreach ($dokumentasiKegiatan->statusKegiatan as $status) {
             $statusSebelumnya = $status->pivot->status_kegiatan_id;
         }
+        if ($request->id_keterangan == 1 && is_null($input['keterangan'])) {
+            $input['keterangan'] = '';
+        }
         switch ($input['id_keterangan']) {
             case 1:          
                 foreach ($keterangan as $listKeterangan) {
@@ -660,17 +663,9 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     $btn_status = "<h6 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status."</h6>";
                 }
             } elseif($status == "Belum Disetujui"){
-                if($type == "Pengajuan Historis"){
-                    $btn_status = "<h6 class='text-center alert alert-primary alert-heading font-weight-bolder'>".$status."(".$type.")</h6>";
-                } else {
-                    $btn_status = "<h6 class='text-center alert alert-primary alert-heading font-weight-bolder'>".$status."</h6>";
-                }
+                $btn_status = "<h6 class='text-center alert alert-primary alert-heading font-weight-bolder'>".$status."</h6>";
             } elseif($status == "Pengajuan Ulang"){
-                if($type == "Pengajuan Historis"){
-                    $btn_status = "<h6 class='text-center alert alert-info alert-heading font-weight-bolder'>Belum ".$status."(".$type.")</h6>";
-                } else {
-                    $btn_status = "<h6 class='text-center alert alert-info alert-heading font-weight-bolder'>Belum ".$status."</h6>";
-                }
+               $btn_status = "<h6 class='text-center alert alert-info alert-heading font-weight-bolder'>Sedang ".$status."</h6>";
             }
         }
         return $btn_status;
