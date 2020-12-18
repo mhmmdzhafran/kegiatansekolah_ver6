@@ -256,14 +256,17 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                                     return Response::json(['errors' => ['Tidak dapat membuat data Dokumentasi Kegiatan, silahkan dicoba kembali']], 422);
                                 }
                                 $statusSukses = StatusKegiatan::findOrFail(1);
-                                $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
+                                $simpanStatus = $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
                                     'status_kegiatan_id' => $statusSukses->id
                                 ]);
-                                if (!is_null($pengajuan_kegiatan->user()->first())) {
-                                    event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
+                                if ($simpanStatus) {
+                                    if (!is_null($pengajuan_kegiatan->user()->first())) {
+                                        event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
+                                    }
+                                    return Response::json(['data' => 'data is valid', 'status_data'=>'Pengajuan Kegiatan Berhasil diterima!'], 200);
                                 }
-                                return Response::json(['data' => 'data is valid', 'status_data'=>'Pengajuan Kegiatan Berhasil diterima!'], 200);
-                                
+                                $this->deleteDokumentasiKegiatan($user_id, $username_pj, $pengajuan_kegiatan->PJ_nama_kegiatan, $pengajuan_kegiatan->nilai_ppk, $pengajuan_kegiatan->kegiatan_berbasis, $tanggal_mulai, $tanggal_akhir);
+                                return Response::json(['errors' => ['Tidak dapat menyimpan status Dokumentasi Kegiatan, silahkan beri keputusan dan coba kembali']], 422);
                             }
                             else {
                                 return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi'], 'state' => true], 422);
@@ -598,8 +601,23 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         if (!$dokumentasi) {
             return false;
         }
-        $dokumentasi->StatusKegiatan()->save($statusDefault);
+        $saveStatus = $dokumentasi->StatusKegiatan()->save($statusDefault);
+        if (!$saveStatus) {
+            $this->deleteDokumentasiKegiatan($user_id, $username ,$namaKegiatan, $nilai_ppk, $kegiatan_berbasis, $tanggal_mulai, $tanggal_akhir);
+            return false;
+        }
         return true;
+    }
+
+    private function deleteDokumentasiKegiatan($userID, $usernameID, $nama_dokumentasi_kegiatan, $tanggal_mulai_kegiatan, $tanggal_akhir_kegiatan){
+        $dokumentasiSearch = DokumentasiKegiatan::where([
+            'user_id' => $userID,
+            'nama_pj' => $usernameID,
+            'nama_kegiatan' => $nama_dokumentasi_kegiatan,
+            'mulai_kegiatan' => $tanggal_mulai_kegiatan,
+            'akhir_kegiatan' => $tanggal_akhir_kegiatan
+        ])->first();
+        $dokumentasiSearch->delete();
     }
 
     private function updateKegiatan($dataKegiatan, $tipeKegiatan, $idKeterangan ,$keterangan, $placementKeterangan, $dataKeterangan){

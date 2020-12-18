@@ -334,11 +334,8 @@ class KepalaSekolahAssessmenController extends Controller
         }
 
         $fileSizes = $this->getFileUploadSizes($file);
+        $this->isFileSize($fileSizes);
         
-        if ($fileSizes > 5120000) {
-            $fileSizesToMB = round(($fileSizes / 1000) / 1000 , 2);
-            return Response::json(['errors' => ['Total File Size melebihi kapasitas yang sudah ditetapkan (Total Max: 5MB), Total File Ada: '.$fileSizesToMB." MB"]], 422);
-        }
         
         //strictly for storing skor dan upload dokumen
         /** Revision Code Here */
@@ -609,7 +606,7 @@ class KepalaSekolahAssessmenController extends Controller
     }
     
  
-    protected function calculateScore($skor_1, $skor_2, $skor_3, $skor_4, $skor_5, $skor_6, $skor_7, $skor_8 , $skor_9 , $skor_10){
+    private function calculateScore($skor_1, $skor_2, $skor_3, $skor_4, $skor_5, $skor_6, $skor_7, $skor_8 , $skor_9 , $skor_10){
         $skor_akhir_1 = $skor_1 / 5;
         $skor_akhir_2 = $skor_2 / 3;
         $skor_akhir_3 = $skor_3 / 3;
@@ -624,7 +621,7 @@ class KepalaSekolahAssessmenController extends Controller
         return $skor_akhir;
     }
 
-    protected function create_json_assessmen_internal(){
+    private function create_json_assessmen_internal(){
         $json_assessmen = [];
         for ($i=1; $i <=49 ; $i++) { 
             $json_assessmen [] = array(
@@ -637,12 +634,19 @@ class KepalaSekolahAssessmenController extends Controller
         return $assessmen_skor_penilaian;
     }
 
-    protected function getFileUploadSizes($files){
+    private function getFileUploadSizes($files){
         $sizeAllDokumen = 0;
         foreach ($files as $getFileSizes) {
             $sizeAllDokumen += $getFileSizes->getSize();
         }
         return $sizeAllDokumen;
+    }
+
+    private function isFileSize($file){
+        if ($file > 5120000) {
+            $fileSizesToMB = round(($file / 1000) / 1000 , 2);
+            return Response::json(['errors' => ['Total File Size melebihi kapasitas yang sudah ditetapkan (Total Max: 5MB), Total File Ada: '.$fileSizesToMB." MB"]], 422);
+        }
     }
 
 }
