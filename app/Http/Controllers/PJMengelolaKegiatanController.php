@@ -703,7 +703,11 @@ class PJMengelolaKegiatanController extends Controller
 
         $this->isFileSize($fileSize);
         $this->isFileSize($imageSize);
-       
+        
+        $checkLaporanKegiatan = DokumentasiKegiatan::where('nama_kegiatan' , $request->nama_kegiatan)->first();
+        if ($dokumentasi_ulang->id != $checkLaporanKegiatan->id) {
+            return response()->json(['errors' => ['Nama Laporan Kegiatan Telah Diambil, Silahkan Coba Kembali']], 422);
+        }
 
         $status_unggah_laporan = $dokumentasi_ulang->tipe_kegiatan;
         $dokumen_lama = $dokumentasi_ulang->dokumenKegiatan()->where([
@@ -906,35 +910,13 @@ class PJMengelolaKegiatanController extends Controller
                             ["nama_dokumen", '=', $new_dokumen_name], 
                             ["status_unggah_dokumen", '=', $type]
                         ])->touch();
-                       
-                        // if ($update_dokumen) {
-                        //     return $update_dokumen;
-                        //     //$masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
-                        //      $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/',$new_dokumen_name);
-                            
-                        //     continue;
-                        // } else {
-                        //     $this->failedUploadKegiatan($kumpulan_dokumen, $kegiatan, $file_type, $type);
-                        //     // return response()->json(['data' => $update_dokumen, 'tes' => $kegiatan->fotoKegiatan()->where(["dokumentasi_kegiatan_id" => $kegiatan->id, "nama_foto_kegiatan" => $new_dokumen_name, "status_unggah_foto" => $type])->first()], 200);
-                        //     // return $update_dokumen;
-                        //    return false;
-                        // }
-                       
+
                     } elseif($file_type == "image") {
                         $input["nama_foto_kegiatan"] = $new_dokumen_name;
                         $kegiatan->fotoKegiatan()->where([
                             ["nama_foto_kegiatan", '=', $new_dokumen_name], 
                             ["status_unggah_foto", '=', $type]
                         ])->touch();
-                        // if ($update_dokumen) {
-                        //     $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
-                            
-                        //     continue;
-                        // } else {
-                        //     $this->failedUploadKegiatan($kumpulan_dokumen, $kegiatan, $file_type, $type);
-                        //     // return $update_dokumen;
-                        //     return false;
-                        // }
                     }
                     // unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name));
                     $simpan_file = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
