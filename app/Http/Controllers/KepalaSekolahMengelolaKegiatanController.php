@@ -709,13 +709,5 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         }
         return $data_ppk;
     }
-
-    // private function updateStatusKegiatan($type, $dataKegiatan, $status, $statusSebelumnya){
-    //     if ($type == 'Pengajuan') {
-    //         # code...
-    //     } elseif($type == 'Laporan'){
-    //         # code...
-    //     }
-    //     return true;
-    // }
+    
 }

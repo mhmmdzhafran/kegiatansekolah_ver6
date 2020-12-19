@@ -704,10 +704,10 @@ class PJMengelolaKegiatanController extends Controller
         $this->isFileSize($fileSize);
         $this->isFileSize($imageSize);
         
-        $checkLaporanKegiatan = DokumentasiKegiatan::where('nama_kegiatan' , $request->nama_kegiatan)->first();
-        if ($dokumentasi_ulang->id != $checkLaporanKegiatan->id) {
-            return response()->json(['errors' => ['Nama Laporan Kegiatan Telah Diambil, Silahkan Coba Kembali']], 422);
-        }
+        // $checkLaporanKegiatan = DokumentasiKegiatan::where('nama_kegiatan' , $request->nama_kegiatan)->first();
+        // if ($dokumentasi_ulang->id != $checkLaporanKegiatan->id) {
+        //     return response()->json(['errors' => ['Nama Laporan Kegiatan Telah Diambil, Silahkan Coba Kembali']], 422);
+        // }
 
         $status_unggah_laporan = $dokumentasi_ulang->tipe_kegiatan;
         $dokumen_lama = $dokumentasi_ulang->dokumenKegiatan()->where([
