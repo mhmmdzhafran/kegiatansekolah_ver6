@@ -290,13 +290,16 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                             $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal", $input['id_keterangan'] ,$input['keterangan'], $key, $keterangan_decode);
                             if($update){
                                 $statusSukses = StatusKegiatan::findOrFail(4);
-                                $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
+                                $simpanStatus = $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
                                     'status_kegiatan_id' => $statusSukses->id
                                 ]);
-                                if (!is_null($pengajuan_kegiatan->user()->first())) {
-                                    event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
+                                if ($simpanStatus) {
+                                    if (!is_null($pengajuan_kegiatan->user()->first())) {
+                                        event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
+                                    }
+                                    return Response::json(['data' => 'data is valid', 'status_data' => 'Kegiatan Yang Diajukan Telah Diajukan Ulang beserta Keterangan Dari Kepala Sekolah'], 200);
                                 }
-                                return Response::json(['data' => 'data is valid', 'status_data' => 'Kegiatan Yang Diajukan Telah Diajukan Ulang beserta Keterangan Dari Kepala Sekolah'], 200);
+                                return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi']], 422);
                             } else {
                                 return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi'], 'state' => true], 422);
                             }
@@ -322,13 +325,16 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                             $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal", $input['id_keterangan'] ,$input['keterangan'], $key, $keterangan_decode);
                             if($update){
                                 $statusSukses = StatusKegiatan::findOrFail(5);
-                                $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
+                                $simpanStatus = $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
                                     'status_kegiatan_id' => $statusSukses->id
-                                ]);                            
-                                if (!is_null($pengajuan_kegiatan->user()->first())) {
-                                    event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
-                                }
-                                return Response::json(['data' => 'data is valid', 'status_data' => 'Kegiatan Yang Diajukan Telah Ditolak'], 200);
+                                ]);     
+                                if ($simpanStatus) {
+                                    if (!is_null($pengajuan_kegiatan->user()->first())) {
+                                        event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
+                                    }
+                                    return Response::json(['data' => 'data is valid', 'status_data' => 'Kegiatan Yang Diajukan Telah Ditolak'], 200);
+                                }                       
+                                return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi']], 422);
                             }
                             else{
                                 return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi'], 'state' => true], 422);
