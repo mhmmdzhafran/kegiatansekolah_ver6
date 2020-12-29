@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 
 class AdminUserController extends Controller
 {
@@ -205,9 +206,11 @@ class AdminUserController extends Controller
         $url = url('/login');
         Mail::to($request->email_user)->send(new UpdatedUserAccountMail($user, $request->passwordChecker, $url));
         if ($user->id == Auth::user()->id && $user->Role->role_title == 'Admin') {
-            return Response::json(['message' => 'data is valid' , 'store_message' => 'Pengguna Berhasil Diperbarui', 'state_refresh' => true, 'new_name' => $user->name], 200);
+            return Response::json(['message' => 'data is valid' , 'store_message' => 'Pengguna Berhasil Diperbarui', 'state_refresh' => true, 'new_name' => $user->name, 'state' => false], 200);
+        } elseif($user->id == Auth::user()->id && $user->Role->role_title != 'Admin'){
+            return Response::json(['message' => 'data is valid' , 'store_message' => 'Pengguna Berhasil Diperbarui', 'state_refresh' => true, 'state' => true], 200);    
         }
-        return Response::json(['message' => 'data is valid' , 'store_message' => 'Pengguna Berhasil Diperbarui', 'state_refresh' => false], 200);
+        return Response::json(['message' => 'data is valid' , 'store_message' => 'Pengguna Berhasil Diperbarui', 'state_refresh' => false, 'state' => false], 200);
     }
 
     /**

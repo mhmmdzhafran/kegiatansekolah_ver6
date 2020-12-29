@@ -406,6 +406,9 @@
                         }).then((result) => {
                             $(".name_admin").empty();
                             $(".name_admin").append(dataUser);
+                            if (!response.state) {
+                               window.location.replace('/logout');
+                            }
                         }); 
                     } else {
                         Swal.fire({
