@@ -395,7 +395,7 @@
                         const linkVideo = JSON.parse(res.data_dokumentasi.add_link_video);
                         if (linkVideo.length > 0) {
                             linkVideo.forEach(element => {
-                                $(".link_video").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+                                $(".link_video").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
                             });
                         } else {
                             $(".link_video").append('<li>Belum Mengunggah Link Video Kegiatan</li>');
@@ -403,7 +403,7 @@
                         const linkArticle = JSON.parse(res.data_dokumentasi.add_link_article);
                         if (linkArticle.length > 0) {
                             linkArticle.forEach(element => {
-                                $(".link_article").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+                                $(".link_article").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
                             });
                         } else {
                             $(".link_article").append('<li>Belum Mengunggah Link Artikel Kegiatan</li>');

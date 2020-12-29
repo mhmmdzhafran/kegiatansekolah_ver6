@@ -40,7 +40,8 @@
             <div class="modal-dialog " role="document">
               <!-- Modal content-->
               <form action="" id="deleteForm" method="post">
-                {{-- @method("DELETE") --}}
+                @method('delete')
+                @csrf
                   <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Penghapusan User</h5>
@@ -129,8 +130,8 @@
             <div class="modal-dialog " role="document">
               <!-- Modal content-->
               <form action="" id="editUserForm" autocomplete="off">
-                {{-- @method("PUT") --}}
-                {{ csrf_field() }}
+                @method('PUT')
+                @csrf
                   <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Pengubahan User</h5>
@@ -231,6 +232,7 @@
         $("#error_notification").empty();
         url = '{{route("admin.user.update", "id")}}';
         url = url.replace('id', value);
+        console.log(url);
         $("#editUserForm").attr('action', url);        
         // let data_table = table.row($(this).parents('tr')).data();
         // $(".nama_user").prop('value' , data_table.name);
@@ -384,17 +386,34 @@
                     $(".error_notification").addClass('d-none');
                     loading_bar(true);
                 },
-                success: function(result){
+                success: function(response){
+                    let dataUser = response.new_name;
                     $(".error_notification").empty();
                     $(".error_notification").addClass('d-none');
                     loading_bar(false);
                     $(modalState).modal('hide');
-                    Swal.fire({
-                        icon: 'success',
-                        title: "Berhasil",
-                        text: result.store_message
-                    });                    
+                    // Swal.fire({
+                    //     icon: 'success',
+                    //     title: "Berhasil",
+                    //     text: result.store_message
+                    // });                    
                     $('#users-table').DataTable().ajax.reload();
+                    if (response.state_refresh) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: "Berhasil",
+                            text: response.store_message
+                        }).then((result) => {
+                            $(".name_admin").empty();
+                            $(".name_admin").append(dataUser);
+                        }); 
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: "Berhasil",
+                            text: response.store_message
+                        }); 
+                    }
                 },
                 error: function(result){
                     loading_bar(false);
@@ -438,7 +457,7 @@
         });
         $.ajax({
             url: action,
-            type: 'POST',
+            type: 'DELETE',
             data: id,
             beforeSend: function(){
                 loading_bar(true);

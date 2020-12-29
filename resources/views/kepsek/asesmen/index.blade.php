@@ -95,6 +95,20 @@
                                 <label for="email_kepsek">Email: </label>
                                 <input type="text" name="email_kepsek" id="email_kepsek" class="form-control">
                             </div>
+                            {{-- <div class="row">
+                                <div class="col-sm-12 col-lg-6">
+                                    <div class="form-group">
+                                        {!! Form::label('mulai_tahun_ajaran', 'Mulai Tahun Ajaran Sekolah:') !!}
+                                        {!! Form::date('mulai_ajaran', \Carbon\Carbon::now() , ['class' => 'form-control']) !!}    
+                                    </div>
+                                </div>
+                                <div class="col-sm-12 col-lg-6">
+                                    <div class="form-group">
+                                        {!! Form::label('akhir_tahun_ajaran', 'Akhir Tahun Ajaran Sekolah:') !!}
+                                        {!! Form::date('akhir_ajaran', \Carbon\Carbon::now()->addYear() , ['class' => 'form-control']) !!}
+                                    </div>
+                                </div>
+                            </div> --}}
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary close_form" data-dismiss="modal">Tutup</button>

@@ -25,14 +25,15 @@ class TempPasswordValidationRequest extends FormRequest
     {
         return [
             //
-            'username_id_user' => 'required'
+            'username_id_user' => 'required|exists:users,username_id'
         ];
     }
 
     public function messages()
     {
         return [
-            'username_id_user.required' => 'Masukkan Username Anda!'
+            'username_id_user.required' => 'Masukkan Username Anda!',
+            'username_id_user.exists' => 'Username Tidak Terdaftar Dalam Sistem, Silahkan Masukkan Username Kembali'
         ];
     }
 }

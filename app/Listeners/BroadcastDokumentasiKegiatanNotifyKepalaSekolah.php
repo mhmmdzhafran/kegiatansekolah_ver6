@@ -33,6 +33,6 @@ class BroadcastDokumentasiKegiatanNotifyKepalaSekolah
         $user_kepalaSekolah = User::whereHas('Role', function($query){
             $query->where('id' , 2);
         })->first();
-        Notification::send($user_kepalaSekolah, new AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification($event->dokumentasiKegiatan , $event->statusKegiatan));
+        Notification::send($user_kepalaSekolah, new AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification($user_kepalaSekolah,$event->dokumentasiKegiatan , $event->statusKegiatan));
     }
 }

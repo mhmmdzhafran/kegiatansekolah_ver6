@@ -29,20 +29,24 @@
                         <button type="button" class="btn btn-warning btn-sm rounded-pill float-md-right float-lg-right float-sm-left" id="edit" style="color:white;">Ubah Password</button>
                         <div class="row mt-5">
                             <div class="col-sm-12 col-lg-3">
+                                @if (is_null(Auth::user()->photo_user))
                                 <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" style=" width: 100%; max-width: 400px; height: auto;">
+                                @else
+                                <img class="rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.Auth::user()->photo_user) }}" alt="" srcset="" width="300" height="300" style="width: 100%">
+                                @endif
                             </div>
                             <div class="col-sm-12 col-lg-9">
                                 <div class="form-group">
                                     {!! Form::label('nama_PJ' , "Nama Kepala Sekolah:" ) !!}
-                                    <input type="text" name="nama_kepala_sekolah" id="nama_kepala_sekolah" value="{{ $data_user->name }}" class="form-control" disabled>
+                                    <input type="text" name="nama_kepala_sekolah" id="nama_kepala_sekolah" value="{{ Auth::user()->name }}" class="form-control" disabled>
                                 </div>
                                 <div class="form-group">
                                     {!! Form::label('username_id' , "Username ID:" ) !!}
-                                    <input type="text" name="username_id" id="username_id" value="{{ $data_user->username_id }}" class="form-control" disabled>
+                                    <input type="text" name="username_id" id="username_id" value="{{ Auth::user()->username_id }}" class="form-control" disabled>
                                 </div>
                                 <div class="form-group">
                                     {!! Form::label('email_user' , "Email User:" ) !!}
-                                    <input type="text" name="email_user" id="email_user" value="{{ $data_user->email_user }}" class="form-control" disabled>
+                                    <input type="text" name="email_user" id="email_user" value="{{ Auth::user()->email_user }}" class="form-control" disabled>
                                 </div>
                                 <div class="form-group">
                                     {!! Form::label('role' , "Jabatan User:" ) !!}

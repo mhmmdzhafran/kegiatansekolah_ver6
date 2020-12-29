@@ -31,7 +31,7 @@ class UserValidationRequest extends FormRequest
             'email_user' => 'required|unique:users,email_user|max:255',
             'photo_user' => 'required|mimes:jpeg,png|max:5120',
             'password' => 'required',
-            'passwordChecker' => 'required'
+            'passwordChecker' => 'required|same:password'
         ];
     }
     public function messages(){
@@ -49,6 +49,7 @@ class UserValidationRequest extends FormRequest
             'role_id.required' => 'Pilih Peran User!',
             'password.required' => 'Masukkan password user',
             'passwordChecker.required' => 'Masukkan password kedua kalinya',
+            'passwordChecker.same' => 'Password tidak cocok, Silahkan masukkan kembali',
         ];
     }
 }

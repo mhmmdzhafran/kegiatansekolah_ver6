@@ -182,6 +182,7 @@ function initializeNotifications(status){
             } else {
                 badgeCounterElement.innerText = "9+";   
             }
+            console.log(unreadNotification);
             
             notificationData.forEach(element => {
                 const createLinkElement = document.createElement('a');
@@ -373,5 +374,9 @@ function markAsReadNotification(notificationRequest, notificationType){
             return "0"+timestamps;
         }
         return timestamps;
+    }
+
+    function isTouchDevice(){
+        return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
     }
 

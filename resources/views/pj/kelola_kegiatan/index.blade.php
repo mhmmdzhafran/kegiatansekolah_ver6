@@ -227,6 +227,7 @@ $('#pengajuan-table').DataTable({
                    },
                    success: function(res){
                     loadingBar('hide');
+                    console.log(res.data);
                     $("#showModal").modal();
                     var dokumen = $.parseJSON(res.data.dokumen_kegiatan);
                     var nilai_ppk = $.parseJSON(res.data.nilai_ppk);
@@ -333,7 +334,7 @@ $('#pengajuan-table').DataTable({
                         $(".status-proposal").append('<li>'+res.status_proposal.nama+'</li>');   
                     } else if(res.status_proposal.id === 3){
                         $(".status-proposal").css({
-                            "background-color": "#d7f1f5",
+                            "background-color": "#4e73df",
                             "color": "white",
                             "border-radius": "10px",
                             // "padding-bottom": "2rem",

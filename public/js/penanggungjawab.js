@@ -412,3 +412,8 @@ function transformToFormatTimestamps(timestamps){
     return timestamps;
 }
 
+function isTouchDevice(){
+    return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
+}
+
+

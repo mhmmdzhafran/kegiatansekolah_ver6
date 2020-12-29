@@ -246,7 +246,7 @@
       const backButtonElement = document.getElementById('back-button');
       let statusData = true;
       url_get_data = url_get_data.replace('dokumentasi_kegiatan' , value);
-      url_get_data = url_get_data.replace('type_kegiatan' , 'dokumentasi');
+      url_get_data = url_get_data.replace('type_kegiatan' , 'Laporan');
       $.get(url_get_data, function(res){
         console.log(res);
         statusData = res.status;
@@ -270,7 +270,7 @@
         console.log(linkVideo);
         if (linkVideo.length > 0) {
           linkVideo.forEach(element => {
-              $("#link-video-sent").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+              $("#link-video-sent").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
           });  
         } else {
           $("#link-video-sent").append('Tidak Terdapat Link Video yang dikirim');
@@ -279,7 +279,7 @@
         const linkArticle = JSON.parse(res.data.add_link_article);
         if (linkArticle.length > 0) {
           linkArticle.forEach(element => {
-            $("#link-article-sent").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'">'+element.link_data+'</a></li>');
+            $("#link-article-sent").append('<li><i class="fa fa-external-link-alt mr-2"></i><a href="'+element.link_data+'" target="_blank">'+element.link_data+'</a></li>');
           });  
         } else {
           $("#link-article-sent").append('<li>Tidak Terdapat Link Artikel yang Dikirim');

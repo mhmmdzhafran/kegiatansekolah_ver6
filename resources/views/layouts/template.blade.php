@@ -174,9 +174,9 @@
                 @if (is_null(Auth::user()->photo_user))
                   <img class="img-profile rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}">
                 @else 
-                  <img class="img-profile rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.Auth::user()->photo_user) }}">
+                  <img class="img-profile rounded-circle photo_admin" src="{{ asset('kegiatan/admin/foto_user/'.Auth::user()->photo_user) }}">
                 @endif
-                <span class="ml-2 d-none d-lg-inline text-gray-600 small">{{ Auth::user()->name }}</span>
+                <span class="ml-2 d-none d-lg-inline text-gray-600 small name_admin">{{ Auth::user()->name }}</span>
               </a>
               <!-- Dropdown - User Information -->
               <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">

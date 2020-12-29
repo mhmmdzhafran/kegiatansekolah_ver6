@@ -33,6 +33,6 @@ class BroadcastAjukanProposalKegiatanToKepalaSekolah
         $user_kepalaSekolah = User::whereHas('Role', function($query){
             $query->where('id',2);
         })->first();
-        Notification::send($user_kepalaSekolah, new AjukanProposalKegiatanToKepalaSekolahNotification($event->pengajuanKegiatan, $event->statusKegiatan));
+        Notification::send($user_kepalaSekolah, new AjukanProposalKegiatanToKepalaSekolahNotification($user_kepalaSekolah,$event->pengajuanKegiatan, $event->statusKegiatan));
     }
 }

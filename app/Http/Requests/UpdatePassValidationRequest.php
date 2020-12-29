@@ -26,7 +26,7 @@ class UpdatePassValidationRequest extends FormRequest
         return [
             //
             'passwordBaru' => 'required',
-            'passwordChecker' => 'required'
+            'passwordChecker' => 'required|same:password'
         ];
     }
 
@@ -34,7 +34,8 @@ class UpdatePassValidationRequest extends FormRequest
     {
         return [
             'passwordBaru.required' => 'Masukkan Password Baru Anda!',
-            'passwordChecker.required' => 'Masukkan Password Baru Anda Kembali!'
+            'passwordChecker.required' => 'Masukkan Password Baru Anda Kembali!',
+            'passwordChecker.same' => 'Password Tidak Sama, Silahkan Masukkan Password Kembali',
         ];
     }
 }

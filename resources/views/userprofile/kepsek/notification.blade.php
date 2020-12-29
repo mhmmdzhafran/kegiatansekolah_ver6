@@ -30,7 +30,7 @@
                                     @if ($item->data['tipe_pengajuan'] == 'Pengajuan Historis')
                                     {{ $item->data['type_notification'] }} (Historis)
                                     @elseif($item->data['tipe_pengajuan'] == 'Pengajuan')
-                                      ({{ $item->data['tipe_pengajuan'] }})
+                                    {{ $item->data['type_notification'] }} ({{ $item->data['tipe_pengajuan'] }})
                                     @else
                                       N/A
                                     @endif
@@ -47,21 +47,23 @@
                           </div>
                           @if ($item['read_at'] === null)
                           <div class="col-auto">
-                            <a href="#" class="mr-2 notificationRead" id="{{ $item->id }}">
+                            <a href="#" class="mr-2 notificationRead" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" title="Baca Notifikasi">
                                 <i class="fa fa-check fa-2x"></i>
                             </a>
-                            <a href="#" class="notificationLink" id="{{ $item->id }}" data-type="{{ $item->data['type_notification'] }}">
+                            <a href="#" class="notificationLink" id="{{ $item->id }}" data-type="{{ $item->data['type_notification'] }}" data-toggle="tooltip" data-placement="bottom" title="Akses Notifikasi">
                                 <i class="fa fa-arrow-right fa-2x"></i>
                             </a>
+                            <a href="#" class="ml-2 deleteNotification" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" title="Hapus Notifikasi"><i class="fa fa-trash fa-2x text-danger"></i></a>
                           </div>
                           @else
                           <div class="col-auto">
-                            <a href="javascript:void(0)" class="mr-2" style="pointer-events: none;">
+                            <a href="javascript:void(0)" class="mr-2" style="pointer-events: none">
                                 <i class="fa fa-thumbs-up fa-2x text-gray-500"></i>
                             </a>
-                            <a href="#" class="notificationLink" id="alreadyRead" data-id="{{ $item->id }}" data-type="{{ $item->data['type_notification'] }}">
+                            <a href="#" class="notificationLink" id="alreadyRead" data-id="{{ $item->id }}" data-type="{{ $item->data['type_notification'] }}" data-toggle="tooltip" data-placement="bottom" title="Akses Notifikasi">
                                 <i class="fa fa-arrow-right fa-2x"></i>
                             </a>
+                            <a href="#" class="ml-2 deleteNotification" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" title="Hapus Notifikasi"><i class="fa fa-trash fa-2x text-danger"></i></a>
                           </div>
                           @endif
                         </div>

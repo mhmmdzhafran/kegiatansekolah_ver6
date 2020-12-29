@@ -46,7 +46,7 @@
                             </ul>
                         </div>
                         <div class="form-group">
-                            {!! Form::label('status_kegiatan', 'Histori Keterangan Kegiatan:') !!}
+                            {!! Form::label('status_kegiatan', 'Histori Keterangan Proposal Kegiatan:') !!}
                             <ul class="keterangan_kegiatan">
 
                             </ul>
@@ -154,7 +154,7 @@
                     $(".akhir_kegiatan").attr('value', res.data.akhir_kegiatan);
                     var keterangan = $.parseJSON(res.data.keterangan_json);
                     $(".keterangan_kegiatan").css({
-                            "background-color": "#4e73df",
+                            "background-color": "#36b9cc",
                             "color": "white",
                             "border-radius": "10px",
                             // "padding-bottom": "3rem",
@@ -163,7 +163,7 @@
                     $.each(keterangan, function(key, value){
                         if (value.no === 1) {
                             if (value.keterangan_opsional === null || value.keterangan_opsional === "") {
-                                // $(".keterangan_kegiatan").append('<li>Tidak Terdapat Keterangan Saat Disetujui</li>');
+                                $(".keterangan_kegiatan").append('<li>Tidak Terdapat Keterangan Saat Disetujui</li>');
                             }
                             else{
                                 $(".keterangan_kegiatan").append('<li> Keterangan Pengajuan Sukses: '+value.keterangan_opsional+'</li>');
@@ -171,7 +171,7 @@
                         }
                         else if(value.no === 2){
                             if (value.keterangan_wajib_ulang === null || value.keterangan_wajib_ulang === "") {
-                                // $(".keterangan_kegiatan").append('<li>Tidak Terdapat Keterangan Saat Melakukan Pengajuan Ulang</li>');
+                                $(".keterangan_kegiatan").append('<li>Tidak Terdapat Keterangan Saat Melakukan Pengajuan Ulang</li>');
                             }
                             else{
                                 $(".keterangan_kegiatan").append('<li> Keterangan Saat Pengajuan Ulang: '+value.keterangan_wajib_ulang+'</li>');
@@ -189,7 +189,7 @@
                     //untuk data status kegiatan => res.status_kegiatan
                     if (res.status_kegiatan.id === 1) {
                         $(".status_kegiatan").css({
-                            "background-color": "#36b9cc",
+                            "background-color": "#00a85a",
                             "color": "white",
                             "border-radius": "10px",
                             // "padding-bottom": "3rem",
@@ -247,8 +247,8 @@
                         let loginMessage = errors.message;
                         alertNotificationLoginAndError(error.status , loginMessage);
                     } else if(error.status === 404) {
-                        let errors = JSON.parse(error.responseText);
-                        let errorMessage = errors.messages;
+                        // let errors = JSON.parse(error.responseText);
+                        let errorMessage = error.messages;
                         alertNotificationLoginAndError(error.status , errorMessage);
                     } else {
                         anyErrors(error.status , error.statusText, error);

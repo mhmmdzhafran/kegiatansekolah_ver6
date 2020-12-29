@@ -243,7 +243,7 @@
       $("#file_upload").empty();
       var url = '{{route("kepsek.pengajuan_dokumentasi_kegiatan.get_kegiatan", ["dokumentasi_kegiatan" => "id_kegiatan", "type_kegiatan" => "tipe_kegiatan"])}}';
       url = url.replace("id_kegiatan", $("[name='id']").val());
-      url = url.replace("tipe_kegiatan", "pengajuan");
+      url = url.replace("tipe_kegiatan", "Proposal");
 
       $.get(url, function(res){
         var data_nilai_ppk = $.parseJSON(res.data.nilai_ppk);

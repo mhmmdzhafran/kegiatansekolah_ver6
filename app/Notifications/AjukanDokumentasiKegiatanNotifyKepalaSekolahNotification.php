@@ -16,17 +16,19 @@ class AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification extends Notificat
 
     public $dokumentasiKegiatan;
     public $statusKegiatan;
+    public $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(DokumentasiKegiatan $dokumentasiKegiatan , StatusKegiatan $statusKegiatan)
+    public function __construct(User $user,DokumentasiKegiatan $dokumentasiKegiatan , StatusKegiatan $statusKegiatan)
     {
         //
         $this->dokumentasiKegiatan = $dokumentasiKegiatan;
         $this->statusKegiatan = $statusKegiatan;
+        $this->user = $user;
     }
 
     /**
@@ -48,10 +50,9 @@ class AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification extends Notificat
      */
     public function toMail($notifiable)
     {
-        $user_kepsek = User::whereRoleId(2)->first();
         $url = url('/kepala-sekolah/dokumentasi-kegiatan');
         return (new MailMessage)
-                    ->greeting('Hello, '.$user_kepsek->name)
+                    ->greeting('Hello, '.$this->user->name)
                     ->line('Laporan Kegiatan dengan Nama Kegiatan: '.$this->dokumentasiKegiatan->nama_kegiatan
                     .' Telah Diunggah oleh: '.$this->dokumentasiKegiatan->user->name)
                     ->action('Notification Action', $url)

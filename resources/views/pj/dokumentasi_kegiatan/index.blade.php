@@ -252,7 +252,7 @@
                         </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary submit_dokumentasi">Unggah Dokumentasi</button>
+                    <button type="submit" class="btn btn-primary submit_dokumentasi">Unggah Laporan Kegiatan</button>
                   </div>
                 </div>
                 </form>
@@ -353,7 +353,7 @@
                         </div>
                   <div class="modal-footer">
                     <button type="button" class="btn btn-secondary close_btn" data-dismiss="modal">Tutup</button>
-                    <button type="submit" class="btn btn-primary submit_dokumentasi">Unggah Dokumentasi</button>
+                    <button type="submit" class="btn btn-primary submit_dokumentasi">Unggah Laporan Kegiatan Historis</button>
                   </div>
                 </div>
             </form>
@@ -386,7 +386,7 @@
                     <hr>
                     <div class="form-group">
                         {!! Form::label('nama_kegiatan', 'Nama Kegiatan:') !!}
-                        {!! Form::text('nama_kegiatan', null , ['class' => 'form-control nama_kegiatan']) !!}
+                        {!! Form::text('nama_kegiatan', null , ['class' => 'form-control nama_kegiatan' , 'disabled']) !!}
                     </div>
                     
                     <div class="form-group">
@@ -400,11 +400,11 @@
                         <br>
                         {!! Form::checkbox('nilai_ppk[]', 'Mandiri', null, ['class' => 'value_nilai_ppk_ulang' ]) !!} Mandiri
                         <br>
-                        {!! Form::checkbox('nilai_ppk[]', 'Gotong Royong', null, ['class' => 'value_nilai_ppk_ulang' ]) !!} Gotong Royong
+                        {!! Form::checkbox('nilai_ppk[]', 'Gotong Royong', null, ['class' => 'value_nilai_ppk_ulang', 'disabled' ]) !!} Gotong Royong
                       </div>
                       <div class="form-group">
                           {!! Form::label('kegiatan_berbasis', 'Kegiatan Berbasis PPK:') !!}
-                          {!! Form::select('kegiatan_berbasis', array('' => 'Choose Options', 'Berbasis Kelas' => 'Berbasis Kelas', 'Berbasis Budaya Sekolah' => 'Berbasis Budaya Sekolah', 'Berbasis Masyarakat' => 'Berbasis Masyarakat') ,null , ['class' => 'form-control kegiatan_berbasis']) !!}
+                          {!! Form::select('kegiatan_berbasis', array('' => 'Choose Options', 'Berbasis Kelas' => 'Berbasis Kelas', 'Berbasis Budaya Sekolah' => 'Berbasis Budaya Sekolah', 'Berbasis Masyarakat' => 'Berbasis Masyarakat') ,null , ['class' => 'form-control kegiatan_berbasis' , 'disabled']) !!}
                       </div>
 
                       {!! Form::label('text_label_pengelolaan_dokumentasi' , 'Laporan Kegiatan PPK Yang Telah Dikirim: ') !!}
@@ -442,7 +442,7 @@
                       </div>
                       <div class="row">
                           <div class="col-sm-12 col-lg-6">
-                              {!! Form::label('lihat-file', "Unggah Laporan Kegiatan (ekstensi .pdf /.docx / .doc dan total seluruh file sebesar 5MB): ") !!}
+                              {!! Form::label('lihat-file', "Unggah Kembali Laporan Kegiatan (ekstensi .pdf /.docx / .doc dan total seluruh file sebesar 5MB): ") !!}
                               <br>
                               <button class="btn btn-success btn-sm mb-2 add" type="button" id="add">Tambah</button>
                               <br>
@@ -450,7 +450,7 @@
                               <div class="form-group doc-file" id="doc-file">
                               </div>
                               <hr>
-                              {!! Form::label('lihat-file', "Unggah Dokumentasi Kegiatan (ekstensi .jpeg atau .png dan total seluruh file sebesar 5MB): ") !!}
+                              {!! Form::label('lihat-file', "Unggah Kembali Dokumentasi Kegiatan (ekstensi .jpeg atau .png dan total seluruh file sebesar 5MB): ") !!}
                               <br>
                               <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_img">Tambah</button>
                               <br>
@@ -463,14 +463,14 @@
                       <hr>
                       <div class="row">
                         <div class="col-sm-12 col-lg-12">
-                            {!! Form::label('lihat-link-video', "Masukkan Link Video Kegiatan: ") !!}
+                            {!! Form::label('lihat-link-video', "Masukkan Kembali Link Video Kegiatan: ") !!}
                             <br>
                             <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_video">Tambah</button>
                             <br>
                             {!! Form::text('add_link_video[]', null , ['class' => 'form-control add_link_video']) !!}
                             <div class="form-group links-video"></div>
                             
-                            {!! Form::label('lihat-link-article', "Masukkan Link Artikel Kegiatan: ") !!}
+                            {!! Form::label('lihat-link-article', "Masukkan Kembali Link Artikel Kegiatan: ") !!}
                             <br>
                             <button class="btn btn-success btn-sm mb-2 add" type="button" id="add_link_article">Tambah</button>
                             <br>
@@ -483,13 +483,13 @@
                               <div class="col-sm-12 col-lg-6">
                                   <div class="form-group">
                                       {!! Form::label('mulai_kegiatan', 'Mulai Melaksanakan Kegiatan:') !!}
-                                      {!! Form::date('mulai_kegiatan', null , ['class' => 'form-control mulai_kegiatan']) !!}    
+                                      {!! Form::date('mulai_kegiatan', null , ['class' => 'form-control mulai_kegiatan' , 'disabled']) !!}    
                                   </div>
                               </div>
                               <div class="col-sm-12 col-lg-6">
                                   <div class="form-group">
                                       {!! Form::label('akhir_kegiatan', 'Akhir dari Kegiatan:') !!}
-                                      {!! Form::date('akhir_kegiatan', null , ['class' => 'form-control akhir_kegiatan']) !!}
+                                      {!! Form::date('akhir_kegiatan', null , ['class' => 'form-control akhir_kegiatan' , 'disabled']) !!}
                                   </div>
                               </div>
                         </div>
@@ -626,9 +626,9 @@
                             const element = nilai_ppk[index];
                             element.setAttribute('disabled', true);
                         }
-                        $(".mulai_kegiatan").prop('disabled', true);
-                        $(".akhir_kegiatan").prop('disabled', true);
-                        $(".kegiatan_berbasis").prop('disabled', true);
+                        // $(".mulai_kegiatan").prop('disabled', true);
+                        // $(".akhir_kegiatan").prop('disabled', true);
+                        // $(".kegiatan_berbasis").prop('disabled', true);
                         console.log(true);
                     } 
                     const previewLinkVideo = JSON.parse(res.data_dokumentasi.add_link_video);
@@ -676,7 +676,7 @@
                         img_kegiatan.forEach(element => {
                             const imgName = element.nama_foto_kegiatan;
                             let assets = fileAssets(imgName);
-                            $(".foto_kegiatan_unggah").append('<li><img class="rounded-circle mb-2 mt-2 mr-2" src="'+assets+'" alt="" width="150" height="150">'+imgName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+assets+'">Lihat Dokumen</button><a href="'+assets+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+imgName+'">Download File</a></li>');
+                            $(".foto_kegiatan_unggah").append('<li><img class="rounded-circle mb-2 mt-2 mr-2" src="'+assets+'" alt="" width="150" height="150">'+imgName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+assets+'">Lihat Foto</button><a href="'+assets+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+imgName+'">Download File</a></li>');
                         });    
                     } else {
                         $(".foto_kegiatan_unggah").append('<li class="mb-2">Tidak Terdapat Dokumentasi Kegiatan</li>');
@@ -724,7 +724,7 @@
         //     let fileStatus = $(this).attr('data-target2');
         //     let fileID = $(this).attr('data-target3');
         //     document.querySelector('.show_dokumen_edit').innerHTML = "<i class='fa fa-file-alt mr-2'></i>"+fileName+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+fileAsset+"'>Lihat File</button><a href='"+fileAsset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+fileName+"'>Unduh Dokumen</a></li>";
-        //     let url_edit_file = '{{route("pj.dokumentasi_kegiatan.editDokumenDokumentasi", ["status_dokumen" => "status_docs" , "id" => "ids" , "id_dokumen" => "id_docs"])}}';
+        
         //     url_edit_file = url_edit_file.replace('status_docs' , fileStatus);
         //     url_edit_file = url_edit_file.replace('ids' , id);
         //     url_edit_file = url_edit_file.replace('id_docs' , fileID);
@@ -744,7 +744,7 @@
         //     document.querySelector('.show_dokumen_delete').innerHTML = "<i class='fa fa-file-alt mr-2'></i>"+fileName+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+fileAsset+"'>Lihat File</button><a href='"+fileAsset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+fileName+"'>Unduh Dokumen</a></li>";
         //     //add form action
         //     //{status_dokumen}/{id}/{id_dokumen}
-        //     let url_delete_form = "{{route('pj.dokumentasi_kegiatan.deleteDokumenDokumentasi' , ['status_dokumen' => 'status' , 'id' => 'id_dokumentasi' , 'id_dokumen' => 'id_docs'])}}";
+        
         //     url_delete_form = url_delete_form.replace('status' , fileStatus);
         //     url_delete_form = url_delete_form.replace('id_dokumentasi' , id);
         //     url_delete_form = url_delete_form.replace('id_docs' , fileID);
@@ -825,34 +825,22 @@
             //remove chekced value
             $(".error_notification").empty();
             $(".error_notification").addClass('d-none');
-            // $(".nama_kegiatan").removeAttr('disabled');
+            
             $(".nama_kegiatan").val('');
-            // $(".mulai_kegiatan").removeAttr('disabled');
-            $(".mulai_kegiatan").val('');
-            $(".akhir_kegiatan").val('');
-            // $(".akhir_kegiatan").removeAttr('disabled');
-            if (kegiatan_berbasis) {
-                $(".kegiatan_berbasis").find('[value = "'+kegiatan_berbasis+'"]').prop('selected', false);
-                // $(".kegiatan_berbasis").removeAttr('disabled');
-            // } else {
-            //     $(".kegiatan_berbasis").find('[value = ""]').prop('selected', true);
-            }
             if (value_checked.length > 0) {
                     for (let index = 0; index < value_checked.length; index++) {
                     const element = value_checked[index];
                     $("[value = '"+element+"']").prop('checked', false);
                 }   
             }
-            // else{
-            // $(".value_nilai_ppk").each(function(){
-            //         var isChecked = $(this).is(":checked");
-            //         if (isChecked) {
-            //             $(this).prop('checked', false);
-            //         }
-            //     });
-            // }
+            $(".mulai_kegiatan").val('');
+            $(".akhir_kegiatan").val('');
+            
+            if (kegiatan_berbasis) {
+                $(".kegiatan_berbasis").find('[value = "'+kegiatan_berbasis+'"]').prop('selected', false);
+            }
+            
             $(".form_unggah")[0].reset();
-            // $(".value_nilai_ppk").removeAttr('disabled');
             kegiatan_berbasis = "";
             value_checked.length = 0 ;
             doc_row = 1;
@@ -860,7 +848,8 @@
             modalState = "";
             $(".doc-file").empty();
             $(".img-file").empty();
-            
+            $(".links-video").empty();
+            $(".links-article").empty();
             // $(".waktu_status_unggah").empty();
         });
 
@@ -890,8 +879,8 @@
             $(".img-file").empty();
             $(".laporan_kegiatan_unggah").empty();
             $(".foto_kegiatan_unggah").empty();
-            $(".link-video-unggah").empty();
-            $(".link-article-unggah").empty();
+            $(".links-video").empty();
+            $(".links-article").empty();
         });
 
         // $(".unggah_dokumentasi_baru").on('hidden.bs.modal' , function(){
@@ -937,136 +926,6 @@
                     'X-CSRF-TOKEN': $("[name= '_token']").val()
                 }
             });
-            // if (class_form === "form-pengelolaan-kegiatan") {
-            //     $.ajax({
-            //         url: form_submit,
-            //         type: 'POST',
-            //         data: data_form,
-            //         cache: false,
-            //         contentType: false,
-            //         processData: false,
-            //         beforeSend: function(){
-            //             progressBarState("show", modalState);
-            //             console.log(modalState);
-            //         },
-            //         xhr: function(){
-            //         let xhr = new XMLHttpRequest();
-            //         xhr.upload.addEventListener('progress', function(event){
-            //             if (event.lengthComputable) {
-            //                 var percentageComplete = event.loaded / event.total;
-            //                 percentageComplete = parseInt(percentageComplete * 100);
-            //                 $(".myProgress").text(percentageComplete+'%');
-            //                 $(".myProgress").css('width', percentageComplete+'%');
-            //             }
-            //         }, false);
-            //             return xhr;
-            //         },
-            //         success: function(res){
-            //             progressBarState("reset");
-            //             Swal.fire({
-            //                 icon: 'success',
-            //                 title: 'Sukses',
-            //                 allowOutsideClick: false,
-            //                 allowEscapeKey: false,
-            //                 allowEnterKey: false
-            //             }).then((result) => {
-            //                 $(modalState).modal('hide');
-            //             });
-            //             $("#dokumentasi_kegiatan").DataTable().ajax.reload();
-            //         },
-            //         error: function(res){
-            //             progressBarState("reset" , modalState);
-            //             //error_notification_upload_baru
-            //             if (res.status === 401) {
-            //             let loginInfo = JSON.parse(res.responseText);
-            //             alertNotificationsForLoginAndErrors(res.status , loginInfo.message);
-            //         } else if(res.status === 422) {
-            //             let value_error = JSON.parse(res.responseText);
-            //             $(".error_notification_upload_baru").append('<h5>Error Pengisian Form:</h5>');
-            //             $.each(value_error.errors, function(key, value){
-            //                 $(".error_notification_upload_baru").append('<li>'+value+'</li>');
-            //             });                       
-            //             Swal.fire({
-            //                 icon: 'error',
-            //                 title: 'Error',
-            //                 text: 'Terdapat Error ketika melakukan unggah Dokumentasi, Silahkan Lihat Error diatas Form'
-            //             }).then((result) => {
-            //                 if (result.value) {
-            //                     document.querySelector('.error_notification_upload_baru').scrollIntoView(true);
-            //                 }
-            //             });
-            //         } else if(res.status === 404){
-            //             let error_info = JSON.parse(res.responseText);
-            //             alertNotificationsForLoginAndErrors(res.status , error_info.messages);
-            //         } else {
-            //             anyErrors(res.status , res.statusText , res);
-            //         }
-            //         }
-            //     });
-            // } else if(class_form === "edited-dokumen-form"){
-            //     $.ajax({
-            //     url: form_submit,
-            //     type: 'POST',
-            //     data: data_form,
-            //     cache: false,
-            //     contentType: false,
-            //     processData: false,
-            //     beforeSend: function(){
-            //         progressBarState("show" , modalState);
-            //     },
-            //     xhr: function(){
-            //         var xhr = new XMLHttpRequest();
-            //         xhr.upload.addEventListener('progress', function(event){
-            //             if (event.lengthComputable) {
-            //                 var percentageComplete = event.loaded / event.total;
-            //                 percentageComplete = parseInt(percentageComplete * 100);
-            //                 $(".myProgress").text(percentageComplete+'%');
-            //                 $(".myProgress").css('width', percentageComplete+'%');
-            //             }
-            //         }, false);
-            //         return xhr;
-            //     },
-            //     success: function(res){
-            //         progressBarState("reset");
-            //         Swal.fire({
-            //             icon: 'success',
-            //             title: 'Sukses',
-            //             text: res.notification
-            //         }).then((result)=> {
-            //             $(".modal_edit").modal('hide');
-            //         });
-            //         $("#dokumentasi_kegiatan").DataTable().ajax.reload();
-            //     },
-            //     error: function(res){
-            //         progressBarState("reset" , modalState);
-            //         if (res.status === 401) {
-            //             let loginInfo = JSON.parse(res.responseText);
-            //             alertNotificationsForLoginAndErrors(res.status , loginInfo.message);
-            //         } else if(res.status === 422) {
-            //             let value_error = JSON.parse(res.responseText);
-            //             $(".error_notification_upload_edit").append('<h5>Error Pengisian Form:</h5>');
-            //             $.each(value_error.errors, function(key, value){
-            //                 $(".error_notification_upload_edit").append('<li>'+value+'</li>');
-            //             });                       
-            //             Swal.fire({
-            //                 icon: 'error',
-            //                 title: 'Error',
-            //                 text: 'Terdapat Error ketika melakukan unggah Dokumentasi, Silahkan Lihat Error diatas Form'
-            //                 }).then((result) => {
-            //                     if (result.value) {
-            //                         document.querySelector('.error_notification_upload_edit').scrollIntoView(true);
-            //                     }
-            //                 });
-            //             } else if(res.status === 404){
-            //                 let error_info = JSON.parse(res.responseText);
-            //                 alertNotificationsForLoginAndErrors(res.status , error_info.messages);
-            //             } else {
-            //                 anyErrors(res.status , res.statusText , res);
-            //             }
-            //         }   
-            //     });       
-            // } else 
-            
             $.ajax({
                 url: form_submit,
                 type: 'POST',
@@ -1093,14 +952,11 @@
                     console.log(res);
                     progressBarState("reset");
                     $(modalState).modal('hide');
+                    $("#dokumentasi_kegiatan").DataTable().ajax.reload();    
                     Swal.fire({
                         icon: 'success',
                         title: 'Sukses',
                         text: res.notification
-                    }).then((result)=> {
-                        if (result.value) {
-                            $("#dokumentasi_kegiatan").DataTable().ajax.reload();    
-                        }
                     });
                 },
                 error: function(res){
@@ -1110,7 +966,7 @@
                         alertNotificationsForLoginAndErrors(res.status , loginInfo.message);
                     } else if(res.status === 422) {
                         let value_error = JSON.parse(res.responseText);
-                        $(".error_notification").append('<h5>Error Pengisian Form:</h5>');
+                        // $(".error_notification").append('<h5>Error Pengisian Form:</h5>');
                         $.each(value_error.errors, function(key, value){
                             $(".error_notification").append('<li class="mb-2">'+value+'</li>');
                         });                       
@@ -1144,9 +1000,9 @@
             $(".status_laporan_kegiatan").empty();
             // $(".keterangan_kegiatan_ppk").empty();
             let url = '{{route("pj.dokumentasi_kegiatan.show", ["dokumentasi_kegiatan" => "ids"])}}';
-            let url_dokumen_upload_baru = '{{route("pj.dokumentasi_kegiatan.uploadDokumenBaru", ["id_dokumentasi" => "id_doc_baru"])}}'
+            
             url = url.replace("ids", id);
-            url_dokumen_upload_baru = url_dokumen_upload_baru.replace('id_doc_baru' , id);
+            // url_dokumen_upload_baru = url_dokumen_upload_baru.replace('id_doc_baru' , id);
             loadingBar('show');
             $.get(url, function(res){         
                 console.log(res);

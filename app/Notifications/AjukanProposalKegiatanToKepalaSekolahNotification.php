@@ -2,6 +2,8 @@
 
 namespace App\Notifications;
 
+use App\PengajuanKegiatan;
+use App\StatusKegiatan;
 use App\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -14,17 +16,19 @@ class AjukanProposalKegiatanToKepalaSekolahNotification extends Notification
 
     public $pengajuan_kegiatan;
     public $status_kegiatan;
+    public $user;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($pengajuan_kegiatan , $status_kegiatan)
+    public function __construct(User $user, PengajuanKegiatan $pengajuan_kegiatan , StatusKegiatan $status_kegiatan)
     {
         //
         $this->pengajuan_kegiatan = $pengajuan_kegiatan;
         $this->status_kegiatan = $status_kegiatan;
+        $this->user = $user;
     }
 
     /**
@@ -46,8 +50,8 @@ class AjukanProposalKegiatanToKepalaSekolahNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $user_kepsek = User::whereRoleId(2)->first();
-        $decode_file = json_decode($this->pengajuan_kegiatan->dokumen_kegiatan);
+        // $user_kepsek = User::whereRoleId(2)->first();
+        // $decode_file = json_decode($this->pengajuan_kegiatan->dokumen_kegiatan);
         // $file_name = '';
         // foreach ($decode_file as $getFile) {
         //     $file_name = $getFile->nama_dokumen;
@@ -58,7 +62,7 @@ class AjukanProposalKegiatanToKepalaSekolahNotification extends Notification
                     // ])
         $url = url('/kepala-sekolah/mengelola-kegiatan');
         return (new MailMessage)
-                    ->greeting('Hello, '.$user_kepsek->name)
+                    ->greeting('Hello, '.$this->user->name)
                     ->line('Proposal Kegiatan dengan Nama Kegiatan: '.$this->pengajuan_kegiatan->PJ_nama_kegiatan
                     .' Telah Diunggah oleh: '.$this->pengajuan_kegiatan->user->name)
                     ->action('Lihat Proposal', $url)

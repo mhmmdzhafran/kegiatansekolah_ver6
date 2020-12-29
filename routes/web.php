@@ -39,13 +39,10 @@ Route::group(['middleware' => 'Admin'], function(){
         'create' => 'admin.user.create',
         'store' => 'admin.user.store',
         'edit' => 'admin.user.edit',
-        // 'destroy' => 'admin.user.destroy',
-        // 'update' => 'admin.user.update'
+        'destroy' => 'admin.user.destroy',
+        'update' => 'admin.user.update'
     ]]);
     
-    Route::post('/admin/users-update/{id}', 'AdminUserController@update')->name('admin.user.update');
-
-    Route::post('/admin/users/{id}/delete', 'AdminUserController@destroy')->name('admin.user.destroy');
 
 });
 
@@ -59,7 +56,7 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
     Route::get('/penanggung-jawab/get-more-notification/{request}' , 'UsersNotificationController@getMoreNotification')->name('pj.notification.getMoreData');
     Route::get('/penanggung-jawab/specific-notification/{notification}' , 'UsersNotificationController@getSpecificNotification')->name('pj.notification.specificNotification');
     Route::put('/penanggung-jawab/mark-as-read/', 'UsersNotificationController@markAsReadNotification')->name('pj.notification.markAsRead');
-
+    Route::delete('/penanggung-jawab/notification/delete-notifications' , 'UsersNotificationController@deleteNotification')->name('pj.notification.deleteNotification');
 
     Route::resource('/penanggung-jawab/mengelola-kegiatan', 'PJMengelolaKegiatanController',['names' =>[
         'index' => 'pj.kelola_kegiatan.index',
@@ -86,9 +83,9 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
     Route::get('/penanggung-jawab/unggah-dokumentasi-kegiatan/{dokumentasi_kegiatan}/edit', 'PJMengelolaKegiatanController@editDokumentasi')
     ->name('pj.dokumentasi_kegiatan.edit');
 
-    Route::post('/penanggung-jawab/dokumentasi-kegiatan/upload-dokumen-baru/{id_dokumentasi}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiBaru')->name('pj.dokumentasi_kegiatan.uploadDokumenBaru');
-    Route::post('/penanggung-jawab/dokumentasi-kegiatan/edit-dokumen-dokumentasi/{status_dokumen}/{id}/{id_dokumen}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiEdit')->name('pj.dokumentasi_kegiatan.editDokumenDokumentasi');
-    Route::delete('/penanggung-jawab/dokumentasi-kegiatan/delete-dokumen-dokumentasi/{status_dokumen}/{id}/{id_dokumen}', 'PJMengelolaKegiatanController@deleteDokumenDokumentasi')->name('pj.dokumentasi_kegiatan.deleteDokumenDokumentasi');
+    // Route::post('/penanggung-jawab/dokumentasi-kegiatan/upload-dokumen-baru/{id_dokumentasi}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiBaru')->name('pj.dokumentasi_kegiatan.uploadDokumenBaru');
+    // Route::post('/penanggung-jawab/dokumentasi-kegiatan/edit-dokumen-dokumentasi/{status_dokumen}/{id}/{id_dokumen}', 'PJMengelolaKegiatanController@uploadDokumenDokumentasiEdit')->name('pj.dokumentasi_kegiatan.editDokumenDokumentasi');
+    // Route::delete('/penanggung-jawab/dokumentasi-kegiatan/delete-dokumen-dokumentasi/{status_dokumen}/{id}/{id_dokumen}', 'PJMengelolaKegiatanController@deleteDokumenDokumentasi')->name('pj.dokumentasi_kegiatan.deleteDokumenDokumentasi');
 
     Route::resource('/penanggung-jawab/user-profile', 'UserProfileController', ['names' => [
         'index' => 'userprofile.pj.index',
@@ -139,6 +136,7 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     Route::get('/kepala-sekolah/get-more-notification/{request}' , 'UsersNotificationController@getMoreNotification')->name('kepsek.notification.getMoreData');
     Route::get('/kepala-sekolah/specific-notification/{notification}' , 'UsersNotificationController@getSpecificNotification')->name('kepsek.notification.specificNotification');
     Route::put('/kepala-sekolah/mark-as-read/', 'UsersNotificationController@markAsReadNotification')->name('kepsek.notification.markAsRead');
+    Route::delete('/kepala-sekolah/notification/delete-notifications' , 'UsersNotificationController@deleteNotification')->name('kepsek.notification.deleteNotification');
     // Route::resource('/kepala-sekolah/mengelola-dokumentasi-kegiatan/mengelola-kegiatan', 'KepalaSekolahDokumentasiController', ['names' => [
     //     'index' => 'kepsek.kelola_dokumentasi.index',
     //     'show' => 'kepsek.kelola_dokumentasi.show',

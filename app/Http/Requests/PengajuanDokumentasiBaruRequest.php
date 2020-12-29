@@ -32,8 +32,8 @@ class PengajuanDokumentasiBaruRequest extends FormRequest
             'image_kegiatan_ppk.*' => 'required|mimes:jpeg,png|max:5120',
             'add_link_video.*' => 'required|url',
             'add_link_article.*' => 'required|url',
-            "mulai_kegiatan" => 'required',
-            "akhir_kegiatan" => 'required'
+            "mulai_kegiatan" => 'required|date|before_or_equal:akhir_kegiatan',
+            "akhir_kegiatan" => 'required|date|after_or_equal:mulai_kegiatan'
         ];
     }
     public function messages()
@@ -54,7 +54,9 @@ class PengajuanDokumentasiBaruRequest extends FormRequest
             'add_link_article.*.required' => 'Link Artikel Kegiatan harap dicantumkan!',
             'add_link_article.*.url' => 'Link Arikel Kegiatan tidak valid!',
             'mulai_kegiatan.required' => 'Awal Kegiatan Wajib Diisi',
-            'akhir_kegiatan.required' => 'Akhir Kegiatan Wajib Diisi'
+            'mulai_kegiatan.before_or_equal' => 'Tanggal Mulai Kegiatan harus lebih dulu atau sama dengan Tanggal Akhir Kegiatan',
+            'akhir_kegiatan.required' => 'Akhir Kegiatan Wajib Diisi',
+            'akhir_kegiatan.after_or_equal' => 'Tanggal Akhir Kegiatan harus setelah atau sama dengan Tanggal Mulai Kegiatan',
         ];
     }
 }
