@@ -371,7 +371,7 @@ class KepalaSekolahAssessmenController extends Controller
         } else {
             $res_kumpulan_dokumen = $fileUploadService->fileArrTypeChecker($kumpulan_dokumen);
             $fileUploadService->removeKumpulanFile($res_kumpulan_dokumen, $assessmen_internal, 'asesmen', $request->assessment);
-            return Response::json(['message'=>'data is not valid' , ['errors' => 'Tidak dapat melakukan Update Penilaian, Silahkan Coba Kembali']], 422);
+            return Response::json(['message'=>'data is not valid' , 'errors' => ['Tidak dapat melakukan Update Penilaian, Silahkan Coba Kembali']], 422);
         }
     }
 
