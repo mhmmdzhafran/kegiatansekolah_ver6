@@ -80,7 +80,7 @@
       <li class="nav-item {{(request()->segment(2) == 'dokumentasi-kegiatan') ? 'active' : ''}}">
         <a class="nav-link" href="{{ route('kepsek.pengajuan_dokumentasi_kegiatan.index') }}">
           <i class="fas fa-fw fa-folder-open"></i>
-          <span>Dokumentasi Kegiatan</span>
+          <span>Laporan Kegiatan</span>
         </a>        
       </li>
 

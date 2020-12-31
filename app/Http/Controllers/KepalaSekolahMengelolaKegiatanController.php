@@ -86,21 +86,15 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             if (gettype($data_pengajuan_kegiatan) == 'string') {
                 return response()->json(['messages' => 'Data Pengajuan Kegiatan Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.", System Error Message: ". $data_pengajuan_kegiatan], 404);
             }
-            // try{
-            //     $data_pengajuan_kegiatan = PengajuanKegiatan::findOrFail($id);
-            // } catch (ModelNotFoundException $e) {
-            //     return Response::json([
-            //         'messages' => 'Data Pengajuan Kegiatan Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.", System Error Message: ". $e->getMessage()
-            //     ], 404);
-            // } catch(\Throwable $th){
-            //     return Response::json([
-            //         'messages' => $th->getMessage()
-            //     ], 404);
-            // }
+           
             if (!is_null($data_pengajuan_kegiatan->user()->first())) {
                 $usersName = $data_pengajuan_kegiatan->user->name;
+                $imgState = true;
+                $data_user = $data_pengajuan_kegiatan->user()->first();
             } else {
                 $usersName = $data_pengajuan_kegiatan->nama_pj;
+                $imgState = false;
+                $data_user = '';
             }
             $status_kegiatan =  $data_pengajuan_kegiatan->statusKegiatan()->first();
             $dokumen = json_decode($data_pengajuan_kegiatan->dokumen_kegiatan);
@@ -110,12 +104,12 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             }
             if ($dokumen) {
                 if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen))) {
-                    return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => true, 'username' => $usersName], 200);
+                    return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => true, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
                 }
-                return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => false, 'username' => $usersName], 200);
+                return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => false, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
             }
             else{
-                return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => false, 'username' => $usersName], 200);
+                return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => false, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
             }
         }
     }
@@ -131,7 +125,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         //
         $pengajuan_kegiatan = $this->findData->findDataModel($id, 'Proposal');
         if (gettype($pengajuan_kegiatan) == 'string') {
-            return response()->json(['messages' => 'Data Pengajuan Kegiatan Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.", System Error Message: ". $pengajuan_kegiatan], 404);
+            return redirect()->to('/404');
         }
         
         if (!is_null($pengajuan_kegiatan->user()->first())) {
@@ -353,43 +347,38 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
 
     public function showDokumentasi($id){
         //for sukses dan Pengajuan Ulang dan belum mengunggah dokumentasi
-        $dokumentasi_kegiatan = $this->findData->findDataModel($id, 'Proposal');
-        if (gettype($dokumentasi_kegiatan) == 'string') {
-            return response()->json(['messages' => 'Data Pengajuan Kegiatan Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.", System Error Message: ". $dokumentasi_kegiatan], 404);
-        }
+        
         if (request()->ajax()) {
-            // try{
-            //     $dokumentasi_kegiatan = DokumentasiKegiatan::findOrFail($id);
-            // } catch(ModelNotFoundException $e){
-            //     return Response::json(['messages' => 'Terdapat Error saat pengambilan data, Silahkan Coba kembali dan Kontak Admin! id yang diberikan: '.$id.' System Error Code: '.$e->getMessage()], 404);
-            // } catch(\Throwable $th){
-            //     return Response::json(['messages' => $th->getMessage()], 404);
-            // }
-            $dokumentasi_kegiatan = $this->findData->findDataModel($id, 'Proposal');
+            
+            $dokumentasi_kegiatan = $this->findData->findDataModel($id, 'Laporan');
             if (gettype($dokumentasi_kegiatan) == 'string') {
                 return response()->json(['messages' => 'Data Pengajuan Kegiatan Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.", System Error Message: ". $dokumentasi_kegiatan], 404);
             }
             if (!is_null($dokumentasi_kegiatan->user()->first())) {
                 $userName = $dokumentasi_kegiatan->user->name;
+                $imgState = true;
+                $data_user = $dokumentasi_kegiatan->user()->first();
             } else {
                 $userName = $dokumentasi_kegiatan->nama_pj;
+                $imgState = false;
+                $data_user = '';
             }
             $status_kegiatan_dokumentasi = $dokumentasi_kegiatan->statusKegiatan()->first();
             $dokumen = $dokumentasi_kegiatan->dokumenKegiatan()->get();
             $image = $dokumentasi_kegiatan->fotoKegiatan()->get();
             if (count($dokumen) > 0  && count($image) > 0) {
-                return Response::json(['dokumen_dokumentasi' => $dokumen, 'image_kegiatan' => $image, 'status_kegiatan' => $status_kegiatan_dokumentasi , 'data_dokumentasi' => $dokumentasi_kegiatan, 'username' => $userName], 200);
+                return Response::json(['dokumen_dokumentasi' => $dokumen, 'image_kegiatan' => $image, 'status_kegiatan' => $status_kegiatan_dokumentasi , 'data_dokumentasi' => $dokumentasi_kegiatan, 'username' => $userName, 'image_state' => $imgState, 'user' => $data_user], 200);
             }
             else{
-                return Response::json(['status_kegiatan' => $status_kegiatan_dokumentasi, 'data_dokumentasi' => $dokumentasi_kegiatan , 'username' => $userName], 200);
+                return Response::json(['status_kegiatan' => $status_kegiatan_dokumentasi, 'data_dokumentasi' => $dokumentasi_kegiatan , 'username' => $userName, 'image_state' => $imgState, 'user' => $data_user], 200);
             }
         }
     }   
     public function editDokumentasi($id){
         //For acc sukses dan pengajuan ulang
-        $dokumentasi_kegiatan = $this->findData->findDataModel($id, 'Proposal');
+        $dokumentasi_kegiatan = $this->findData->findDataModel($id, 'Laporan');
         if (gettype($dokumentasi_kegiatan) == 'string') {
-            return response()->json(['messages' => 'Data Pengajuan Kegiatan Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.", System Error Message: ". $dokumentasi_kegiatan], 404);
+            return redirect()->to('/404');
         }
 
         if (!is_null($dokumentasi_kegiatan->user()->first())) {
@@ -410,7 +399,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
 
     public function updateDokumentasi(KepalaSekolahKegiatanValidatorRequest $request, $id){
         //for saving sukses dan pengajuan ulang dokumentasi kegiatan
-        $dokumentasiKegiatan = $this->findData->findDataModel($id, 'Proposal');
+        $dokumentasiKegiatan = $this->findData->findDataModel($id, 'Laporan');
         if (gettype($dokumentasiKegiatan) == 'string') {
             return response()->json(['messages' => 'Data Pengajuan Kegiatan Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.", System Error Message: ". $dokumentasiKegiatan], 404);
         }

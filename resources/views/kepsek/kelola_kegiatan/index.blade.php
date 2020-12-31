@@ -51,10 +51,19 @@
 
                             </ul>
                         </div>
-                        <div class="form-group">
-                            {!! Form::label('nama_pj', 'Nama Penanggung Jawab:') !!}
-                            <input type="text" name="nama_pj" id="nama_pj" value="" class="form-control" disabled>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6 image_user">
+                                
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    {!! Form::label('nama_pj', 'Nama Penanggung Jawab:') !!}
+                                    <input type="text" name="nama_pj" id="nama_pj" value="" class="form-control" disabled>
+                                </div>
+                            </div>
                         </div>
+                        <hr>
                         <div class="form-group">
                             {!! Form::label('PJ_nama_kegiatan', 'Nama Kegiatan:') !!}
                             <input type="text" name="PJ_nama_kegiatan" id="PJ_nama_kegiatan" value="" class="form-control" disabled>
@@ -131,6 +140,7 @@
             $(".keterangan_kegiatan").empty();
             $(".status_kegiatan").empty();
             $("#lihat-file").empty();
+            $(".image_user").empty();
             var value_btn = $(this).attr('value');
             var id = $(this).attr('id');
             if (value_btn === "sudah_disetujui" || value_btn === "menolak" || value_btn === "pengajuan_ulang") {
@@ -139,9 +149,17 @@
                 url = url.replace("id", id);
                 loadingBar('show');
                 $.get(url, function(res){
-                    $("#showModal").modal();
+                    if (!res.image_status) {
+                        let file_loc = '{{asset("logo/logo_smp_islam_sabilurrosyad.png")}}';
+                        $("#nama_pj").attr('value' , res.username);
+                        $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
+                    } else {
+                        let file_loc = '{{asset("kegiatan/admin/foto_user/users")}}';
+                        file_loc = file_loc.replace('users' , res.user.photo_user);
+                        $("#nama_pj").attr('value' , res.user.name);
+                        $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
+                    }
                     //untuk data pengajuan => res.data
-                    $("#nama_pj").attr('value' , res.username);
                     $("#PJ_nama_kegiatan").attr('value' , res.data.PJ_nama_kegiatan);
                     var data_ppk = $.parseJSON(res.data.nilai_ppk);
                     // $(".value_nilai_ppk").find('[value = "'+res.data.nilai_ppk+'"]').attr('selected', 'selected');    
@@ -239,6 +257,7 @@
                         });
                     }
                 }).done(function(){
+                    $("#showModal").modal();
                     loadingBar('hide');
                 }).fail(function(error){
                     loadingBar('hide');

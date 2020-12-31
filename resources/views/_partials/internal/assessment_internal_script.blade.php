@@ -31,8 +31,8 @@
                     $(".lihat-dokumen").show();
                     if (result.data.length >= 1) {
                         $(".lihat-dokumen").append('<b>Histori Dokumen Asesmen</b>');
-                        let assets = "{{ asset('kegiatan/asesmen_internal/asset_dokumen')}}";
                         $.each(result.data, function(key, value){
+                            let assets = "{{ asset('kegiatan/asesmen_internal/asset_dokumen')}}";
                             assets = assets.replace('asset_dokumen', value.nama_dokumen_asesmen);
                             $(".lihat-dokumen").append('<li class="mb-2"><i class="fas fa-file-alt mr-2"></i>'+value.nama_dokumen_asesmen+'<button class="btn btn-primary btn-sm ml-2 lihat_file" value="'+assets+'"type="button">Lihat File</button><a href="'+assets+'" class="btn btn-sm btn-info ml-2" download="'+value.nama_dokumen_asesmen+'">Download File</a><button type="button" class="btn btn-warning btn-sm ml-2 edit_file" value="'+id_asesmen+'" data-target="'+value.nama_dokumen_asesmen+'" data-target2="'+indikator_asesmen+'">Ubah File</button><button class="btn btn-danger btn-sm ml-2 delete_file" value="'+value.nama_dokumen_asesmen+'" data-target="'+indikator_asesmen+'" data-target2="'+id_asesmen+'"type="button">Hapus File</button></li>');
                             $(".lihat-dokumen").append('<input type="hidden" name="nama_dokumen_asesmen[]" value="'+value.nama_dokumen_asesmen+'">');

@@ -25,10 +25,37 @@
 </div>
 <hr>
    <input type="hidden" name="id" value="{{ $id }}">
-   <div class="form-group">
-    {!! Form::label('nama_user', 'Nama Penanggung Jawab:') !!}
-    {!! Form::text('nama_user', $data_user , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
-   </div>
+    @if (!is_null($pengajuan_kegiatan->user()->first()))
+    <div class="row">
+      <div class="col-6">
+        @if (is_null($pengajuan_kegiatan->user->photo_user))
+          <img class="rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="300" height="300">    
+        @else
+          <img class="rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.$pengajuan_kegiatan->user->photo_user) }}" alt="" srcset="" width="300" height="300">
+        @endif
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          {!! Form::label('nama_user', 'Nama Penanggung Jawab:') !!}
+          {!! Form::text('nama_user', $pengajuan_kegiatan->user->name , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
+        </div>
+      </div>
+  </div>
+    @else
+    <div class="row">
+      <div class="col-6">
+        <img class="rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="300" height="300">
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          {!! Form::label('nama_user', 'Nama Penanggung Jawab:') !!}
+          {!! Form::text('nama_user', $data_user , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
+        </div>
+      </div>
+    </div>
+    @endif
+   <hr>
+    
     <div class="form-group">
         {!! Form::label('PJ_nama_kegiatan', 'Nama Kegiatan:') !!}
         {!! Form::text('PJ_nama_kegiatan', $pengajuan_kegiatan->PJ_nama_kegiatan , ['class' => 'form-control', 'disabled' => 'disabled']) !!}

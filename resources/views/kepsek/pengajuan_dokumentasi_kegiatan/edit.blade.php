@@ -25,11 +25,36 @@
       <div class="histori_kegiatan alert alert-info alert-heading font-weight-bolder d-none"></div>
     </div>
     <hr>
-    <div class="form-group">
-      {!! Form::label('nama_pj', 'Nama Penanggung Jawab:') !!}
-      {!! Form::text('nama_pj', $user_name , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
+ @if (!is_null($dokumentasi_kegiatan->user()->first()))
+    <div class="row">
+      <div class="col-6">
+        @if (is_null($dokumentasi_kegiatan->user->photo_user))
+          <img class="rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="300" height="300">    
+        @else
+          <img class="rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.$dokumentasi_kegiatan->user->photo_user) }}" alt="" srcset="" width="300" height="300">
+        @endif
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          {!! Form::label('nama_user', 'Nama Penanggung Jawab:') !!}
+          {!! Form::text('nama_user', $dokumentasi_kegiatan->user->name , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
+        </div>
+      </div>
+  </div>
+    @else
+    <div class="row">
+      <div class="col-6">
+        <img class="rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="300" height="300">
+      </div>
+      <div class="col-6">
+        <div class="form-group">
+          {!! Form::label('nama_user', 'Nama Penanggung Jawab:') !!}
+          {!! Form::text('nama_user', $user_name , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
+        </div>
+      </div>
     </div>
-
+    @endif
+    <hr>
     <div class="form-group">
         {!! Form::label('nama_kegiatan', 'Nama Kegiatan:') !!}
         {!! Form::text('nama_kegiatan', $dokumentasi_kegiatan->nama_kegiatan , ['class' => 'form-control', 'disabled' => 'disabled']) !!}
@@ -70,11 +95,7 @@
   
           </ol>
         </div>
-        {{-- <div class="col-lg-12 col-sm-12">
-          <div id="show_docs" hidden>
-            
-          </div>
-        </div> --}}
+       
       </div>
     <div class="form-group">
         {!! Form::label('foto_kegiatan', 'Dokumentasi Kegiatan Yang Dikirim:') !!}

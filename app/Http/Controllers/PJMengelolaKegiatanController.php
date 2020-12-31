@@ -445,21 +445,21 @@ class PJMengelolaKegiatanController extends Controller
                     "tipe_kegiatan" => 'Pengajuan Historis'
                 ])->first();
                
-                $kumpulan_dokumen = $this->storeFileLaporanKegiatan($file, $request->mulai_kegiatan, $cari_dokumentasi, "Pengajuan Historis", "dokumen");
-                if (!$kumpulan_dokumen) {
+                $kumpulan_dokumen = $this->fileService->multipleStoreFileKegiatan($file, $cari_dokumentasi, "Pengajuan Historis", "dokumen");
+                if (!$kumpulan_dokumen || gettype($kumpulan_dokumen) == 'object') {
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan dan Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
                 }
-                $kumpulan_foto = $this->storeFileLaporanKegiatan($img, $request->mulai_kegiatan, $cari_dokumentasi, "Pengajuan Historis", "image");
-                if (!$kumpulan_foto) {
-                    $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+                $kumpulan_foto = $this->fileService->multipleStoreFileKegiatan($img, $cari_dokumentasi, "Pengajuan Historis", "image");
+                if (!$kumpulan_foto || gettype($kumpulan_foto) == 'object') {
+                    $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
                     $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan dan Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
                 }
                
-                $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
-                $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
+                $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
+                $res_kumpulan_foto = $this->fileService->fileArrTypeChecker($kumpulan_foto);
                 $statusDefault = StatusKegiatan::findOrFail(6);
                 $save_status = $cari_dokumentasi->statusKegiatan()->save($statusDefault);
                 if (!$save_status) {
@@ -512,19 +512,19 @@ class PJMengelolaKegiatanController extends Controller
         }
         $status_update = StatusKegiatan::findOrFail(3);
                
-        $kumpulan_dokumen = $this->storeFileLaporanKegiatan($file, $dokumentasi_kegiatan->mulai_kegiatan, $dokumentasi_kegiatan, "Pengajuan", "dokumen");
-        if (!$kumpulan_dokumen) {
+        $kumpulan_dokumen = $this->fileService->multipleStoreFileKegiatan($file, $dokumentasi_kegiatan, "Pengajuan", "dokumen");
+        if (!$kumpulan_dokumen || gettype($kumpulan_dokumen) == 'object') {
             return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
         }
-        $kumpulan_foto = $this->storeFileLaporanKegiatan($img, $dokumentasi_kegiatan->mulai_kegiatan, $dokumentasi_kegiatan, "Pengajuan" , "image");
-        if (!$kumpulan_foto) {
-            $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+        $kumpulan_foto = $this->fileService->multipleStoreFileKegiatan($img, $dokumentasi_kegiatan, "Pengajuan" , "image");
+        if (!$kumpulan_foto || gettype($kumpulan_foto) == 'object') {
+            $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
             $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $dokumentasi_kegiatan, "dokumen", "Pengajuan");
             return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
         }
       
-        $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
-        $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
+        $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
+        $res_kumpulan_foto = $this->fileService->fileArrTypeChecker($kumpulan_foto);
         $updateLinksDokumentasi = $dokumentasi_kegiatan->update($input); 
         if (!$updateLinksDokumentasi) {
             $this->fileService->removeKumpulanFile($res_kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
@@ -611,18 +611,18 @@ class PJMengelolaKegiatanController extends Controller
         $status_update = StatusKegiatan::findOrFail(3);
 
         // if($status_unggah_laporan == "Pengajuan"){
-            $kumpulan_dokumen = $this->storeFileLaporanKegiatan($file, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan, "dokumen");
-            if (!$kumpulan_dokumen) {
-                return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
+            $kumpulan_dokumen = $this->fileService->multipleStoreFileKegiatan($file, $dokumentasi_ulang, $status_unggah_laporan, "dokumen");
+            if (!$kumpulan_dokumen || gettype($kumpulan_dokumen) == 'object') {
+                return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
             }
-            $kumpulan_foto = $this->storeFileLaporanKegiatan($img, $dokumentasi_ulang->mulai_kegiatan, $dokumentasi_ulang, $status_unggah_laporan , "image");
-            if (!$kumpulan_foto) {
-                $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
+            $kumpulan_foto = $this->fileService->multipleStoreFileKegiatan($img, $dokumentasi_ulang, $status_unggah_laporan , "image");
+            if (!$kumpulan_foto || gettype($kumpulan_foto) == 'object') {
+                $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
                 $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
                 return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
             }
-            $res_kumpulan_dokumen = $this->fileArrTypeChecker($kumpulan_dokumen);
-            $res_kumpulan_foto = $this->fileArrTypeChecker($kumpulan_foto);
+            $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
+            $res_kumpulan_foto = $this->fileService->fileArrTypeChecker($kumpulan_foto);
             $update_links_dokumentasi = $dokumentasi_ulang->update($input);
             if (!$update_links_dokumentasi) {
                 $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
@@ -721,90 +721,90 @@ class PJMengelolaKegiatanController extends Controller
     //     return true;
     // }
 
-    private function storeFileLaporanKegiatan($file, $mulai_kegiatan, $kegiatan, $type, $file_type){
-        $kumpulan_dokumen  = [];
-        $new_dokumen_name = "";
-        foreach ($file as $file_kegiatan) {
-            if ($type == "Pengajuan" || $type == "Pengajuan Historis") {
-                $dokumen_name = $file_kegiatan->getClientOriginalName();
-                if ($file_type == "dokumen") {
-                    $new_dokumen_name = $mulai_kegiatan."_".$kegiatan->nama_kegiatan."_Laporan Kegiatan_".$dokumen_name;
-                    $checker =  $kegiatan->dokumenKegiatan()->where([ 
-                        ["nama_dokumen" , $new_dokumen_name], 
-                        ["status_unggah_dokumen" , $type]
-                    ])->first();
-                } elseif($file_type == "image") {
-                    $new_dokumen_name = $mulai_kegiatan."_".$kegiatan->nama_kegiatan."_Dokumentasi_".$dokumen_name;
-                    $checker  = $kegiatan->fotoKegiatan()->where([
-                        ["nama_foto_kegiatan" , $new_dokumen_name],
-                        ["status_unggah_foto" , $type]
-                    ])->first();
-                }
+    // private function storeFileLaporanKegiatan($file, $kegiatan, $file_type , $type){
+    //     $kumpulan_dokumen  = [];
+    //     $new_dokumen_name = "";
+    //     foreach ($file as $file_kegiatan) {
+    //         if ($type == "Pengajuan" || $type == "Pengajuan Historis") {
+    //             $dokumen_name = $file_kegiatan->getClientOriginalName();
+    //             if ($file_type == "dokumen") {
+    //                 $new_dokumen_name = $kegiatan->mulai_kegiatan."_".$kegiatan->nama_kegiatan."_Laporan Kegiatan_".$dokumen_name;
+    //                 $checker =  $kegiatan->dokumenKegiatan()->where([ 
+    //                     ["nama_dokumen" , $new_dokumen_name], 
+    //                     ["status_unggah_dokumen" , $type]
+    //                 ])->first();
+    //             } elseif($file_type == "image") {
+    //                 $new_dokumen_name = $kegiatan->mulai_kegiatan."_".$kegiatan->nama_kegiatan."_Dokumentasi_".$dokumen_name;
+    //                 $checker  = $kegiatan->fotoKegiatan()->where([
+    //                     ["nama_foto_kegiatan" , $new_dokumen_name],
+    //                     ["status_unggah_foto" , $type]
+    //                 ])->first();
+    //             }
 
-                if(file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name)) && !is_null($checker)){
-                    if ($file_type == "dokumen") {
-                        $input["nama_dokumen"] = $new_dokumen_name;
-                        $kegiatan->dokumenKegiatan()->where([
-                            ["nama_dokumen", '=', $new_dokumen_name], 
-                            ["status_unggah_dokumen", '=', $type]
-                        ])->touch();
+    //             if(file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name)) && !is_null($checker)){
+    //                 if ($file_type == "dokumen") {
+    //                     // $input["nama_dokumen"] = $new_dokumen_name;
+    //                     $kegiatan->dokumenKegiatan()->where([
+    //                         ["nama_dokumen", '=', $new_dokumen_name], 
+    //                         ["status_unggah_dokumen", '=', $type]
+    //                     ])->touch();
 
-                    } elseif($file_type == "image") {
-                        $input["nama_foto_kegiatan"] = $new_dokumen_name;
-                        $kegiatan->fotoKegiatan()->where([
-                            ["nama_foto_kegiatan", '=', $new_dokumen_name], 
-                            ["status_unggah_foto", '=', $type]
-                        ])->touch();
-                    }
-                    // unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name));
-                    $simpan_file = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
-                    if (!$simpan_file) {
-                        $this->fileService->removeKumpulanFile($kumpulan_dokumen, $kegiatan, $file_type, $type);
-                        return false;
-                    }
-                    // $kumpulan_dokumen = [];
-                    continue;
-                } else {
-                    $kumpulan_dokumen [] = $new_dokumen_name;
-                    if ($file_type == "dokumen") {
-                        $dokumen_create = new DokumenKegiatan([
-                            "dokumentasi_kegiatan_id" => $kegiatan->id,
-                            "nama_dokumen" => $new_dokumen_name,
-                            "status_unggah_dokumen" => $type
-                        ]);
-                        $dokumen_final =  $kegiatan->dokumenKegiatan()->save($dokumen_create);
-                    } elseif($file_type == "image") {
-                        $image_create = new FotoKegiatan([
-                            'dokumentasi_kegiatan_id' => $kegiatan->id,
-                            'nama_foto_kegiatan' => $new_dokumen_name,
-                            'status_unggah_foto' => $type
-                        ]);
-                        $dokumen_final =  $kegiatan->fotoKegiatan()->save($image_create);
-                    }
-                    $file_uploaded = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
-                    if ($file_uploaded && $dokumen_final) {
-                        continue;
-                    } else {
-                        //delete dokumen
-                        if ($file_type == "dokumen") {
-                            $this->fileService->removeKumpulanFile($kumpulan_dokumen , $kegiatan, $file_type, $type);
-                            // return Response::json(['errors' => ['Terjadi Kegagalan Dalam Menyimpan Dokumen, Silahkan Dicoba Kembali']], 422);
-                            return false;
-                        } elseif($file_type == "image"){
-                            $this->fileService->removeKumpulanFile($kumpulan_dokumen, $kegiatan, $file_type, $type);
-                            return false;
-                        }
-                    }   
-                }
-            }
-        }
-        if (count($kumpulan_dokumen) == 0) {
-            $kumpulan_dokumen = true;
-            return $kumpulan_dokumen;
-        } else {
-            return $kumpulan_dokumen;
-        }
-    }
+    //                 } elseif($file_type == "image") {
+    //                     // $input["nama_foto_kegiatan"] = $new_dokumen_name;
+    //                     $kegiatan->fotoKegiatan()->where([
+    //                         ["nama_foto_kegiatan", '=', $new_dokumen_name], 
+    //                         ["status_unggah_foto", '=', $type]
+    //                     ])->touch();
+    //                 }
+    //                 // unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name));
+    //                 $simpan_file = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+    //                 if (!$simpan_file) {
+    //                     $this->fileService->removeKumpulanFile($kumpulan_dokumen, $kegiatan, $file_type, $type);
+    //                     return false;
+    //                 }
+    //                 // $kumpulan_dokumen = [];
+    //                 continue;
+    //             } else {
+    //                 $kumpulan_dokumen [] = $new_dokumen_name;
+    //                 if ($file_type == "dokumen") {
+    //                     $dokumen_create = new DokumenKegiatan([
+    //                         "dokumentasi_kegiatan_id" => $kegiatan->id,
+    //                         "nama_dokumen" => $new_dokumen_name,
+    //                         "status_unggah_dokumen" => $type
+    //                     ]);
+    //                     $dokumen_final =  $kegiatan->dokumenKegiatan()->save($dokumen_create);
+    //                 } elseif($file_type == "image") {
+    //                     $image_create = new FotoKegiatan([
+    //                         'dokumentasi_kegiatan_id' => $kegiatan->id,
+    //                         'nama_foto_kegiatan' => $new_dokumen_name,
+    //                         'status_unggah_foto' => $type
+    //                     ]);
+    //                     $dokumen_final =  $kegiatan->fotoKegiatan()->save($image_create);
+    //                 }
+    //                 $file_uploaded = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+    //                 if ($file_uploaded && $dokumen_final) {
+    //                     continue;
+    //                 } else {
+    //                     //delete dokumen
+    //                     if ($file_type == "dokumen") {
+    //                         $this->fileService->removeKumpulanFile($kumpulan_dokumen , $kegiatan, $file_type, $type);
+    //                         // return Response::json(['errors' => ['Terjadi Kegagalan Dalam Menyimpan Dokumen, Silahkan Dicoba Kembali']], 422);
+    //                         return false;
+    //                     } elseif($file_type == "image"){
+    //                         $this->fileService->removeKumpulanFile($kumpulan_dokumen, $kegiatan, $file_type, $type);
+    //                         return false;
+    //                     }
+    //                 }   
+    //             }
+    //         }
+    //     }
+    //     if (count($kumpulan_dokumen) == 0) {
+    //         $kumpulan_dokumen = true;
+    //         return $kumpulan_dokumen;
+    //     } else {
+    //         return $kumpulan_dokumen;
+    //     }
+    // }
 
 
     private function dataLinks($linkRequest){
@@ -826,13 +826,13 @@ class PJMengelolaKegiatanController extends Controller
         return $jsonData;
     }
 
-    private function fileArrTypeChecker($fileArr){
-        if (gettype($fileArr) == 'boolean' && $fileArr) {
-            $fileArr = [];
-            return $fileArr;
-        } elseif(gettype($fileArr) == 'array') {
-            return $fileArr;
-        }
-    }
+    // private function fileArrTypeChecker($fileArr){
+    //     if (gettype($fileArr) == 'boolean' && $fileArr) {
+    //         $fileArr = [];
+    //         return $fileArr;
+    //     } elseif(gettype($fileArr) == 'array') {
+    //         return $fileArr;
+    //     }
+    // }
 
 }

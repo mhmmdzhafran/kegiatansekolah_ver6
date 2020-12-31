@@ -62,10 +62,19 @@
                             </ul>
                         </div>
                         <hr>
-                        <div class="form-group">
-                            {!! Form::label('nama_user' , 'Nama Penanggung Jawab') !!}
-                            {!! Form::text('nama_user' , null , ['class' => 'form-control nama_user' , 'disabled']) !!}
+                        <div class="row">
+                            <div class="col-6 image_user">
+                                
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group">
+                                    {!! Form::label('nama_user' , 'Nama Penanggung Jawab') !!}
+                                    {!! Form::text('nama_user' , null , ['class' => 'form-control nama_user' , 'disabled']) !!}
+                                </div>
+                            </div>
                         </div>
+                        <hr>
+                        
                         <div class="form-group">
                             {!! Form::label('nama_kegiatan' , 'Nama Kegiatan') !!}
                             {!! Form::text('nama_kegiatan' , null , ['class' => 'form-control nama_kegiatan' , 'disabled']) !!}
@@ -334,6 +343,16 @@
                 loadingBar('show');
                 $.get(url, function(res){
                     // console.log(res);
+                    if (!res.image_state) {
+                        let file_loc = '{{asset("logo/logo_smp_islam_sabilurrosyad.png")}}';
+                        $(".nama_user").val(res.username);
+                        $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
+                    } else {
+                        let file_loc = '{{asset("kegiatan/admin/foto_user/users")}}';
+                        file_loc = file_loc.replace('users' , res.user.photo_user);
+                        $(".nama_user").val(res.user.name);
+                        $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
+                    }
                     $(".pengajuan_kegiatan").empty();
                     const status_kegiatan = res.status_kegiatan;
                     const keteranganKegiatan = JSON.parse(res.data_dokumentasi.keterangan_dokumentasi);
@@ -359,7 +378,6 @@
                         value_checked.push(element.nilai_ppk);
                         $("[value = '"+element.nilai_ppk+"']").prop('checked', true);
                     });
-                    $(".nama_user").val(res.username);
                     $(".kegiatan_berbasis").find("[value = '"+res.data_dokumentasi.kegiatan_berbasis+"']").prop('selected', true);
                     $(".awal_kegiatan").val(res.data_dokumentasi.mulai_kegiatan);
                     $(".akhir_kegiatan").val(res.data_dokumentasi.akhir_kegiatan);

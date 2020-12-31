@@ -83,7 +83,7 @@
     <li class="nav-item {{(request()->segment(2) == 'unggah-dokumentasi-kegiatan') ? 'active' : ''}}">
       <a class="nav-link" href="{{ route('pj.dokumentasi_kegiatan.index') }}">
         <i class="fas fa-fw fa-folder-open"></i>
-        <span>Dokumentasi Kegiatan</span></a>
+        <span>Laporan Kegiatan</span></a>
       </li>
 
       <li class="nav-item {{(request()->segment(2) == 'user-profile') || (request()->segment(2) == 'notifications') ? 'active' : ''}}">
