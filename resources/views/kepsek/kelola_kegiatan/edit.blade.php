@@ -288,11 +288,12 @@
           }
         });
         if (statusData) {
-            $.each(res.data_dokumen, function(key,value){
-              var url_dokumen = "{{asset('kegiatan/pengajuan_kegiatan/nama_dokumen')}}";
-              url_dokumen = url_dokumen.replace('nama_dokumen', value.nama_dokumen);
-              $("#file_upload").append('<i class="fas fa-file-alt"></i> <a href="'+url_dokumen+'" class="mr-2" target="_blank">'+value.nama_dokumen+'</a><button class="btn btn-primary btn-sm lihat_file mr-2" value="'+url_dokumen+'">Lihat File</button><a href="'+url_dokumen+'" download="'+value.nama_dokumen+'" class="btn btn-info btn-sm mr-2">Download File</a><br>');
-            });  
+          var url_dokumen = "{{asset('kegiatan/pengajuan_kegiatan/nama_dokumen')}}";
+          url_dokumen = url_dokumen.replace('nama_dokumen', res.data_dokumen);
+          $("#file_upload").append('<i class="fas fa-file-alt"></i> <a href="'+url_dokumen+'" class="mr-2" target="_blank">'+res.data_dokumen+'</a><button class="btn btn-primary btn-sm lihat_file mr-2" value="'+url_dokumen+'">Lihat File</button><a href="'+url_dokumen+'" download="'+res.data_dokumen+'" class="btn btn-info btn-sm mr-2">Download File</a><br>');
+            // $.each(res.data_dokumen, function(key,value){
+             
+            // });  
         } else {
           $("#file_upload").append('<ol><li>'+res.data_dokumen+'</li></ol>');
         }

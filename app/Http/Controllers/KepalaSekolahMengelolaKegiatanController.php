@@ -97,13 +97,13 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 $data_user = '';
             }
             $status_kegiatan =  $data_pengajuan_kegiatan->statusKegiatan()->first();
-            $dokumen = json_decode($data_pengajuan_kegiatan->dokumen_kegiatan);
-            $nama_dokumen = "";
-            foreach ($dokumen as $isi_data_dokumen) {
-                $nama_dokumen = $isi_data_dokumen->nama_dokumen;
-            }
-            if ($dokumen) {
-                if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen))) {
+            // $dokumen = json_decode($data_pengajuan_kegiatan->dokumen_kegiatan);
+            // $nama_dokumen = "";
+            // foreach ($dokumen as $isi_data_dokumen) {
+            //     $nama_dokumen = $isi_data_dokumen->nama_dokumen;
+            // }
+            if (!is_null($data_pengajuan_kegiatan->dokumen_kegiatan)) {
+                if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$data_pengajuan_kegiatan->dokumen_kegiatan))) {
                     return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => true, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
                 }
                 return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => false, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
@@ -488,15 +488,15 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             $kegiatan = $this->findData->findDataModel($id, $type);
             if (gettype($kegiatan) != 'string') {
                 if ($type == "Proposal") {
-                    $nama_dokumen = "";
-                    $dokumen_pengajuan = json_decode($kegiatan->dokumen_kegiatan);
-                    foreach ($dokumen_pengajuan as $isi_data_dokumen) {
-                        $nama_dokumen = $isi_data_dokumen->nama_dokumen;
-                    }
+                    // $nama_dokumen = "";
+                    // $dokumen_pengajuan = json_decode($kegiatan->dokumen_kegiatan);
+                    // foreach ($dokumen_pengajuan as $isi_data_dokumen) {
+                    //     $nama_dokumen = $isi_data_dokumen->nama_dokumen;
+                    // }
                     $keterangan_pengajuan = json_decode($kegiatan->keterangan_json);
-                    if ($dokumen_pengajuan) {
-                        if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen))) {
-                            return Response::json(['status' => true, 'data_dokumen' => $dokumen_pengajuan , 'data' => $kegiatan, 'keterangan' => $keterangan_pengajuan], 200);
+                    if (!is_null($kegiatan->dokumen_kegiatan)) {
+                        if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$kegiatan->dokumen_kegiatan))) {
+                            return Response::json(['status' => true, 'data_dokumen' => $kegiatan->dokumen_kegiatan , 'data' => $kegiatan, 'keterangan' => $keterangan_pengajuan], 200);
                         } else {
                             return Response::json(['status' => false, 'data_dokumen' => "Tidak terdapat Dokumen Pengajuan Kegiatan", 'data' => $kegiatan , 'keterangan' => $keterangan_pengajuan], 200);
                         }

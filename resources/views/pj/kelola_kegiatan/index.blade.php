@@ -229,7 +229,7 @@ $('#pengajuan-table').DataTable({
                     loadingBar('hide');
                     console.log(res.data);
                     $("#showModal").modal();
-                    var dokumen = $.parseJSON(res.data.dokumen_kegiatan);
+                    // var dokumen = $.parseJSON(res.data.dokumen_kegiatan);
                     var nilai_ppk = $.parseJSON(res.data.nilai_ppk);
                     var keterangan = $.parseJSON(res.data.keterangan_json);
                     $("#PJ_nama_kegiatan").attr('value', res.data.PJ_nama_kegiatan);
@@ -354,11 +354,11 @@ $('#pengajuan-table').DataTable({
                     }
 
                     if (res.status_dokumen) {
-                        $.each(dokumen, function(key, value){
                             var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
-                            asset = asset.replace('asset_kegiatan', value.nama_dokumen);
+                            asset = asset.replace('asset_kegiatan', res.data.dokumen_kegiatan);
                             $("#upload-file").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
-                        });   
+                        // $.each(dokumen, function(key, value){
+                        // });   
                     } else {
                         $("#upload-file").append('<ol><li class="mb-2">Tidak Terdapat Proposal Kegiatan</li></ol>')
                     }
@@ -395,7 +395,7 @@ $('#pengajuan-table').DataTable({
                     success: function(res){
                     loadingBar('hide');
                     $("#pengajuanUlangModal").modal();
-                    var dokumen = $.parseJSON(res.data.dokumen_kegiatan);   
+                    // var dokumen = $.parseJSON(res.data.dokumen_kegiatan);   
                     var nilai_ppk = $.parseJSON(res.data.nilai_ppk);
                     var url2 = '{{route("pj.kelola_kegiatan.update", "id")}}';
                     url2 = url2.replace('id', id);
@@ -416,11 +416,11 @@ $('#pengajuan-table').DataTable({
                     });
 
                     if (res.status_dokumen) {
-                        $.each(dokumen, function(key, value){
                             var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
-                            asset = asset.replace('asset_kegiatan', value.nama_dokumen);
+                            asset = asset.replace('asset_kegiatan', res.data.dokumen_kegiatan);
                             $("#upload-ulang").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
-                        });   
+                        // $.each(dokumen, function(key, value){
+                        // });   
                     } else {
                         $("#upload-ulang").append('<ol><li class="mb-2">Tidak Terdapat Proposal Kegiatan</li></ol>');
                     }

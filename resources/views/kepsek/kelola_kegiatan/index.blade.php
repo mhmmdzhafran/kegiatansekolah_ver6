@@ -249,12 +249,14 @@
                     
                     //untuk status dokumen => res.status_dokumen
                     if (res.status_dokumen) {
-                        var dokumen = $.parseJSON(res.data.dokumen_kegiatan);
-                        $.each(dokumen, function(key,value){
-                            var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
-                            asset = asset.replace('asset_kegiatan', value.nama_dokumen);
-                            $("#lihat-file").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
-                        });
+                        // var dokumen = $.parseJSON(res.data.dokumen_kegiatan);
+                        var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                        asset = asset.replace('asset_kegiatan', res.data.dokumen_kegiatan);
+                        $("#lihat-file").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
+                        // $.each(dokumen, function(key,value){
+                        // });
+                    } else {
+                        $("#lihat-file").append('<ol><li class="mb-2">Tidak Terdapat Proposal Kegiatan</li></ol>');
                     }
                 }).done(function(){
                     $("#showModal").modal();
