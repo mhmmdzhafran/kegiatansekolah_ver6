@@ -22,10 +22,12 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
 {
 
     protected $findData;
-    public function __construct(FindDataRepository $findDataRepository)
+    protected $dataPPK;
+    public function __construct(FindDataRepository $findDataRepository, DataPPKService $dataPPKService)
     {
         $this->middleware('auth');
         $this->findData = $findDataRepository;
+        $this->dataPPK = $dataPPKService;
     }
 
     /**
@@ -33,14 +35,14 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(DataPPKService $dataPPKService)
+    public function index()
     {
         //
         $pengajuan_all = PengajuanKegiatan::with(['statusKegiatan' ])->select('pengajuan_kegiatans.*');
         if (request()->ajax()) { 
-            return datatables()->eloquent($pengajuan_all)->addColumn('statusKegiatan', function(PengajuanKegiatan $pengajuan) use ($dataPPKService){
+            return datatables()->eloquent($pengajuan_all)->addColumn('statusKegiatan', function(PengajuanKegiatan $pengajuan){
                 $status_pengajuan =  $pengajuan->statusKegiatan->pluck('nama')->implode('<br>');
-                $status_indikator = $dataPPKService->statusKegiatanPPK("Pengajuan", $status_pengajuan, "Proposal Kegiatan");
+                $status_indikator = $this->dataPPK->statusKegiatanPPK("Pengajuan", $status_pengajuan, "Proposal Kegiatan");
                 return $status_indikator;
             })->addColumn('data_pengajuan', function($data){
                 foreach($data->statusKegiatan as $data_pengajuan){
@@ -60,9 +62,9 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     }
                     return $aksi;
                 }
-            })->editColumn('nilai_ppk', function($data) use ($dataPPKService){
+            })->editColumn('nilai_ppk', function($data){
                 $json_ppk = json_decode($data->nilai_ppk);
-                $data_ppk = $dataPPKService->showDataPPK($json_ppk);
+                $data_ppk = $this->dataPPK->showDataPPK($json_ppk);
                 return $data_ppk;
             })->editColumn('updated_at' , function($data){
                 return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
@@ -311,12 +313,12 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
      * KHUSUS FUNCTION DOKUMENTASI
      */
 
-    public function indexDokumentasi(DataPPKService $dataPPKService){
+    public function indexDokumentasi(){
         $dokumentasi_all = DokumentasiKegiatan::with(['statusKegiatan'])->select('dokumentasi_kegiatans.*');
          if (request()->ajax()) {
-            return datatables()->eloquent($dokumentasi_all)->addColumn('statusKegiatan', function(DokumentasiKegiatan $dokumentasi) use($dataPPKService){
+            return datatables()->eloquent($dokumentasi_all)->addColumn('statusKegiatan', function(DokumentasiKegiatan $dokumentasi) {
                 $status_indikator = $dokumentasi->statusKegiatan->pluck('nama')->implode('<br>');
-                $status = $dataPPKService->statusKegiatanPPK("Dokumentasi",$status_indikator, $dokumentasi->tipe_kegiatan);
+                $status = $this->dataPPK->statusKegiatanPPK("Dokumentasi",$status_indikator, $dokumentasi->tipe_kegiatan);
                 return $status;
              })->addColumn('unggah_dokumentasi', function($data){
                 foreach ($data->statusKegiatan as $item) {
@@ -333,9 +335,9 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                         return $button;   
                     }
                 }
-             })->editColumn('nilai_ppk', function($data) use($dataPPKService){
+             })->editColumn('nilai_ppk', function($data){
                 $json_decode_nilai_ppk = json_decode($data->nilai_ppk);
-                $nilai_ppk_kegiatan = $dataPPKService->showDataPPK($json_decode_nilai_ppk);
+                $nilai_ppk_kegiatan = $this->dataPPK->showDataPPK($json_decode_nilai_ppk);
                 return $nilai_ppk_kegiatan;
              })->editColumn('updated_at' , function($data){
                 return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
@@ -528,19 +530,19 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         $inputDokumentasi['mulai_kegiatan'] = $tanggal_mulai;
         $inputDokumentasi['akhir_kegiatan'] = $tanggal_akhir;
         
-        $keterangan_default [] = array(
-            'no' => 1,
-            'keterangan_opsional' => ''
-        );
-        $keterangan_default [] = array(
-            'no' => 2,
-            'keterangan_wajib_ulang' => ''
-        );
+        // $keterangan_default [] = array(
+        //     'no' => 1,
+        //     'keterangan_opsional' => ''
+        // );
+        // $keterangan_default [] = array(
+        //     'no' => 2,
+        //     'keterangan_wajib_ulang' => ''
+        // );
         $inputDokumentasi['nilai_ppk'] = $nilai_ppk;
         $inputDokumentasi['kegiatan_berbasis'] = $kegiatan_berbasis;
         $statusDefault = StatusKegiatan::findOrFail(2);
-        $keteranganDokumentasi = json_encode($keterangan_default);
-        $inputDokumentasi['keterangan_dokumentasi'] = $keteranganDokumentasi;
+        // $keteranganDokumentasi = json_encode($keterangan_default);
+        $inputDokumentasi['keterangan_dokumentasi'] = $this->dataPPK->createKeteranganKegiatanPPK('Laporan');
         $inputDokumentasi['tipe_kegiatan'] = "Pengajuan";
 
         $dokumentasi = DokumentasiKegiatan::create($inputDokumentasi);

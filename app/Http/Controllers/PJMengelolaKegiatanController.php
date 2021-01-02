@@ -110,22 +110,22 @@ class PJMengelolaKegiatanController extends Controller
                 $masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
                     if($masuk_file){
                        
-                        $keterangan_default [] = array(
-                            'no' => 1,
-                            'keterangan_opsional' => ''
-                        );
-                        $keterangan_default [] = array(
-                            'no' => 2,
-                            'keterangan_wajib_ulang' => ''
-                        );
-                        $keterangan_default [] = array(
-                            'no' => 3,
-                            'keterangan_wajib' => ''
-                        );
-                        $input['nilai_ppk'] = $dataPPKService->countPPK($request->nilai_ppk);
-                        $keterangan = json_encode($keterangan_default);
+                        // $keterangan_default [] = array(
+                        //     'no' => 1,
+                        //     'keterangan_opsional' => ''
+                        // );
+                        // $keterangan_default [] = array(
+                        //     'no' => 2,
+                        //     'keterangan_wajib_ulang' => ''
+                        // );
+                        // $keterangan_default [] = array(
+                        //     'no' => 3,
+                        //     'keterangan_wajib' => ''
+                        // );
+                        $input['nilai_ppk'] = $this->countPPK($request->nilai_ppk);
+                        // $keterangan = json_encode($keterangan_default);
                         $input['user_id'] = Auth::user()->id;
-                        $input['keterangan_json'] = $keterangan;
+                        $input['keterangan_json'] = $dataPPKService->createKeteranganKegiatanPPK('Proposal');
                         $input['nama_pj'] = Auth::user()->name;
                         $statusDefault = StatusKegiatan::findOrFail(3);
                         $kegiatan = PengajuanKegiatan::create($input);
@@ -251,7 +251,7 @@ class PJMengelolaKegiatanController extends Controller
         $nama_dokumen_ulang = $request->mulai_kegiatan."_Pengajuan_Kegiatan_Ulang-".$input['PJ_nama_kegiatan']."-".$name;
         $input['dokumen_kegiatan'] = $nama_dokumen_ulang;
         $input['user_id'] = Auth::user()->id;
-        $input['nilai_ppk'] = $dataPPKService->countPPK($request->nilai_ppk);
+        $input['nilai_ppk'] = $this->countPPK($request->nilai_ppk);
         $input['nama_pj'] = Auth::user()->name;
         $status_ulang = StatusKegiatan::findOrFail(3);
         $update_pengajuan = $pengajuan_ulang->update($input);
@@ -413,7 +413,7 @@ class PJMengelolaKegiatanController extends Controller
             'no' => 2,
             'keterangan_wajib_ulang' => ''
         );
-        $keterangan_json = json_encode($keterangan_dokumentasi);
+        $keterangan_json = $dataPPKService->createKeteranganKegiatanPPK('Laporan');
         
         $videoLinks = $this->dataLinks($request->add_link_video);
         $articleLinks = $this->dataLinks($request->add_link_article);
@@ -424,7 +424,7 @@ class PJMengelolaKegiatanController extends Controller
             "nama_pj" => Auth::user()->name,
             "mulai_kegiatan" => $request->mulai_kegiatan,
             "akhir_kegiatan" => $request->akhir_kegiatan,
-            "nilai_ppk" => $dataPPKService->countPPK($request->nilai_ppk),
+            "nilai_ppk" => $this->countPPK($request->nilai_ppk),
             "kegiatan_berbasis" => $request->kegiatan_berbasis,
             "keterangan_dokumentasi" => $keterangan_json,
             "add_link_video" => $videoLinks,
@@ -805,6 +805,18 @@ class PJMengelolaKegiatanController extends Controller
     //     }
     // }
 
+    private function countPPK($nilaiPPK){
+        $id_nilai_ppk = 1;
+        for ($i=0; $i < count($nilaiPPK) ; $i++) { 
+            $json_ppk[] = array(
+                'no' => $id_nilai_ppk,
+                'nilai_ppk' => $nilaiPPK[$i]
+            );
+            $id_nilai_ppk++;
+        }
+        return json_encode($json_ppk);
+        
+    }
 
     private function dataLinks($linkRequest){
         $links = [];
@@ -825,9 +837,9 @@ class PJMengelolaKegiatanController extends Controller
         return $jsonData;
     }
 
-    private function setFileProposalKegiatan($type, $fileName){
+    // private function setFileProposalKegiatan($type, $fileName){
 
-    }
+    // }
 
     // private function fileArrTypeChecker($fileArr){
     //     if (gettype($fileArr) == 'boolean' && $fileArr) {

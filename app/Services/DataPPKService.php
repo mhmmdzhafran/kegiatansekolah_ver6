@@ -2,16 +2,43 @@
 namespace App\Services;
 
 class DataPPKService{
-    public function countPPK($nilaiPPK){
-        $id_nilai_ppk = 1;
-        for ($i=0; $i < count($nilaiPPK) ; $i++) { 
-            $json_ppk[] = array(
-                'no' => $id_nilai_ppk,
-                'nilai_ppk' => $nilaiPPK[$i]
+    // public function countPPK($nilaiPPK){
+    //     $id_nilai_ppk = 1;
+    //     for ($i=0; $i < count($nilaiPPK) ; $i++) { 
+    //         $json_ppk[] = array(
+    //             'no' => $id_nilai_ppk,
+    //             'nilai_ppk' => $nilaiPPK[$i]
+    //         );
+    //         $id_nilai_ppk++;
+    //     }
+    //     return json_encode($json_ppk);
+    // }
+
+    public function createKeteranganKegiatanPPK($type){
+        if ($type == 'Proposal') {
+            $keterangan_default [] = array(
+                'no' => 1,
+                'keterangan_opsional' => ''
             );
-            $id_nilai_ppk++;
+            $keterangan_default [] = array(
+                'no' => 2,
+                'keterangan_wajib_ulang' => ''
+            );
+            $keterangan_default [] = array(
+                'no' => 3,
+                'keterangan_wajib' => ''
+            );
+        } elseif($type == 'Laporan'){
+            $keterangan_default [] = array(
+                'no' => 1,
+                'keterangan_opsional' => ''
+            );
+            $keterangan_default [] = array(
+                'no' => 2,
+                'keterangan_wajib_ulang' => ''
+            );
         }
-        return json_encode($json_ppk);
+        return json_encode($keterangan_default);
     }
 
     public function showDataPPK($dataPPK){
