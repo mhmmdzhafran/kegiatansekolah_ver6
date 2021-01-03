@@ -215,7 +215,7 @@ class PJMengelolaKegiatanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PengajuanKegiatanUlangValidationRequest $request, DataPPKService $dataPPKService, $id)
+    public function update(PengajuanKegiatanUlangValidationRequest $request, $id)
     {
         //
         //for pengajuan ulang
@@ -360,19 +360,13 @@ class PJMengelolaKegiatanController extends Controller
             foreach($dokumentasi_kegiatan->statusKegiatan as $status){
                 $status_kegiatan  = $status->pivot->status_kegiatan_id;
             }
-            if (count($dokumen) > 0) {
-                if($status_kegiatan == 3) {
+            if (count($dokumen) > 0 || count($image) > 0) {
+                if($status_kegiatan == 3 || $status_kegiatan == 6) {
                     if (!is_null($dokumentasi_kegiatan->keterangan_dokumentasi)) {
                         return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'image' => $image,  'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan , 'isKeterangan' => true, 'keterangan' => $dokumentasi_kegiatan->keterangan_dokumentasi], 200);
                     } else {
                         return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'image' => $image, 'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan , 'isKeterangan' => false], 200);
                     }
-                } elseif($status_kegiatan == 6 ){
-                    if (!is_null($dokumentasi_kegiatan->keterangan_dokumentasi)) {
-                        return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'image' => $image,  'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan , 'isKeterangan' => true, 'keterangan' => $dokumentasi_kegiatan->keterangan_dokumentasi], 200);
-                    } else {
-                        return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'image' => $image, 'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan , 'isKeterangan' => false], 200);
-                    }   
                 }
             } else {
                 return Response::json(['status' => $status_kegiatan, 'dokumen' => $dokumen, 'image' => $image, 'nilai_ppk_kegiatan' => $nilai_ppk_kegiatan, 'dokumentasi_kegiatan' => $dokumentasi_kegiatan,  'isKeterangan' => false], 200);   
@@ -405,14 +399,14 @@ class PJMengelolaKegiatanController extends Controller
             return $imageCheck;
         }
         
-        $keterangan_dokumentasi [] = array(
-            'no' => 1,
-            'keterangan_opsional' => ''
-        );
-        $keterangan_dokumentasi [] = array(
-            'no' => 2,
-            'keterangan_wajib_ulang' => ''
-        );
+        // $keterangan_dokumentasi [] = array(
+        //     'no' => 1,
+        //     'keterangan_opsional' => ''
+        // );
+        // $keterangan_dokumentasi [] = array(
+        //     'no' => 2,
+        //     'keterangan_wajib_ulang' => ''
+        // );
         $keterangan_json = $dataPPKService->createKeteranganKegiatanPPK('Laporan');
         
         $videoLinks = $this->dataLinks($request->add_link_video);

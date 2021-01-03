@@ -93,7 +93,8 @@ class AdminUserController extends Controller
             'password'
         ]);
         $fileImage = $request->file('photo_user');
-        $customNameFile = $this->photoUserNamingScheme($fileImage->getClientOriginalName(), $request->username_id);
+        $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
+        // $customNameFile = $this->photoUserNamingScheme($fileImage->getClientOriginalName(), $request->username_id);
         
         $input['photo_user'] = $customNameFile;
         $input['password'] = bcrypt($request->password);
@@ -184,7 +185,9 @@ class AdminUserController extends Controller
                 $customNameFile = $user->photo_user;       
             }
         } else {
-            $customNameFile = $this->photoUserNamingScheme($fileImage->getClientOriginalName(), $request->username_id);
+            //"USER-ACC-".$username."-".$photo
+            $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
+            // $customNameFile = $this->photoUserNamingScheme($fileImage->getClientOriginalName(), $request->username_id);
             if (!is_null($user->photo_user)) {
                 if (file_exists(public_path('kegiatan/admin/foto_user/'.$user->photo_user))) {
                     unlink(public_path('kegiatan/admin/foto_user/'.$user->photo_user));
@@ -241,9 +244,9 @@ class AdminUserController extends Controller
         return Response::json(['message' => 'data is deleted', 'notification' => "Berhasil Menghapus Data Pengguna!"], 200);
     }
 
-    private function photoUserNamingScheme($photo, $username){
-        $customNameFile = "USER-ACC-".$username."-".$photo;
-        return $customNameFile;
-    }
+    // private function photoUserNamingScheme($photo, $username){
+    //     $customNameFile = "USER-ACC-".$username."-".$photo;
+    //     return $customNameFile;
+    // }
 
 }

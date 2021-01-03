@@ -68,6 +68,14 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 return $data_ppk;
             })->editColumn('updated_at' , function($data){
                 return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
+            })->editColumn('nama_pj', function($data){
+                $data_user = "";
+                if(!is_null($data->user()->first())){
+                    $data_user = $data->user->name;
+                } else {
+                    $data_user = $data->nama_pj;
+                }
+                return $data_user;
             })
             ->rawColumns(['statusKegiatan', 'data_pengajuan', 'nilai_ppk'])->make(true);       
         }        
@@ -341,6 +349,14 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 return $nilai_ppk_kegiatan;
              })->editColumn('updated_at' , function($data){
                 return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
+             })->editColumn('nama_pj', function($data){
+                $data_user = "";
+                if(!is_null($data->user()->first())){
+                    $data_user = $data->user->name;
+                } else {
+                    $data_user = $data->nama_pj;
+                }
+                return $data_user;
              })
              ->rawColumns(['statusKegiatan', 'unggah_dokumentasi' , 'nilai_ppk'])->make(true);
          }
