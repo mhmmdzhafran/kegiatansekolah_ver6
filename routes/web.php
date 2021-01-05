@@ -89,11 +89,11 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
 
     Route::resource('/penanggung-jawab/user-profile', 'UserProfileController', ['names' => [
         'index' => 'userprofile.pj.index',
-        'edit' => 'userprofile.pj.edit',
+        // 'edit' => 'userprofile.pj.edit',
     ]]);
 
     Route::post('/penanggung-jawab/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('pj.userprofile.check');
-    Route::post('/penanggung-jawab/user-profile/change-pass' , 'UserProfileController@update')->name('pj.userprofile.update');
+    Route::put('/penanggung-jawab/user-profile/change-pass' , 'UserProfileController@update')->name('pj.userprofile.update');
     
     Route::get('/penanggung-jawab/search-notification/{search_notification}/search', 'UsersNotificationController@searchNotification')->name('pj.notification.searchNotify');
     Route::get('/penanggung-jawab/notifications', 'UsersNotificationController@getAllNotifications')->name('pj.userprofile.getAllNotify');
@@ -184,11 +184,11 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
 
     Route::resource('/kepala-sekolah/user-profile', 'UserProfileController', ['names' => [
         'index' => 'userprofile.kepsek.index',
-        'edit' => 'userprofile.kepsek.edit',
+        // 'edit' => 'userprofile.kepsek.edit',
     ]]);
 
     Route::post('/kepala-sekolah/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('kepsek.userprofile.check');
-    Route::post('/kepala-sekolah/user-profile/change-pass' , 'UserProfileController@update')->name('kepsek.userprofile.update');
+    Route::put('/kepala-sekolah/user-profile/change-pass' , 'UserProfileController@update')->name('kepsek.userprofile.update');
     Route::get('/kepala-sekolah/search-notification/{search_notification}/search', 'UsersNotificationController@searchNotification')->name('kepsek.notification.searchNotify');
     Route::get('/kepala-sekolah/notifications', 'UsersNotificationController@getAllNotifications')->name('kepsek.userprofile.getAllNotify');
     Route::get('/kepala-sekolah/filter-notifications/{filterChoice}' , 'UsersNotificationController@orderByNotification')->name('kepsek.userprofile.orderNotify');

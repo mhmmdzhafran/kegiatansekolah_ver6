@@ -391,25 +391,24 @@
                     } else if(statusKegiatanType === 'sudah_unggah' || statusKegiatanType === 'pengajuan_ulang'){
                         // let count_dokumen = 1;
                         // let count_image = 1;
-                         res.dokumen_dokumentasi.forEach(item_dokumen => {
-                            const fileName = item_dokumen.nama_dokumen;
-                            let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
-                            asset_url = asset_url.replace("asset_dokumen" , item_dokumen.nama_dokumen);
-                            // $(".dokumen_kegiatan").append('<li> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></li><br>');
-                            if (item_dokumen.status_unggah_dokumen === "Pengajuan" || item_dokumen.status_unggah_dokumen === "Pengajuan Historis") {
-                                // $(".laporan_kegiatan").append('<tr><td>'+(count_dokumen++)+'</td><td> <i class="fa fa-file-alt mr-2"></i>'+item_dokumen.nama_dokumen+'</td><td>'+item_dokumen.status_unggah_dokumen+'</td><td><button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></td></tr>');                                
-                                if (fileName.search('.pdf') === -1) {
-                                    $(".laporan_kegiatan").append('<li class="mb-2"> <i class="fa fa-file-alt mr-2"></i>'+fileName+'<a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+fileName+'">Download File</a></li>');                                
-                                } else if(fileName.search('.docx') === -1 || fileName.search('.doc') === -1) {
-                                    $(".laporan_kegiatan").append('<li class="mb-2"> <i class="fa fa-file-alt mr-2"></i>'+fileName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+fileName+'">Download File</a></li>');                                   
-                                }
-                            } 
-                        });
-                        res.image_kegiatan.forEach(item_image => {
-                            let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
-                            asset_url = asset_url.replace("asset_dokumen" , item_image.nama_foto_kegiatan);
-                            $(".dokumentasi_kegiatan").append('<li class="mb-2"><img class="rounded-circle mb-2 mt-2 mr-2" src="'+asset_url+'" alt="" width="150" height="150">'+item_image.nama_foto_kegiatan+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat File</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_image.nama_foto_kegiatan+'">Download File</a></li>');                                
-                        });
+                        if (res.dokumen_dokumentasi.length > 0) {
+                            res.dokumen_dokumentasi.forEach(item_dokumen => {
+                                const fileName = item_dokumen.nama_dokumen;
+                                let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
+                                asset_url = asset_url.replace("asset_dokumen" , item_dokumen.nama_dokumen);
+                                // $(".dokumen_kegiatan").append('<li> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></li><br>');
+                                if (item_dokumen.status_unggah_dokumen === "Pengajuan" || item_dokumen.status_unggah_dokumen === "Pengajuan Historis") {
+                                    // $(".laporan_kegiatan").append('<tr><td>'+(count_dokumen++)+'</td><td> <i class="fa fa-file-alt mr-2"></i>'+item_dokumen.nama_dokumen+'</td><td>'+item_dokumen.status_unggah_dokumen+'</td><td><button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></td></tr>');                                
+                                    if (fileName.search('.pdf') === -1) {
+                                        $(".laporan_kegiatan").append('<li class="mb-2"> <i class="fa fa-file-alt mr-2"></i>'+fileName+'<a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+fileName+'">Download File</a></li>');                                
+                                    } else if(fileName.search('.docx') === -1 || fileName.search('.doc') === -1) {
+                                        $(".laporan_kegiatan").append('<li class="mb-2"> <i class="fa fa-file-alt mr-2"></i>'+fileName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+fileName+'">Download File</a></li>');                                   
+                                    }
+                                } 
+                            });
+                        } else {
+                            $(".laporan_kegiatan").append('<li class="mb-2">Tidak Ada Laporan Kegiatan</li>');
+                        }
                         const linkVideo = JSON.parse(res.data_dokumentasi.add_link_video);
                         if (linkVideo.length > 0) {
                             linkVideo.forEach(element => {
@@ -425,6 +424,15 @@
                             });
                         } else {
                             $(".link_article").append('<li>Belum Mengunggah Link Artikel Kegiatan</li>');
+                        }
+                        if (res.image_kegiatan.length > 0) {
+                            res.image_kegiatan.forEach(item_image => {
+                                let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
+                                asset_url = asset_url.replace("asset_dokumen" , item_image.nama_foto_kegiatan);
+                                $(".dokumentasi_kegiatan").append('<li class="mb-2"><img class="rounded-circle mb-2 mt-2 mr-2" src="'+asset_url+'" alt="" width="150" height="150">'+item_image.nama_foto_kegiatan+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat File</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_image.nama_foto_kegiatan+'">Download File</a></li>');                                
+                            });    
+                        } else {
+                            $(".dokumentasi_kegiatan").append('<li class="mb-2">Tidak Ada Dokumentasi Kegiatan</li>');
                         }
                     }
                 }).done(function(){

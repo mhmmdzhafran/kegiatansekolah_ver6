@@ -2,11 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\DokumentasiKegiatan;
-use App\PengajuanKegiatan;
 use App\Repository\FindDataRepository;
-use App\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -34,6 +30,9 @@ class UsersNotificationController extends Controller
         if ($request->data != null) {
             $notification = Auth::user()->notifications->where('id',$request->data)->first();
             if ($request->page == 'accessLinks') {
+                if ($notification == null) {
+                    return response()->json(['errors' => ['Notification Not Found']], 404);
+                }
                 return $this->getLinkMarkAsRead($notification, $request->type);
             } elseif($request->page == 'read'){
                 if ($notification == null) {
@@ -49,14 +48,7 @@ class UsersNotificationController extends Controller
     }
 
     public function getAllNotifications(){
-        // try {
-        //     $data_user = User::findOrFail(Auth::user()->id);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
-        // } catch(ModelNotFoundException $evt) {
-        //     return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
-        // }
-        
+    
         $notification = Auth::user()->notifications()->paginate(10);        
         $role = Auth::user()->Role->role_title;
         $counter_notification = Auth::user()->unreadNotifications()->count();
@@ -88,14 +80,7 @@ class UsersNotificationController extends Controller
     }
     
     public function searchNotification($searchValue){
-        // try {
-        //     $user = User::findOrFail(Auth::user()->id);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
-        // } catch(ModelNotFoundException $evt) {
-        //     return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
-        // }
-        //thanks stack overflow!
+       
         if (request()->ajax()) {
             $notification = Auth::user()->notifications()
             ->Where('notifiable_id' , Auth::user()->id)
@@ -112,13 +97,7 @@ class UsersNotificationController extends Controller
     }
 
     public function orderByNotification($option){
-        // try {
-        //     $user = User::findOrFail(Auth::user()->id);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
-        // } catch(ModelNotFoundException $evt) {
-        //     return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
-        // }
+        
         
         if (request()->ajax()) {
             $orderChoice = ucwords($option);
@@ -136,13 +115,7 @@ class UsersNotificationController extends Controller
     }
 
     public function orderByTwoChoiceNotifications($optionOne , $optionTwo){
-        // try {
-        //     $user = User::findOrFail(Auth::user()->id);
-        // } catch (\Throwable $th) {
-        //     return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
-        // } catch(ModelNotFoundException $evt) {
-        //     return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
-        // }
+       
 
         if (request()->ajax()) {
             $orderChoice = ucwords($optionTwo);
@@ -193,13 +166,13 @@ class UsersNotificationController extends Controller
        
         $findNotification = Auth::user()->notifications->where('id' , $request->notificationID)->first();
         if (is_null($findNotification)) {
-            return response()->json(['errors' => ['destroy notification id success']], 422);    
+            return response()->json(['errors' => ['Tidak menemukan notifikasi']], 422);    
         }
         $deleteNotification = $findNotification->delete();
         if ($deleteNotification) {
             return $this->getLastNotification($request->lastRequest, 'delete');
         }
-        return response()->json(['errors' => ['destroy notification id success']], 422);    
+        return response()->json(['errors' => ['destroy notification id unsuccessful']], 422);    
     }
 
     public function getLastNotification($lastNotificationCounter, $state){
@@ -229,42 +202,21 @@ class UsersNotificationController extends Controller
 
     
     public function getLinkMarkAsRead($notification,$tipeKegiatan){
-        if ($notification["read_at"] !== null) {
+       
             if (Auth::user()->Role->role_title == "Kepala Sekolah") {
                 if ($tipeKegiatan == "Proposal Kegiatan") {
-                    $pengajuan_kegiatan = $this->$this->findData('Proposal', $notification->data['kegiatan_id']);
-                    if (gettype($pengajuan_kegiatan) != 'string') {
-                        $link = $this->kepalaSekolahNotificationLinkAccess($notification, $tipeKegiatan, $pengajuan_kegiatan);   
-                    } else {
-                        return response()->json(['message' => $pengajuan_kegiatan], 404);
-                    }
-                } elseif($tipeKegiatan == "Laporan Kegiatan"){
-                    $dokumentasi_kegiatan = $this->$this->findData('Laporan', $notification->data['kegiatan_id']);
-                    if(gettype($dokumentasi_kegiatan) != 'string'){
-                        $link = $this->kepalaSekolahNotificationLinkAccess($notification, $tipeKegiatan, $dokumentasi_kegiatan);
-                    } else {
-                        return response()->json(['message' => $dokumentasi_kegiatan], 404);
-                    }
-                }
-            } else {
-                $link = $notification->data['link'];   
-            }
-            return response()->json(['status' => 'Connecting View' , 'link_data' => $link], 200);
-        } else {
-            if (Auth::user()->Role->role_title == "Kepala Sekolah") {
-                if ($tipeKegiatan == "Proposal Kegiatan") {
-                    $pengajuan_kegiatan = $this->$this->findData('Proposal', $notification->data['kegiatan_id']);
+                    $pengajuan_kegiatan = $this->findData->findDataModel($notification->data['kegiatan_id'], 'Proposal');
                     if(gettype($pengajuan_kegiatan) != 'string'){
                         $link = $this->kepalaSekolahNotificationLinkAccess($notification, $tipeKegiatan, $pengajuan_kegiatan);
                     } else {
-                        return response()->json(['message' => $pengajuan_kegiatan], 404);
+                        return response()->json(['messages' => $pengajuan_kegiatan], 404);
                     }
                 } elseif($tipeKegiatan == "Laporan Kegiatan"){
-                    $dokumentasi_kegiatan = $this->$this->findData('Laporan', $notification->data['kegiatan_id']);
+                    $dokumentasi_kegiatan = $this->findData->findDataModel($notification->data['kegiatan_id'], 'Laporan');
                     if(gettype($dokumentasi_kegiatan) != 'string'){
                         $link = $this->kepalaSekolahNotificationLinkAccess($notification, $tipeKegiatan, $dokumentasi_kegiatan);
                     } else {
-                        return response()->json(['message' => $dokumentasi_kegiatan], 404);
+                        return response()->json(['messages' => $dokumentasi_kegiatan], 404);
                     }
                 }
             } else {
@@ -272,7 +224,7 @@ class UsersNotificationController extends Controller
             }
             $notification->markAsRead();
             return response()->json(['status' => 'Read Success' , 'link_data' => $link], 200);
-        }
+        
     }
 
     public function redirectToRespectivePageNotifications($notification , $roles){
@@ -294,22 +246,18 @@ class UsersNotificationController extends Controller
         if (Auth::user()->Role->role_title == "Kepala Sekolah") {
             $notification = Auth::user()->notifications->where('id' , $request->data)->first();
             if ($request->type == "Proposal Kegiatan") {
-                try {
-                    $pengajuan_kegiatan = PengajuanKegiatan::findOrFail($notification->data['kegiatan_id']);
-                } catch (\Throwable $th) {
-                    return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
-                } catch(ModelNotFoundException $evt) {
-                    return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
+                $pengajuan_kegiatan = $this->findData->findDataModel($notification->data['kegiatan_id'], 'Proposal');
+                if (gettype($pengajuan_kegiatan) == 'string') {
+                    return response()->json(['messages' => [$pengajuan_kegiatan]], 404);
                 }
+              
                 $links = $this->kepalaSekolahNotificationLinkAccess($notification, $request->type, $pengajuan_kegiatan);
             } elseif($request->type == "Laporan Kegiatan"){
-                try {
-                    $dokumentasi_kegiatan = DokumentasiKegiatan::findOrFail($notification->data['kegiatan_id']);
-                } catch (\Throwable $th) {
-                    return response()->json(['messages' => ['Terdapat Error Ketika Mengambil Notifikasi, System Error Message: '.$th->getMessage()]], 404);
-                } catch(ModelNotFoundException $evt) {
-                    return response()->json(['messages' => ['Data User Tidak Dapat Ditemukan!, System Error Message: '.$evt->getMessage()]], 404);
+                $dokumentasi_kegiatan = $this->findData->findDataModel($notification->data['kegiatan_id'] , 'Laporan');
+                if (gettype($dokumentasi_kegiatan) == 'string') {
+                    return response()->json(['messages' => [$dokumentasi_kegiatan]], 404);
                 }
+               
                 $links = $this->kepalaSekolahNotificationLinkAccess($notification, $request->type, $dokumentasi_kegiatan);
             }
         } else {
@@ -348,29 +296,5 @@ class UsersNotificationController extends Controller
         }
         return $link;
     }
-
-    // private function getDataKegiatan($type, $requestID){
-    //     if ($type == "Proposal Kegiatan") {
-    //         try {
-    //             $kegiatan = PengajuanKegiatan::findOrFail($requestID);
-    //         } catch (\Throwable $th) {
-    //             //throw $th;
-    //             return response()->json(['messages' => $th->getMessage()], 404);
-    //         } catch (ModelNotFoundException $e){
-    //             return response()->json(['messages' => $e->getMessage()], 404);
-    //         }
-    //         return $kegiatan;
-    //     } elseif($type == "Laporan Kegiatan"){
-    //         try {
-    //             $kegiatan = DokumentasiKegiatan::findOrFail($requestID);
-    //         } catch (\Throwable $th) {
-    //             //throw $th;
-    //             return response()->json(['messages' => $th->getMessage()], 404);
-    //         } catch (ModelNotFoundException $e){
-    //             return response()->json(['messages' => $e->getMessage()], 404);
-    //         }
-    //         return $kegiatan;
-    //     }
-    // }
 
 }

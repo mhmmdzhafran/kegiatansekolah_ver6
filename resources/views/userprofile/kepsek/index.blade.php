@@ -91,6 +91,7 @@
           <div class="modal-content">
             <form action="" id="form_change_pass" method="POST">
                 @csrf
+                @method('put')
             <div class="modal-header">
               <h5 class="modal-title" id="exampleModalLabel">Pengubahan Password</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -189,7 +190,7 @@
             } else if(form_id === 'form_change_pass') {
                 $.ajax({
                     url: form_url,
-                    type: 'POST',
+                    type: 'PUT',
                     data: $("#"+form_id).serialize(),
                     beforeSend: function(){
                         loading_bar(true);

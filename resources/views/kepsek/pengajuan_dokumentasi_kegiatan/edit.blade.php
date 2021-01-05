@@ -323,7 +323,7 @@
               }
             });  
           } else {
-            $("#file_upload").append('<li class="mb-2">'+dokumen_kegiatan+'</li>');
+            $("#file_upload").append('<li class="mb-2">Tidak terdapat Dokumen Laporan Kegiatan</li>');
           }
         
           const image_kegiatan = res.image;
@@ -335,7 +335,7 @@
               $("#img_upload").append('<img class="rounded-circle mb-2 mt-2 mr-2" src="'+assets+'" alt="" width="150" height="150">'+imgName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+assets+'">Lihat File</button><a href="'+assets+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+imgName+'">Download File</a><br>');
             });  
           } else {
-            $("#img_upload").append('<ol><li class="mb-2">'+image_kegiatan+'</li></ol>');
+            $("#img_upload").append('<ol><li class="mb-2">Tidak terdapat Foto Kegiatan</li></ol>');
           } 
         }
       }).done(function(){

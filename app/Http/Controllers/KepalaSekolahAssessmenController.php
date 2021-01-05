@@ -487,7 +487,8 @@ class KepalaSekolahAssessmenController extends Controller
         // }
     } 
     
-    public function destroyAsesmen($id){
+    public function destroyAsesmen(FileUploadService $fileUploadService,$id){
+        $tempDokumen = [];
         $assessmen_internal =  $this->findData->findDataModel($id, 'Asesmen');
         if (gettype($assessmen_internal) == 'string') {
             return response()->json(['message' => 'Data Asesmen Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.', System Error Message: '. $assessmen_internal], 404);
@@ -495,10 +496,14 @@ class KepalaSekolahAssessmenController extends Controller
 
         $dokumen_asesmen = $assessmen_internal->dokumenAsesmen()->get();
         if (count($dokumen_asesmen) > 0) {
-            $delete_dokumen_asesmen = $assessmen_internal->dokumenAsesmen()->delete();
-            if (!$delete_dokumen_asesmen) {
-                return response()->json(['errors' => ['Tidak Dapat Menghapus Dokumen Asesmen, Silahkan Coba Kembali']], 422);
+            // $delete_dokumen_asesmen = $assessmen_internal->dokumenAsesmen()->delete();
+            foreach ($dokumen_asesmen as $dataDokumen) {
+               $tempDokumen [] = $dataDokumen->nama_dokumen_asesmen;
             }
+            $fileUploadService->removeKumpulanFile($tempDokumen, $assessmen_internal, 'Asesmen', 'all');
+            // if (!$delete_dokumen_asesmen) {
+            //     return response()->json(['errors' => ['Tidak Dapat Menghapus Dokumen Asesmen, Silahkan Coba Kembali']], 422);
+            // }
         }
         $delete_asesmen = $assessmen_internal->delete();
         if (!$delete_asesmen) {

@@ -147,7 +147,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         foreach($pengajuan_kegiatan->StatusKegiatan as $status){
             $status_kegiatan  = $status;
         }
-        if ($status_kegiatan->id !== 3) {
+        if ($status_kegiatan->id != 3) {
             return redirect()->to('/kepala-sekolah/mengelola-kegiatan');
         }
         return view('kepsek.kelola_kegiatan.edit', compact('pengajuan_kegiatan', 'status_kegiatan', 'data_user', 'id'));
@@ -201,6 +201,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 $username_pj = $pengajuan_kegiatan->nama_pj;
                 foreach ($keterangan_decode as $key) {
                     if($key->no == 1){
+                        $keterangan_sebelumnya = $key->keterangan_opsional;
                         // $update = $pengajuan_kegiatan->update($input);
                         // $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$input['keterangan'], $key, $keterangan_decode);
                         $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$input['keterangan'], $key, $keterangan_decode);
@@ -211,10 +212,10 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                             $dokumentasi = $this->createDefaultDokumentasi($user_id, $username_pj, $pengajuan_kegiatan->PJ_nama_kegiatan, $pengajuan_kegiatan->nilai_ppk, $pengajuan_kegiatan->kegiatan_berbasis, $tanggal_mulai, $tanggal_akhir);
                             if (!$dokumentasi) {
                                 // restore before
-                                $key->keterangan_opsional = "";
-                                $keterangan_restore = json_encode($keterangan_decode);
-                                $input['keterangan_json'] = $keterangan_restore;
-                                $pengajuan_kegiatan->update($input);
+                                $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$keterangan_sebelumnya, $key, $keterangan_decode);
+                                if (gettype($update) == 'object') {
+                                    return $update;
+                                }
                                 return Response::json(['errors' => ['Tidak dapat membuat data Dokumentasi Kegiatan, silahkan dicoba kembali']], 422);
                             }
                             $statusSukses = StatusKegiatan::findOrFail(1);
@@ -228,6 +229,10 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                                 return Response::json(['data' => 'data is valid', 'status_data'=>'Pengajuan Kegiatan Berhasil diterima!'], 200);
                             }
                             $this->deleteDokumentasiKegiatan($user_id, $username_pj, $pengajuan_kegiatan->PJ_nama_kegiatan, $pengajuan_kegiatan->nilai_ppk, $pengajuan_kegiatan->kegiatan_berbasis, $tanggal_mulai, $tanggal_akhir);
+                            $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$keterangan_sebelumnya, $key, $keterangan_decode);
+                            if (gettype($update) == 'object') {
+                                return $update;
+                            }
                             return Response::json(['errors' => ['Tidak dapat menyimpan status Dokumentasi Kegiatan, silahkan beri keputusan dan coba kembali']], 422);
                         // }
                         // return $update;
@@ -247,6 +252,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     }
                     elseif($key->no == 2){
                         // $update = $pengajuan_kegiatan->update($input);
+                        $keterangan_sebelumnya = $key->keterangan_wajib_ulang;
                         $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$input['keterangan'], $key, $keterangan_decode);
                         if (gettype($update) == 'object') {
                             return $update;
@@ -262,6 +268,10 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                                 }
                                 return Response::json(['data' => 'data is valid', 'status_data' => 'Kegiatan Yang Diajukan Telah Diajukan Ulang beserta Keterangan Dari Kepala Sekolah'], 200);
                             }
+                            $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$keterangan_sebelumnya, $key, $keterangan_decode);
+                            if (gettype($update) == 'object') {
+                                return $update;
+                            }   
                             return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi']], 422);
                         // } else {
                         //     return $update;
@@ -284,23 +294,28 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                         continue;
                     }
                     elseif($key->no == 3){
+                        $keterangan_sebelumnya = $key->keterangan_wajib;
                         // $update = $pengajuan_kegiatan->update($input);
                         $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$input['keterangan'], $key, $keterangan_decode);
                         if (gettype($update) == 'object') {
                             return $update;
                         }
                         // if(gettype($update) != 'array'){
-                            $statusSukses = StatusKegiatan::findOrFail(5);
-                            $simpanStatus = $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
-                                'status_kegiatan_id' => $statusSukses->id
-                            ]);     
-                            if ($simpanStatus) {
-                                if (!is_null($pengajuan_kegiatan->user()->first())) {
-                                    event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
-                                }
-                                return Response::json(['data' => 'data is valid', 'status_data' => 'Kegiatan Yang Diajukan Telah Ditolak'], 200);
-                            }                       
-                            return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi']], 422);
+                        $statusSukses = StatusKegiatan::findOrFail(5);
+                        $simpanStatus = $pengajuan_kegiatan->StatusKegiatan()->updateExistingPivot($statusSebelumnya, [
+                            'status_kegiatan_id' => $statusSukses->id
+                        ]);     
+                        if ($simpanStatus) {
+                            if (!is_null($pengajuan_kegiatan->user()->first())) {
+                                event(new KeputusanProposalKegiatanToPJEvent($pengajuan_kegiatan->user()->first(), $pengajuan_kegiatan, $statusSukses));
+                            }
+                            return Response::json(['data' => 'data is valid', 'status_data' => 'Kegiatan Yang Diajukan Telah Ditolak'], 200);
+                        }
+                        $update = $this->updateKegiatan($pengajuan_kegiatan, "Proposal",$request->id_keterangan ,$keterangan_sebelumnya, $key, $keterangan_decode);
+                        if (gettype($update) == 'object') {
+                            return $update;
+                        }                       
+                        return Response::json(['errors' => ['Tidak dapat melakukan proses, silahkan coba lagi']], 422);
                         // } else {
                         //     return $update;
                         // }
@@ -384,7 +399,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             $status_kegiatan_dokumentasi = $dokumentasi_kegiatan->statusKegiatan()->first();
             $dokumen = $dokumentasi_kegiatan->dokumenKegiatan()->get();
             $image = $dokumentasi_kegiatan->fotoKegiatan()->get();
-            if (count($dokumen) > 0  && count($image) > 0) {
+            if (count($dokumen) > 0  || count($image) > 0) {
                 return Response::json(['dokumen_dokumentasi' => $dokumen, 'image_kegiatan' => $image, 'status_kegiatan' => $status_kegiatan_dokumentasi , 'data_dokumentasi' => $dokumentasi_kegiatan, 'username' => $userName, 'image_state' => $imgState, 'user' => $data_user], 200);
             }
             else{
@@ -408,7 +423,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         foreach ($dokumentasi_kegiatan->statusKegiatan as $status) {
             $status_dokumentasi = $status;
         }
-        if ($status_dokumentasi->id == 4) {
+        if ($status_dokumentasi->id != 3) {
             return redirect()->to('/kepala-sekolah/dokumentasi-kegiatan');
         }
         return view('kepsek.pengajuan_dokumentasi_kegiatan.edit', compact('dokumentasi_kegiatan', 'user_name', 'status_dokumentasi'));        
@@ -441,16 +456,19 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                         // $listKeterangan->keterangan_opsional = $input['keterangan'];
                         // $input['keterangan_dokumentasi'] = json_encode($keterangan);
                         // $updateDokumentasi = $dokumentasiKegiatan->update($input);
-                        $updateKegiatan = $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no , $input['keterangan'], $listKeterangan , $keterangan);
-                        if(gettype($updateKegiatan) == 'object'){
-                            return $updateKegiatan;
+                        $update_kegiatan = $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no , $input['keterangan'], $listKeterangan , $keterangan);
+                        if(gettype($update_kegiatan) == 'object'){
+                            return $update_kegiatan;
                         }
                         $status_laporan_baru = StatusKegiatan::findOrFail(6);
                         $updateStatus = $dokumentasiKegiatan->statusKegiatan()->updateExistingPivot($statusSebelumnya, [
                             "status_kegiatan_id" => $status_laporan_baru->id
                         ]);
                         if (!$updateStatus) {
-                            $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no , $keterangan_sebelumnya, $listKeterangan , $keterangan);
+                            $update_kegiatan = $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no , $keterangan_sebelumnya, $listKeterangan , $keterangan);
+                            if(gettype($update_kegiatan) == 'object'){
+                                return $update_kegiatan;
+                            }
                             return response()->json(['errors' => ['Terdapat Error Ketika Memberi Keputusan Pengajuan Ulang Kegiatan, Silahkan Mencoba Kembali']], 422);
                         } else {
                             if (!is_null($dokumentasiKegiatan->user()->first())) {
@@ -466,13 +484,13 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     if ($listKeterangan->no == 1) {
                         continue;
                     } elseif($listKeterangan->no == 2){
-                        // $keterangan_sebelumnya = $listKeterangan->keterangan_wajib_ulang;
+                        $keterangan_sebelumnya = $listKeterangan->keterangan_wajib_ulang;
                         // $listKeterangan->keterangan_wajib_ulang = $input['keterangan'];
                         // $input['keterangan_dokumentasi'] = json_encode($keterangan);
                         // $updateDokumentasi = $dokumentasiKegiatan->update($input);
-                        $updateKegiatan = $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no , $input['keterangan'], $listKeterangan , $keterangan);
-                        if(gettype($updateKegiatan) == 'object'){
-                            return $updateKegiatan;
+                        $update_kegiatan = $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no , $input['keterangan'], $listKeterangan , $keterangan);
+                        if(gettype($update_kegiatan) == 'object'){
+                            return $update_kegiatan;
                         }
                         // if (gettype($dokumentasiUpdate) != 'array') {
                             $status_laporan_baru = StatusKegiatan::findOrFail(4);
@@ -480,7 +498,10 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                                 "status_kegiatan_id" => $status_laporan_baru->id
                             ]);
                             if (!$statusUpdate) {
-                                // $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no ,  $keterangan_sebelumnya, $listKeterangan , $keterangan);
+                                $update_kegiatan = $this->updateKegiatan($dokumentasiKegiatan, "Laporan" ,$listKeterangan->no ,  $keterangan_sebelumnya, $listKeterangan , $keterangan);
+                                if(gettype($update_kegiatan) == 'object'){
+                                    return $update_kegiatan;
+                                }
                                 return response()->json(['errors' => ['Terdapat Error Ketika Memberi Keputusan Pengajuan Ulang Kegiatan, Silahkan Mencoba Kembali']], 422);
                             } else {
                                 if (!is_null($dokumentasiKegiatan->user()->first())) {
@@ -525,7 +546,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     $dokumen = $kegiatan->dokumenKegiatan()->get();
                     $image = $kegiatan->fotoKegiatan()->get();
                     $keterangan = json_decode($kegiatan->keterangan_dokumentasi);
-                    if (count($dokumen) > 0 && count($image) > 0) {
+                    if (count($dokumen) > 0 || count($image) > 0) {
                         return response()->json(['data' => $kegiatan,'dokumen' => $dokumen, 'image' => $image, 'keterangan_dokumentasi' => $keterangan , 'status' => true], 200);
                     } else {
                         return response()->json(['data' => $kegiatan, 'dokumen' => 'Tidak Ada Laporan Kegiatan' , 'image' => 'Tidak Ada Foto Kegiatan', 'keterangan_dokumentasi' => $keterangan, 'status' => false], 200);

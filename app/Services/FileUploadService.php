@@ -188,11 +188,14 @@ class FileUploadService {
                     if (file_exists(public_path('kegiatan/asesmen_internal/'.$files))) {
                         unlink(public_path('kegiatan/asesmen_internal/'.$files));
                     }
-                    $data->dokumenAsesmen()->where([
-                        ['nama_dokumen_asesmen' , '=', $files],
-                        ['body_indikator_dokumen', '=' , $optData]
-                    ])->delete();
-                    
+                    if ($optData == 'all') {
+                        $data->dokumenAsesmen()->where('nama_dokumen_asesmen', $files)->delete();
+                    } else {
+                        $data->dokumenAsesmen()->where([
+                            ['nama_dokumen_asesmen' , '=', $files],
+                            ['body_indikator_dokumen', '=' , $optData]
+                        ])->delete();
+                    }
                 }
             }
         }
