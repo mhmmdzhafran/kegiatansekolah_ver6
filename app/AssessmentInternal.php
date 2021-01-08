@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class AssessmentInternal extends Model
@@ -19,6 +20,14 @@ class AssessmentInternal extends Model
 
     public function dokumenAsesmen(){
         return $this->hasMany('App\DokumenAsesmen');
+    }
+
+    public function getCreatedAtAttribute($value){
+        return Carbon::parse($value)->timezone('Asia/Jakarta')->toDateTimeString();
+    }
+
+    public function getUpdatedAtAttribute($value){
+        return Carbon::parse($value)->timezone('Asia/Jakarta')->toDateTimeString();
     }
 
 }

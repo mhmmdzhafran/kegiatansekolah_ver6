@@ -73,8 +73,6 @@ class PJMengelolaKegiatanController extends Controller
                 $nilai_ppk_kegiatan = json_decode($data->nilai_ppk);
                 $data_ppk = $dataPPKService->showDataPPK($nilai_ppk_kegiatan);
                 return $data_ppk;
-            })->editColumn('updated_at' , function($data){
-                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
             })
             ->rawColumns(['pengajuan', 'statusKegiatan'])->make(true);
         }
@@ -311,8 +309,6 @@ class PJMengelolaKegiatanController extends Controller
                 $data_nilai = json_decode($data->nilai_ppk);
                 $data_ppk = $dataPPKService->showDataPPK($data_nilai);
                 return $data_ppk; 
-            })->editColumn('updated_at' , function($data){
-                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
             })
             ->rawColumns(['statusKegiatan', 'unggah_dokumentasi'])->make(true);
         }   

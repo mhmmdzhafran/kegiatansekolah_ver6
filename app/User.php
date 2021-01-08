@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -95,17 +96,12 @@ class User extends Authenticatable
         return $this->email_user;
     }
 
-    // public function isPenilaiEksternal(){
-    //     if ($this->Role->role_title == 'Penilai Eksternal') {
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    public function getCreatedAtAttribute($value){
+        return Carbon::parse($value)->timezone('Asia/Jakarta')->toDateTimeString();
+    }
 
-    // public function isPenilaiInternal(){
-    //     if ($this->Role->role_title == 'Penilai Internal') {
-    //         return true;
-    //     }
-    //     return false;
-    // }
+    public function getUpdatedAtAttribute($value){
+        return Carbon::parse($value)->timezone('Asia/Jakarta')->toDateTimeString();
+    }
+ 
 }

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class DokumentasiKegiatan extends Model
@@ -29,5 +30,9 @@ class DokumentasiKegiatan extends Model
 
     public function user(){
         return $this->belongsTo('App\User');
+    }
+
+    public function getUpdatedAtAttribute($value){
+        return Carbon::parse($value)->timezone('Asia/Jakarta')->toDateTimeString();
     }
 }

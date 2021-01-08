@@ -66,8 +66,6 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 $json_ppk = json_decode($data->nilai_ppk);
                 $data_ppk = $this->dataPPK->showDataPPK($json_ppk);
                 return $data_ppk;
-            })->editColumn('updated_at' , function($data){
-                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
             })->editColumn('nama_pj', function($data){
                 $data_user = "";
                 if(!is_null($data->user()->first())){
@@ -362,8 +360,6 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 $json_decode_nilai_ppk = json_decode($data->nilai_ppk);
                 $nilai_ppk_kegiatan = $this->dataPPK->showDataPPK($json_decode_nilai_ppk);
                 return $nilai_ppk_kegiatan;
-             })->editColumn('updated_at' , function($data){
-                return $data->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
              })->editColumn('nama_pj', function($data){
                 $data_user = "";
                 if(!is_null($data->user()->first())){

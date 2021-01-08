@@ -44,10 +44,6 @@ class KepalaSekolahAssessmenController extends Controller
                 // $aksi.= '&nbsp;&nbsp;';
                 $aksi.= '<button type="button" id="'.$data_asesmen->id.'"class="btn btn-sm btn-danger delete_asesmen rounded-pill mb-2">Hapus Asesmen</button>';
                 return $aksi;
-            })->editColumn('created_at', function($data_asesmen){
-                return $data_asesmen->created_at->timezone('Asia/Jakarta')->toDateTimeString();
-            })->editColumn('updated_at', function($data_asesmen){
-                return $data_asesmen->updated_at->timezone('Asia/Jakarta')->toDateTimeString();
             })
             ->rawColumns(['Aksi'])->make(true);
         }
