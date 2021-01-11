@@ -113,12 +113,12 @@ class KepalaSekolahAssessmenController extends Controller
         }
 
         $assessment_json = json_decode($assessmen_internal->indikator_skor_penilaian_ppk);
-        $dokumen = $assessmen_internal->dokumenAsesmen()->get();
+        // $dokumen = $assessmen_internal->dokumenAsesmen()->get();
         $id_asesmen = $id;
         $kategori_asesmen = KategoriAsesmen::all();
         // $get_kategori = KategoriAsesmen::all();
         // return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json', 'dokumen' , 'id_asesmen' , 'get_kategori'));
-        return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json', 'dokumen' , 'id_asesmen', 'kategori_asesmen'));
+        return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json',  'id_asesmen', 'kategori_asesmen'));
     }
 
     public function getSaranSkorDanDokumenAsesmen($id_asesmen, $indikator_asesmen , $skor_asesmen){
