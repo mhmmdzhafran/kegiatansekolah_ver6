@@ -410,7 +410,9 @@ class KepalaSekolahAssessmenController extends Controller
                 ['nama_dokumen_asesmen', '=', $file_name],
                 ['body_indikator_dokumen' ,'=' , $body_indikator_asesmen]
             ])->first();
-
+            if (is_null($dokumen_asesmen_sesuai)) {
+                return response()->json(['errors' => ['Dokumen Asesmen Tidak Dapat Ditemukan, Silahkan Coba Kembali!']], 422);
+            }
             $dokumen_lama = $dokumen_asesmen_sesuai->nama_dokumen_asesmen;
             if ($dokumen_lama == $file_name) {
                 $dokumen_asesmen_sesuai->nama_dokumen_asesmen = $nama_dokumen_baru;
@@ -460,24 +462,30 @@ class KepalaSekolahAssessmenController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($file_name, $indikator_asesmen, $id_asesmen)
+    public function destroy(FileUploadService $fileUploadService, $file_name, $indikator_asesmen, $id_asesmen)
     {
         // for delete a file with id and body indikator
         $assessmen_internal =  $this->findData->findDataModel($id_asesmen, 'Asesmen');
         if (gettype($assessmen_internal) == 'string') {
             return response()->json(['message' => 'Data Asesmen Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id_asesmen.', System Error Message: '. $assessmen_internal], 404);
         }
-        // if (file_exists(public_path('kegiatan/asesmen_internal/'.$file_name))) {
-            $dokumen_delete = $assessmen_internal->dokumenAsesmen()->where([
-                ['nama_dokumen_asesmen', '=', $file_name],
-                ['body_indikator_dokumen' ,'=' , $indikator_asesmen]
-            ])->delete();
-            if ($dokumen_delete) {
-                unlink(public_path('kegiatan/asesmen_internal/'.$file_name));
-                return Response::json(['message' => 'Dokumen berhasil dihapus dari database dan server'], 200);
-            } else {
-                return Response::json(['message' => 'data is not valid', 'errors' => ['Penghapusan tidak berhasil dilakukan dikarenakan dokumen tidak ada, Silahkan Kontak Admin untuk melakukan cek dalam database dan server']], 422);
-            }
+            // if (file_exists(public_path('kegiatan/asesmen_internal/'.$file_name))) {
+        $getDataDokumen = $assessmen_internal->dokumenAsesmen()->where([
+            ['nama_dokumen_asesmen', '=', $file_name],
+            ['body_indikator_dokumen' ,'=' , $indikator_asesmen]
+        ])->first();
+        if (is_null($getDataDokumen)) {
+            return response()->json(['errors' => ['Dokumen Asesmen Tidak Dapat Ditemukan, Silahkan Kontak Admin!']], 422);
+        }
+        $dokumen [] = $getDataDokumen->nama_dokumen_asesmen;
+        $fileUploadService->removeKumpulanFile($dokumen, $assessmen_internal, 'asesmen', $indikator_asesmen);
+        return response()->json(['message' => 'Dokumen berhasil dihapus dari database dan server'], 200);
+            // if ($dokumen_delete) {
+            //     unlink(public_path('kegiatan/asesmen_internal/'.$file_name));
+            //     return Response::json(['message' => 'Dokumen berhasil dihapus dari database dan server'], 200);
+            // } else {
+            //     return Response::json(['message' => 'data is not valid', 'errors' => ['Penghapusan tidak berhasil dilakukan dikarenakan dokumen tidak ada, Silahkan Kontak Admin untuk melakukan cek dalam database dan server']], 422);
+            // }
         // } else {
         //     return Response::json(['errors'=> ['Dokumen Tidak dapat ditemukan dalam server, silahkan refresh browser Anda dan Kontak Admin']], 422);
         // }
