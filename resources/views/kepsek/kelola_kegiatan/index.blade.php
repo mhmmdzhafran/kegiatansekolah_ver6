@@ -149,7 +149,7 @@
                 url = url.replace("id", id);
                 loadingBar('show');
                 $.get(url, function(res){
-                    if (!res.image_status) {
+                    if (!res.image_status || res.user.photo_user === null) {
                         let file_loc = '{{asset("logo/logo_smp_islam_sabilurrosyad.png")}}';
                         $("#nama_pj").attr('value' , res.username);
                         $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');

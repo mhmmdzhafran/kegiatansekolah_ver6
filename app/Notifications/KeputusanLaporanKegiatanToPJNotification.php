@@ -87,7 +87,7 @@ class KeputusanLaporanKegiatanToPJNotification extends Notification
             "kegiatan_berbasis" => $this->dokumentasiKegiatan->kegiatan_berbasis,
             "status_kegiatan_id" => $this->statusKegiatan->id,
             "status_kegiatan" => $this->statusKegiatan->nama,
-            "timestamp_pengiriman" => $this->dokumentasiKegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
+            "timestamp_pengiriman" => $this->dokumentasiKegiatan->updated_at,
             "link" => '/penanggung-jawab/unggah-dokumentasi-kegiatan',
             "type_notification" => "Laporan Kegiatan",
         ];

@@ -195,7 +195,7 @@
                     // location.hash = url+"?page="+page;
                     state_2 = $(this).attr('id');
                     getSecondAlertElement.classList.remove('d-none');
-                    textSearchTwo.innerText= filterName;
+                    textSearchTwo.innerText= "Filter: "+filterName;
                     button_return.classList.remove('d-none');
                     page = 1;
                 }).catch((responseError) => {
@@ -210,7 +210,7 @@
                     // location.hash = url+"?page="+page;
                     state_2 = $(this).attr('id');
                     getSecondAlertElement.classList.remove('d-none');
-                    textSearchTwo.innerText = filterName;
+                    textSearchTwo.innerText = "Filter: "+filterName;
                     button_return.classList.remove('d-none');
                     page = 1;
                 }).catch((responseError) => {

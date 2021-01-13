@@ -324,6 +324,7 @@
             $(".akhir_kegiatan").val();
             // document.getElementById('docs').classList.add('d-none');
             // document.getElementById('img').classList.add('d-none');
+            $('.image_user').empty();
             $(".laporan_kegiatan").empty();
             $(".dokumentasi_kegiatan").empty();
             $(".status_kegiatan").empty();
@@ -343,7 +344,7 @@
                 loadingBar('show');
                 $.get(url, function(res){
                     // console.log(res);
-                    if (!res.image_state) {
+                    if (!res.image_state || res.user.photo_user === null) {
                         let file_loc = '{{asset("logo/logo_smp_islam_sabilurrosyad.png")}}';
                         $(".nama_user").val(res.username);
                         $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
@@ -365,8 +366,8 @@
                         $(".pengajuan_kegiatan").append('<li>'+tipe_kegiatan+'</li>');
                         $(".keterangan_kegiatan_group").addClass('d-none');
                         $(".keterangan_kegiatan").addClass('d-none');
-                        $(".status_kegiatan_group").addClass('d-none');
-                        $(".status_kegiatan").addClass('d-none');
+                        $(".status_kegiatan_group").removeClass('d-none');
+                        $(".status_kegiatan").removeClass('d-none');
                     } else {
                         $(".keterangan_kegiatan_group").removeClass('d-none');
                         $(".keterangan_kegiatan").removeClass('d-none');
@@ -483,7 +484,9 @@
                 });
                 listElement.innerText = namaStatus;
             }
-            addKeteranganElement(dataKeterangan);
+            if (id !== 6) {
+                addKeteranganElement(dataKeterangan);
+            }
             statusElement.appendChild(listElement);
         }
 
@@ -505,7 +508,6 @@
                         }  else {
                             $(".keterangan_kegiatan").append('<li>Keterangan Pengajuan Ulang: '+element.keterangan_wajib_ulang+'</li>');
                         }
-                        // console.log(element.keterangan_wajib_ulang);
                     }
                 });
             } else {

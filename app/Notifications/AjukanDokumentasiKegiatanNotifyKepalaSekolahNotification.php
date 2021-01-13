@@ -89,7 +89,7 @@ class AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification extends Notificat
             "nama_kegiatan" => $this->dokumentasiKegiatan->nama_kegiatan,
             "nilai_ppk" => $data_ppk,
             "kegiatan_berbasis" => $this->dokumentasiKegiatan->kegiatan_berbasis,
-            "timestamp_pengiriman" => $this->dokumentasiKegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
+            "timestamp_pengiriman" => $this->dokumentasiKegiatan->updated_at,
             "type_notification" => "Laporan Kegiatan",
             'tipe_pengajuan' => $this->dokumentasiKegiatan->tipe_kegiatan,
             "status_kegiatan" => $this->statusKegiatan->nama,

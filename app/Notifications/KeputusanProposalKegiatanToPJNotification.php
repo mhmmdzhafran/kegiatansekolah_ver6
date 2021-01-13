@@ -87,7 +87,7 @@ class KeputusanProposalKegiatanToPJNotification extends Notification
             "kegiatan_berbasis" => $this->pengajuan_kegiatan->kegiatan_berbasis,
             "status_kegiatan_id" => $this->status_kegiatan->id,
             "status_kegiatan" => $this->status_kegiatan->nama,
-            "timestamp_pengiriman" => $this->pengajuan_kegiatan->updated_at->timezone('Asia/Jakarta')->toDateTimeString(),
+            "timestamp_pengiriman" => $this->pengajuan_kegiatan->updated_at,
             "link" => '/penanggung-jawab/mengelola-kegiatan',
             "type_notification" => "Proposal Kegiatan"
         ];

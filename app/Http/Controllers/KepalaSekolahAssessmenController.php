@@ -475,7 +475,7 @@ class KepalaSekolahAssessmenController extends Controller
             ['body_indikator_dokumen' ,'=' , $indikator_asesmen]
         ])->first();
         if (is_null($getDataDokumen)) {
-            return response()->json(['errors' => ['Dokumen Asesmen Tidak Dapat Ditemukan, Silahkan Kontak Admin!']], 422);
+            return response()->json(['errors' => ['Dokumen Asesmen Tidak Dapat Ditemukan, Silahkan Coba Kembali!']], 422);
         }
         $dokumen [] = $getDataDokumen->nama_dokumen_asesmen;
         $fileUploadService->removeKumpulanFile($dokumen, $assessmen_internal, 'asesmen', $indikator_asesmen);

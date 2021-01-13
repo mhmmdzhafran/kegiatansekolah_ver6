@@ -1007,15 +1007,18 @@
             $.get(url, function(res){         
                 console.log(res);
                 const kegiatanType = res.dokumentasi_kegiatan.tipe_kegiatan;
+                const keteranganElement = document.querySelector('.keterangan_kegiatan_ppk');
                 if (kegiatanType === 'Pengajuan Historis') {
                     $(".kegiatan-type").removeClass('d-none');
                     $(".tipe_kegiatan_diajukan").append('<li>'+kegiatanType+'</li>');
+                    $(".status_laporan_kegiatan").addClass('d-none');
+                    keteranganElement.classList.add('d-none');
                 } else {
                     $(".kegiatan-type").addClass('d-none');
-                }
-                const keteranganElement = document.querySelector('.keterangan_kegiatan_ppk');
-                if (res.isKeterangan) {
+                    $(".status_laporan_kegiatan").removeClass('d-none');
                     keteranganElement.classList.remove('d-none');
+                }
+                if (res.isKeterangan) {
                     const keteranganKegiatan = JSON.parse(res.keterangan);
                     keteranganKegiatan.forEach(element => {
                         if (element.no === 1) {
@@ -1040,8 +1043,8 @@
                 $(".awal_kegiatan").attr('value', res.dokumentasi_kegiatan.mulai_kegiatan);
                 $(".akhir_dari_kegiatan").attr('value', res.dokumentasi_kegiatan.akhir_kegiatan);
                 $.each(res.nilai_ppk_kegiatan, function(key,value){
-                        value_checked.push(value.nilai_ppk);
-                        $("[value='"+value.nilai_ppk+"']").prop('checked', true);
+                    value_checked.push(value.nilai_ppk);
+                    $("[value='"+value.nilai_ppk+"']").prop('checked', true);
                 });
                 kegiatan_berbasis = res.dokumentasi_kegiatan.kegiatan_berbasis;
                 $(".kegiatan_berbasis_ppk").find('[value = "'+res.dokumentasi_kegiatan.kegiatan_berbasis+'"]').prop('selected', true);   
@@ -1072,8 +1075,6 @@
                     $.each(res.dokumen, function(key,item){         
                         const fileKegiatan = item.nama_dokumen;
                         let dokumen_asset = fileAssets(fileKegiatan);   
-                        // $(".dokumen_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a></li>");                        
-                        // $(".laporan_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a><button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_dokumen+"' data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Edit File</button><button type='button' class='btn btn-danger btn-sm delete_dokumen ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_dokumen+"' data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Delete Dokumen</button></li>");                        
                         if (fileKegiatan.search('.pdf') === -1) {
                             $(".laporan_kegiatan").append('<li class="mb-2"><i class="fa fa-file-alt mr-2"></i>'+fileKegiatan+'<a href="'+dokumen_asset+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+fileKegiatan+'">Download File</a></li>');
                         } else if(fileKegiatan.search('.docx') === -1 || fileKegiatan.search('.doc') === -1){
@@ -1082,17 +1083,11 @@
 
                     });
                 } else {
-                    // $.each(res.dokumen, function(key,item){            
-                    //     dokumen_asset = dokumen_asset.replace('nama_dokumen', item.nama_dokumen);
-                    //     // $(".dokumen_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a></li>");                        
-                    //     $(".laporan_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_dokumen+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_dokumen+"'>Unduh Dokumen</a><button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'data-target='"+item.nama_dokumen+"'data-target2='"+item.status_unggah_dokumen+"' data-target3='"+item.id+"'>Edit File</button></li>");                        
-                    // });
                     $(".laporan_kegiatan").append('<li>Tidak Ada Laporan Kegiatan</li>');
                 }
                 if (res.image.length > 0) {
                     $.each(res.image , function(key,item){
                         let dokumen_asset = fileAssets(item.nama_foto_kegiatan);
-                        // $(".dokumentasi_kegiatan").append("<li><i class='fa fa-file-alt mr-2'></i>"+item.nama_foto_kegiatan+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+item.nama_foto_kegiatan+"'>Unduh Dokumen</a><button class='btn btn-warning btn-sm edit_file ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_foto_kegiatan+"' data-target2='"+item.status_foto+"' data-target3='"+item.id+"'>Edit File</button><button type='button' class='btn btn-danger btn-sm delete_dokumen ml-2 mr-2 mb-2' value='"+dokumen_asset+"' data-target='"+item.nama_foto_kegiatan+"' data-target2='"+item.status_unggah_foto+"' data-target3='"+item.id+"'>Delete Dokumen</button></li>");                        
                         $(".dokumentasi_kegiatan").append("<li><img class='rounded-circle mb-2 mt-2 mr-2' src='"+dokumen_asset+"' alt='' width='150' height='150'>"+item.nama_foto_kegiatan+"<button class='btn btn-primary btn-sm lihat_file ml-2 mb-2' value='"+dokumen_asset+"'>Lihat File</button><a href='"+dokumen_asset+"'class='btn btn-info btn-sm ml-2 mb-2' download='"+item.nama_foto_kegiatan+"'>Unduh Dokumentasi</a>");                        
                     });
                 } else {
@@ -1142,10 +1137,7 @@
                 $(".myProgress").css('width' , '0%');
                 $(".error_notification").removeClass('d-none');
                 $(".close").attr('disabled', false);
-                // $(".submit_dokumen_baru").attr('disabled' , false);
-                // $(".submit_edit_dokumen").attr('disabled' , false);
-                // $(valueModal).attr('data-keyboard' , true);
-                // $(valueModal).attr('data-backdrop' , '');
+               
             }
             else if(condition === 'show'){
                 $(".submit_dokumentasi").attr('disabled', true);
@@ -1158,10 +1150,7 @@
                 $(".error_notification_upload_edit").empty();
                 $(".error_notification_upload_baru").empty();
                 $(".close").attr('disabled', true);
-                // $(".submit_dokumen_baru").attr('disabled' , true);
-                // $(".submit_edit_dokumen").attr('disabled' , true);
-                // $(valueModal).attr('data-keyboard' , false);
-                // $(valueModal).attr('data-backdrop' , 'static');
+               
             }
         }
 
