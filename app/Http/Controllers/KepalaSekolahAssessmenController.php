@@ -324,43 +324,7 @@ class KepalaSekolahAssessmenController extends Controller
         if (gettype($kumpulan_dokumen) == 'object') {
             return $kumpulan_dokumen;
         }
-        // foreach ($file as $unggah_dokumen) {
-        //     $file_default_name =  $this->dokumenAsesmenNamingScheme($request->assessment, $assessmen_internal,$unggah_dokumen->getClientOriginalName());
-        //     $checker  = $assessmen_internal->dokumenAsesmen()->where([
-        //         ['nama_dokumen_asesmen' , '=', $file_default_name],
-        //         ['body_indikator_dokumen', '=' , $request->assessment]
-        //     ])->first();
-        //         if (file_exists(public_path('kegiatan/asesmen_internal/'.$file_default_name)) && !is_null($checker)) {
-                  
-        //             $assessmen_internal->dokumenAsesmen()->where([
-        //                 ['nama_dokumen_asesmen' , '=', $file_default_name],
-        //                 ['body_indikator_dokumen', '=' , $request->assessment]
-        //             ])->touch();
-        //             $dokumen_update = $unggah_dokumen->move('kegiatan/asesmen_internal', $file_default_name);
-        //             if (!$dokumen_update) {
-                      
-        //                 $fileUploadService->removeKumpulanFile($kumpulan_dokumen, $assessmen_internal, 'asesmen', $request->assessment);
-        //                 return Response::json(['message'=>'data is not valid' , ['errors' => 'File tidak berhasil diunggah, Silahkan Coba Kembali']], 422);
-        //             }
-                   
-        //         } 
-        //         else {
-        //             $kumpulan_dokumen [] = $file_default_name;
-        //             $dokumen = new DokumenAsesmen([
-        //                 'assessment_internal_id' => $id,
-        //                 'nama_dokumen_asesmen' => $file_default_name,
-        //                 'body_indikator_dokumen' => $request->assessment
-        //             ]);
-        //             $upload_file = $unggah_dokumen->move('kegiatan/asesmen_internal/', $file_default_name);
-        //             $add_dokumen = $assessmen_internal->dokumenAsesmen()->save($dokumen);
-        //             if ($upload_file && $add_dokumen) {
-        //                 continue;
-        //             } else {
-        //                 $fileUploadService->removeKumpulanFile($kumpulan_dokumen, $assessmen_internal, 'asesmen', $request->assessment);
-        //                 return Response::json(['errors' => ['File Tidak berhasil diunggah, silahkan coba kembali']], 422);
-        //             }
-        //         }
-        //     }
+       
         $update = $assessmen_internal->update($input);
         if ($update) {
             return Response::json(['message' => 'data is valid'], 200);
@@ -499,15 +463,11 @@ class KepalaSekolahAssessmenController extends Controller
         }
 
         $dokumen_asesmen = $assessmen_internal->dokumenAsesmen()->get();
-        if (count($dokumen_asesmen) > 0) {
-            // $delete_dokumen_asesmen = $assessmen_internal->dokumenAsesmen()->delete();
-            foreach ($dokumen_asesmen as $dataDokumen) {
-               $tempDokumen [] = $dataDokumen->nama_dokumen_asesmen;
-            }
-            $fileUploadService->removeKumpulanFile($tempDokumen, $assessmen_internal, 'Asesmen', 'all');
-            // if (!$delete_dokumen_asesmen) {
-            //     return response()->json(['errors' => ['Tidak Dapat Menghapus Dokumen Asesmen, Silahkan Coba Kembali']], 422);
-            // }
+        foreach ($dokumen_asesmen as $dataDokumen) {
+            $tempDokumen [] = $dataDokumen->nama_dokumen_asesmen;
+        }
+        if (count($tempDokumen) > 0) {
+            $fileUploadService->removeKumpulanFile($tempDokumen, $assessmen_internal, 'asesmen', 'all');
         }
         $delete_asesmen = $assessmen_internal->delete();
         if (!$delete_asesmen) {
@@ -516,31 +476,6 @@ class KepalaSekolahAssessmenController extends Controller
         return response()->json(['message' => 'Data Asesmen Berhasil Dihapus'], 200);
     }
 
-    // private function deleteAsesmen($data_asesmen){
-    //     $delete_asesmen = $data_asesmen->delete();
-    //     if (!$delete_asesmen) {
-    //        return false;
-    //     }
-    //     return true;
-    // }
-
-    // private function removeKumpulanDokumen($docsGetter, $dataAsesmen, $indikatorAsesmen){
-    //     if (count($docsGetter > 0)) {
-    //         foreach ($docsGetter as $failed_dokumen_name) {
-    //             unlink(public_path('kegiatan/asesmen_internal/'.$failed_dokumen_name));
-    //             $dataAsesmen->dokumenAsesmen()->where([['nama_dokumen_asesmen' , '=', $failed_dokumen_name],
-    //             ['body_indikator_dokumen', '=' , $indikatorAsesmen]])->delete();
-    //         }
-    //     }
-    //     return true;
-    // }
-
-    // private function dokumenAsesmenNamingScheme($indikator_asesmen,$dataAsesmen,$fileName){
-    //     $naming_scheme = "Poin_Indikator_".$indikator_asesmen."_".$dataAsesmen->nama_sekolah."_".$dataAsesmen->id."_Internal Asesmen_".$fileName;
-    //     return $naming_scheme;
-    // }
-    
- 
     private function calculateScore($skor_1, $skor_2, $skor_3, $skor_4, $skor_5, $skor_6, $skor_7, $skor_8 , $skor_9 , $skor_10){
         $skor_akhir_1 = $skor_1 / 5;
         $skor_akhir_2 = $skor_2 / 3;

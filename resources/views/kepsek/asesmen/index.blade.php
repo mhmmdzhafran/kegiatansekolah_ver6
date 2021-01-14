@@ -235,12 +235,11 @@
             success: function(result){
                 loading_bar(false);
                 $("#asesmen-table").DataTable().ajax.reload();
+                $(".deleteAsesmen").modal('hide');
                 Swal.fire({
                     icon: 'success',
                     title: 'Sukses Menghapus',
                     text: 'Sukses Menghapus Data Asesmen PPK!'
-                }).then((result) => {
-                    $(".deleteAsesmen").modal('hide');
                 });
             },
             error: function(responseError){
