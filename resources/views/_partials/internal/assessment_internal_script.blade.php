@@ -276,12 +276,12 @@
                     success: function(result){
                         loading_bar(false);
                         $(".submit").attr('disabled', false);
+                        $("#edit_informasi").modal('hide');
                         Swal.fire({
                             icon: 'success',
                             title: 'Sukses',
                             text: 'Berhasil Mengubah Informasi Assessmen!'
                         }).then((result)=>{
-                            $("#edit_informasi").modal('hide');
                             location.reload(true);
                         });
                     },
