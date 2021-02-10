@@ -1,4 +1,10 @@
 <script>
+    for (let index = 2; index <= 10; index++) {
+        //<th class="text-center">No</th><th class="text-center">Penjelasan Assessment</th><th class="text-center">Skor</th><th class="text-center">Aksi Asesmen</th>
+        $(".table_asesmen_counter_"+index).append('<th class="text-center">No</th><th class="text-center">Penjelasan Asesmen</th><th class="text-center">Aksi Asesmen</th>');
+    }
+</script>
+<script>
     var indikator_asesmen = "";
     $(".lihat_form").on('click', function(){
             indikator_asesmen = $(this).attr('value');

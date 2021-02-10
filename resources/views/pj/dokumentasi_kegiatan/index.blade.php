@@ -1,7 +1,7 @@
 @extends('layouts.template_PJ')
 
 @section('title')
-    Penanggung Jawab - Pelaporan Dokumentasi Kegiatan
+    Penanggung Jawab - Laporan Kegiatan
 @endsection
 
 @section('content')

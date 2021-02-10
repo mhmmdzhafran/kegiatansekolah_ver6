@@ -64,7 +64,7 @@
         </div>
            
           <div class="modal fade" id="createModal"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-            <div class="modal-dialog " role="document">
+            <div class="modal-dialog modal-xl" role="document">
               <!-- Modal content-->
               <form action="" id="createUserForm" method="post" autocomplete="off">
                 {{-- {{ method_field('POST') }} --}}
@@ -76,7 +76,7 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                          {{ csrf_field() }}
+                          @csrf
                           <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
     
                           </ul>
@@ -127,7 +127,7 @@
         </div>
     
         <div class="modal fade" id="editForm"  role="dialog" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-keyboard="false" data-backdrop="static">
-            <div class="modal-dialog " role="document">
+            <div class="modal-dialog modal-xl" role="document">
               <!-- Modal content-->
               <form action="" id="editUserForm" autocomplete="off">
                 @method('PUT')
@@ -140,10 +140,8 @@
                         </button>
                       </div>
                       <div class="modal-body">
-                          
-                          <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
-    
-                          </ul>
+                          <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px"></ul>
+                          <div class="alert alert-info alert-heading font-weight-bolder mb-2 keterangan_foto d-none"></div>
                           <div class="form-group">
                             {!! Form::label('name', 'Nama:') !!}
                             <input type="text" name="name" value="" class="form-control nama_user">
@@ -229,7 +227,8 @@
         var value = $(this).attr('id');
         url_edit = '{{route("admin.user.edit", "id")}}';
         url_edit = url_edit.replace("id", value);
-        $("#error_notification").empty();
+        // $(".error_notification").empty();
+        $(".keterangan_foto").removeClass('d-none');
         url = '{{route("admin.user.update", "id")}}';
         url = url.replace('id', value);
         console.log(url);
@@ -250,6 +249,7 @@
             $(".username_id").prop('value' , users.username_id);
             $(".role_user").find("[value='"+users.role_id+"']").prop('selected' , true);
             if (picture !== null) {
+                $(".keterangan_foto").append('*Foto Pengguna Sudah Terunggah Sebelumnya!');
                 let fileLoc = '{{asset("kegiatan/admin/foto_user/images")}}';
                 fileLoc = fileLoc.replace('images' , picture);
                 sourceFile = fileLoc;
@@ -259,6 +259,7 @@
                     element.src = fileLoc;
                 }    
             } else {
+                $(".keterangan_foto").append('*Foto Pengguna Harus Diunggah!');
                 $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>Tidak Terdapat Foto</li>');
             }
             
@@ -302,7 +303,9 @@
     $("#editForm").on('hidden.bs.modal', function(){
         $("#editUserForm")[0].reset();
         $(".error_notification").empty();
+        $(".keterangan_foto").empty();
         $('.load-file').empty();
+        $(".keterangan_foto").addClass('d-none');
         $(".error_notification").addClass('d-none');
         sourceFile = '';
         resetPhoto();

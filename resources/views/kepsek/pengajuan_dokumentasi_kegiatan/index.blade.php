@@ -7,7 +7,7 @@
 @section('content')
     <div class="row">
         <div class="col-lg-12">
-            <h1>Laporan Kegiatan Penanggung Jawab</h1>
+            <h1>Laporan Kegiatan PPK</h1>
         </div>
     </div>
         <div class="row">
@@ -24,7 +24,7 @@
                                         <th>Kegiatan Berbasis</th>
                                         <th>Pengiriman Laporan</th>
                                         <th>Nama Penanggung Jawab</th>
-                                        <th>Status Proposal Kegiatan</th>  
+                                        <th>Status Laporan Kegiatan</th>  
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>

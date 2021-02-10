@@ -26,7 +26,7 @@ class UpdatePassValidationRequest extends FormRequest
         return [
             //
             'passwordBaru' => 'required',
-            'passwordChecker' => 'required|same:password'
+            'passwordChecker' => 'required|same:passwordBaru'
         ];
     }
 

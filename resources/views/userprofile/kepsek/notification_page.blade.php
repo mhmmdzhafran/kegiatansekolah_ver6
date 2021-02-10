@@ -42,6 +42,8 @@
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terbaru">Terbaru</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Belum Disetujui">Belum Disetujui</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Sudah Mengunggah Dokumentasi">Sudah Mengunggah Dokumentasi</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Proposal Kegiatan">Proposal Kegiatan</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Laporan Kegiatan">Laporan Kegiatan</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terlama">Terlama</button>
                             </div>
                           </div>

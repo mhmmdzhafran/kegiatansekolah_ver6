@@ -1,7 +1,7 @@
 @extends('layouts.template_kepsek')
 
 @section('title')
-    Kepala Sekolah - Penerimaan Dokumentasi Kegiatan
+    Kepala Sekolah - Evaluasi Laporan Kegiatan
 @endsection
 
 @section('content')
@@ -155,7 +155,7 @@
         <div class="col-sm-12 col-lg-6">
             <div class="form-group">
             <button type="button" class="btn btn-warning btn-md rounded-pill button_show" data-toggle="modal" data-target="#modal_ajukan_ulang">
-                Melakukan Pengajuan Ulang
+                Mengajukan Kembali Laporan Kegiatan
               </button>
             </div>
         </div>
@@ -203,7 +203,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Pengajuan Ulang Laporan Kegiatan</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Mengajukan Kembali Laporan Kegiatan</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -235,25 +235,7 @@
     </div>
   </div>
 
- {{-- <!-- Modal to show file -->
- <div class="modal fade" id="myModal" role="dialog">
-  <div class="modal-dialog modal-dialog-centered">
-  
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-              </div>
-                  <div class="modal-body">
-                      <iframe src="" width="450" height="500"></iframe>
-                  </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                      </div>
-                  </div>    
-              </div>
-          </div> --}}
-          
+ 
 @endsection
 
 @section('script')

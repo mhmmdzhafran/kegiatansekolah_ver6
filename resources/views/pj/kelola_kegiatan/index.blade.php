@@ -1,7 +1,7 @@
 @extends('layouts.template_PJ')
 
 @section('title')
-    Penanggung Jawab - Kelola Kegiatan PPK
+    Penanggung Jawab - Kelola Proposal Kegiatan PPK
 @endsection
 
 @section('content')

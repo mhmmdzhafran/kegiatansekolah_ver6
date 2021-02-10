@@ -43,6 +43,8 @@
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Sudah Disetujui">Sudah Disetujui</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Pengajuan Ulang">Pengajuan Ulang</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Ditolak">Ditolak</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Proposal Kegiatan">Proposal Kegiatan</button>
+                              <button class="dropdown-item dropdown-choice filter_by" type="button" id="Laporan Kegiatan">Laporan Kegiatan</button>
                               <button class="dropdown-item dropdown-choice filter_by" type="button" id="Terlama">Terlama</button>
                             </div>
                           </div>

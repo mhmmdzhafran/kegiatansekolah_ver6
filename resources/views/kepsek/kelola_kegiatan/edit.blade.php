@@ -1,7 +1,7 @@
 @extends('layouts.template_kepsek')
 
 @section('title')
-    Kepala Sekolah - Pengajuan Kegiatan
+    Kepala Sekolah - Evaluasi Proposal Kegiatan
 @endsection
 
 @section('content')
@@ -126,7 +126,7 @@
         <div class="col-sm-12 col-lg-4">
             <div class="form-group">
             <button type="button" class="btn btn-warning btn-md rounded-pill button_show" data-target="#modal_pengajuan_ulang">
-                Melakukan Pengajuan Ulang
+                Mengajukan Kembali Kegiatan
               </button>
             </div>
         </div>
@@ -184,7 +184,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Pengajuan Ulang</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Mengajukan Kembali Proposal Kegiatan</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>

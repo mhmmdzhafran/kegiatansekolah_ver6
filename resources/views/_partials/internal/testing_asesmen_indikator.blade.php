@@ -23,6 +23,7 @@
         $counter_indikator_10 = 49;        
         $batas_counter_10 = 50;
     @endphp
+    
     @foreach ($kategori_asesmen as $item_kategori)
 <div class="card-header border border-left-success" id="heading{{$counter_indikator}}">
       <h5 class="mb-0">
@@ -34,41 +35,43 @@
 @if ($counter_indikator == 1)
 <div id="collapse{{$counter_indikator}}" class="collapse show" aria-labelledby="heading{{$counter_indikator}}" data-parent="#accordion">
     <div class="card-body">
+      <table class="table table-borderless">
+        @if ($loop->first)
+        <thead>
+           <th class="text-center">No</th>
+           <th class="text-center">Penjelasan Asesmen</th>
+           {{-- <th class="text-center">Skor</th> --}}
+           <th class="text-center">Status Asesmen</th>
+      </thead> 
+        @endif
       @foreach ($penjelasan_asesmen as $item_asesmen)
           @if ($counter_asesmen <= $counter_indikator_1)
-     <table class="table table-borderless">
-         <thead>
-            <th class="text-center">No</th>
-            <th class="text-center">Penjelasan Assessment</th>
-            <th class="text-center">Skor</th>
-         </thead>
          <tbody>
-           {{-- foreach --}}
-             <td class="text-center">
+             <td class="text-center" width="10%">
                {{ $counter_asesmen }}
               </td>
-             <td class="text-center" width="75%">
+             <td class="text-center">
                {{ $item_asesmen->penjelasan_asesmen }}
             </td>
-            {{-- end for each --}}
+            {{-- <td class="text-center scores_{{$counter_asesmen}}">1</td> --}}
              <td width="20%" class="text-center">
                @foreach ($json_assessmen as $item)
                   @if ($item->no == $counter_asesmen)
                     @if (empty($item->penjelasan_assessment))
-                      <button type="button" class="btn btn-primary btn-sm rounded-pill lihat_form" value="{{ $counter_asesmen }}" data-target="{{ $assessment->id }}">Lakukan Assessmen</button>    
+                      <button type="button" class="btn btn-primary btn-sm rounded-pill lihat_form" value="{{ $counter_asesmen }}" data-target="{{ $assessment->id }}">Lakukan Asesmen</button>    
                     @else
-                    <button type="button" class="btn btn-warning btn-sm rounded-pill lihat_form" value="{{ $counter_asesmen }}"  data-target="{{ $assessment->id }}">Edit Assessmen</button>
+                    <button type="button" class="btn btn-warning btn-sm rounded-pill lihat_form" value="{{ $counter_asesmen }}"  data-target="{{ $assessment->id }}">Edit Asesmen</button>
                     @endif
                   @endif
                @endforeach
              </td>
          </tbody>                 
-     </table>     
         @php
             $counter_asesmen++;
         @endphp
     @endif
     @endforeach
+  </table>     
     </div>
   </div>
   @php
@@ -78,6 +81,8 @@
     @if ($counter_indikator == $item_kategori->id)
   <div id="collapse{{$counter_indikator}}" class="collapse" aria-labelledby="heading{{$counter_indikator}}" data-parent="#accordion">
     <div class="card-body">
+      <table class="table table-borderless">
+        <thead class="table_asesmen_counter_{{$counter_indikator}} text-center"></thead>
       @foreach ($penjelasan_asesmen as $item_asesmen)
           @if ($counter_asesmen <= $counter_indikator_2 || $counter_asesmen <= $counter_indikator_3 || $counter_asesmen <= $counter_indikator_4 || $counter_asesmen <= $counter_indikator_5 || $counter_asesmen <= $counter_indikator_6 || $counter_asesmen <= $counter_indikator_7 || $counter_asesmen <= $counter_indikator_8 || $counter_asesmen <= $counter_indikator_9  || $counter_indikator <= $counter_indikator_10 )
             @if ($item_asesmen->id != $counter_asesmen)
@@ -86,32 +91,28 @@
                   continue;
               @endphp
             @endif
-     <table class="table table-borderless">
-         <thead>
-            <th class="text-center">No</th>
-            <th class="text-center">Penjelasan Assessment</th>
-            <th class="text-center">Skor</th>
-         </thead>
+     {{-- <table class="table table-bordered"> --}}
          <tbody>
-             <td class="text-center">
+             <td class="text-center" width="10%">
                {{ $counter_asesmen }}
               </td>
-             <td class="text-center" width="75%">
+             <td class="text-center">
                {{ $item_asesmen->penjelasan_asesmen }}
             </td>
+            {{-- <td class="text-center">1</td> --}}
              <td width="20%" class="text-center">
                @foreach ($json_assessmen as $item)
                   @if ($item->no == $counter_asesmen)
                     @if (empty($item->penjelasan_assessment))
-                      <button type="button" class="btn btn-primary rounded-pill btn-sm lihat_form" value="{{ $counter_asesmen }}" data-target="{{ $assessment->id }}">Lakukan Assessmen</button>    
+                      <button type="button" class="btn btn-primary rounded-pill btn-sm lihat_form" value="{{ $counter_asesmen }}" data-target="{{ $assessment->id }}">Lakukan Asesmen</button>    
                     @else
-                    <button type="button" class="btn btn-warning rounded-pill btn-sm lihat_form" value="{{ $counter_asesmen }}"  data-target="{{ $assessment->id }}">Edit Assessmen</button>
+                    <button type="button" class="btn btn-warning rounded-pill btn-sm lihat_form" value="{{ $counter_asesmen }}"  data-target="{{ $assessment->id }}">Edit Asesmen</button>
                     @endif
                   @endif
                @endforeach
              </td>
          </tbody>                 
-     </table>     
+     {{-- </table>      --}}
         @php
             $counter_asesmen++;
         @endphp
@@ -120,6 +121,7 @@
         @endif
     @endif
     @endforeach
+  </table>
     </div>
   </div>
   @php

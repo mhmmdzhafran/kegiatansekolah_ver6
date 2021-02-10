@@ -96,9 +96,7 @@ class UsersNotificationController extends Controller
         }
     }
 
-    public function orderByNotification($option){
-        
-        
+    public function orderByNotification($option){  
         if (request()->ajax()) {
             $orderChoice = ucwords($option);
             if ($orderChoice == "Terlama") {
@@ -107,7 +105,12 @@ class UsersNotificationController extends Controller
                 $notification = Auth::user()->notifications()
                                 ->Where('data' , 'LIKE', '%"status_kegiatan":"'.$orderChoice.'"%')
                                 ->paginate(10);
-            } elseif($orderChoice == "Terbaru"){
+            } elseif($orderChoice == 'Proposal Kegiatan' || $orderChoice == 'Laporan Kegiatan'){
+                $notification = Auth::user()->notifications()
+                                    ->Where('data', 'LIKE' , '%"type_notification":"'.$orderChoice.'"%')
+                                    ->paginate(10);
+            }
+             elseif($orderChoice == "Terbaru"){
                 $notification = Auth::user()->notifications()->paginate(10);
             }
             return $this->redirectToRespectivePageNotifications($notification , Auth::user()->Role->role_title);
@@ -115,8 +118,6 @@ class UsersNotificationController extends Controller
     }
 
     public function orderByTwoChoiceNotifications($optionOne , $optionTwo){
-       
-
         if (request()->ajax()) {
             $orderChoice = ucwords($optionTwo);
             if ($orderChoice === "Terlama") {
@@ -144,7 +145,20 @@ class UsersNotificationController extends Controller
                     ->orWhere('data' , 'LIKE' , '%"kegiatan_berbasis":"%'.$optionOne.'%"%')
                     ->orWhere('data', 'LIKE' , '%"type_notification":"%'.$optionOne.'%"%');
                 })->paginate(10);               
-            } elseif($orderChoice == "Terbaru"){
+            } elseif($orderChoice == "Proposal Kegiatan" || $orderChoice == "Laporan Kegiatan"){
+                $notification = Auth::user()->notifications()
+                ->Where('data' , 'LIKE', '%"type_notification":"%'.$orderChoice.'%"%')
+                ->Where('notifiable_id' , Auth::user()->id)
+                ->Where(function($query) use ($optionOne){
+                    $query->where('data' , 'LIKE' , '%"status_kegiatan":"%'.$optionOne.'%"%')
+                    ->orWhere('data','LIKE','%"user_pj":"%'.$optionOne.'%"%')
+                    ->orWhere('data','LIKE','%"nama_kegiatan":"%'.$optionOne.'%"%')
+                    ->orWhere('data' , 'LIKE' , '%"nilai_ppk":"%'.$optionOne.'%"%')
+                    ->orWhere('data' , 'LIKE' , '%"kegiatan_berbasis":"%'.$optionOne.'%"%')
+                    ->orWhere('data', 'LIKE' , '%"type_notification":"%'.$optionOne.'%"%');
+                })->paginate(10);
+            }
+            elseif($orderChoice == "Terbaru"){
                 $notification = Auth::user()->notifications()
                 ->Where('notifiable_id' , Auth::user()->id)
                 ->Where(function($query) use ($optionOne){
@@ -157,7 +171,6 @@ class UsersNotificationController extends Controller
                 })->paginate(10);
             }
             return $this->redirectToRespectivePageNotifications($notification , Auth::user()->Role->role_title);
-            
         }
 
     }

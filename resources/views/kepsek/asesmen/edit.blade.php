@@ -21,7 +21,7 @@
             <div class="col-lg-12 col-sm-12">
                 <div class="card shadow mb-4 mb-2">
                     <div class="card-header py-3">
-                      <h6 class="m-0 font-weight-bold text-primary">Informasi Assessmen</h6>
+                      <h6 class="m-0 font-weight-bold text-primary">Informasi Asesmen</h6>
                     </div>
                     <div class="card-body">
                         <button type="button" class="btn btn-warning btn-sm rounded-pill float-md-right float-lg-right float-sm-left" id="edit" style="color:white;">Ubah Informasi</button>
@@ -116,7 +116,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle">Pengubahan Informasi Assessmen</h5>
+          <h5 class="modal-title" id="exampleModalCenterTitle">Pengubahan Informasi Asesmen</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -165,7 +165,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalCenterTitle">Hapus Dokumen Assessmen</h5>
+          <h5 class="modal-title" id="exampleModalCenterTitle">Hapus Dokumen Asesmen</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>

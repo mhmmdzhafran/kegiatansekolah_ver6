@@ -1,11 +1,11 @@
 @extends('layouts.template_kepsek')
 
 @section('title')
-    Kepala Sekolah - Pengajuan Kegiatan
+    Kepala Sekolah - Proposal Kegiatan
 @endsection
 
 @section('content')
-    <h1>Pengajuan Proposal Kegiatan PPK</h1>
+    <h1>Proposal Kegiatan PPK</h1>
     <div class="row">
         <div class="col-lg-12">
             <div class="card shadow mb-4">

@@ -1,19 +1,9 @@
 <?php
 namespace App\Services;
 
-class DataPPKService{
-    // public function countPPK($nilaiPPK){
-    //     $id_nilai_ppk = 1;
-    //     for ($i=0; $i < count($nilaiPPK) ; $i++) { 
-    //         $json_ppk[] = array(
-    //             'no' => $id_nilai_ppk,
-    //             'nilai_ppk' => $nilaiPPK[$i]
-    //         );
-    //         $id_nilai_ppk++;
-    //     }
-    //     return json_encode($json_ppk);
-    // }
+use Illuminate\Support\Facades\Auth;
 
+class DataPPKService{
     public function createKeteranganKegiatanPPK($type){
         if ($type == 'Proposal') {
             $keterangan_default [] = array(
@@ -65,14 +55,26 @@ class DataPPKService{
                 $status_indikator ="<h6 class='text-center alert alert-success alert-heading font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
             }
             elseif($status == "Pengajuan Ulang"){
-                $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
+                if (Auth::user()->Role->role_title == 'Kepala Sekolah') {
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>Diajukan Kembali</h6>";
+                } else {
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>Ajukan Ulang</h6>";
+                }
             }
             elseif($status == "Menolak"){
-                $status_indikator = "<h6 class='text-center alert alert-danger font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
+                if (Auth::user()->Role->role_title == 'Penanggung Jawab Kegiatan') {
+                    $status_indikator = "<h6 class='text-center alert alert-danger font-weight-bolder' style='border-radius:10px;'>Ditolak</h6>";
+                } else {
+                    $status_indikator = "<h6 class='text-center alert alert-danger font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
+                }
             }
         } elseif($kegiatan == 'Dokumentasi') {
             if ($status == "Unggah Dokumentasi") {
-                $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
+                if (Auth::user()->Role->role_title == 'Kepala Sekolah') {
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>Belum Unggah</h6>";
+                } else {
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
+                }
             }
             elseif($status == "Sudah Mengunggah Dokumentasi"){
                 if ($type == 'Pengajuan Historis') {
@@ -81,16 +83,12 @@ class DataPPKService{
                     $status_indikator = "<h6 class='text-center alert alert-success font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
             } elseif($status == "Belum Disetujui"){
-                if ($type == 'Pengajuan Historis') {
-                    $status_indikator = "<h6 class='text-center alert alert-primary font-weight-bolder' style='border-radius:10px;'>".$status."(".$type.")</h6>";
-                } else {
-                    $status_indikator = "<h6 class='text-center alert alert-primary font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
-                }
+                $status_indikator = "<h6 class='text-center alert alert-primary font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
             } elseif($status == "Pengajuan Ulang"){
-                if ($type == "Pengajuan Historis") {
-                    $status_indikator = "<h6 class='text-center alert alert-info font-weight-bolder' style='border-radius:10px;'>".$status."(".$type.")</h6>";
+                if (Auth::user()->Role->role_title == 'Kepala Sekolah') {
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>Diajukan Kembali</h6>";
                 } else {
-                    $status_indikator = "<h6 class='text-center alert alert-info font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
+                    $status_indikator = "<h6 class='text-center alert alert-warning font-weight-bolder' style='border-radius:10px;'>".$status."</h6>";
                 }
             }
         }

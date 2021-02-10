@@ -77,7 +77,7 @@
       <li class="nav-item {{(request()->segment(2) == 'mengelola-kegiatan') ? 'active' : ''}}">
         <a class="nav-link" href="{{ route('pj.kelola_kegiatan.index') }}">
           <i class="fas fa-fw fa-clipboard-check"></i>
-          <span>Pengajuan Kegiatan</span></a>
+          <span>Proposal Kegiatan</span></a>
         </li>
 
     <li class="nav-item {{(request()->segment(2) == 'unggah-dokumentasi-kegiatan') ? 'active' : ''}}">
