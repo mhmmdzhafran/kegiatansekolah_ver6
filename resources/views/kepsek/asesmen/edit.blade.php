@@ -57,7 +57,7 @@
                           <div class="collapse show" id="collapseCardExample">
                             <div class="card-body">
                                 <div id="accordion">
-                                    @include('_partials/internal/testing_asesmen_indikator')
+                                    @include('_partials/internal/test_view_asesmen')
                                 </div>
                             </div>
                           </div>

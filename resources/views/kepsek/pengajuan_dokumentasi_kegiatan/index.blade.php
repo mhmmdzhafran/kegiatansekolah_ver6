@@ -349,7 +349,7 @@
                         $(".nama_user").val(res.username);
                         $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
                     } else {
-                        let file_loc = '{{asset("kegiatan/admin/foto_user/users")}}';
+                        let file_loc = '{{asset("storage/photo_user_simppk/users")}}';
                         file_loc = file_loc.replace('users' , res.user.photo_user);
                         $(".nama_user").val(res.user.name);
                         $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
@@ -395,7 +395,7 @@
                         if (res.dokumen_dokumentasi.length > 0) {
                             res.dokumen_dokumentasi.forEach(item_dokumen => {
                                 const fileName = item_dokumen.nama_dokumen;
-                                let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
+                                let asset_url = '{{asset("storage/dokumentasi_kegiatan/asset_dokumen")}}';
                                 asset_url = asset_url.replace("asset_dokumen" , item_dokumen.nama_dokumen);
                                 // $(".dokumen_kegiatan").append('<li> <i class="fa fa-file-alt"></i>'+item_dokumen.nama_dokumen+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat Dokumen</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_dokumen.nama_dokumen+'">Download File</a></li><br>');
                                 if (item_dokumen.status_unggah_dokumen === "Pengajuan" || item_dokumen.status_unggah_dokumen === "Pengajuan Historis") {
@@ -428,7 +428,7 @@
                         }
                         if (res.image_kegiatan.length > 0) {
                             res.image_kegiatan.forEach(item_image => {
-                                let asset_url = '{{asset("kegiatan/dokumentasi_kegiatan/asset_dokumen")}}';
+                                let asset_url = '{{asset("storage/dokumentasi_kegiatan/asset_dokumen")}}';
                                 asset_url = asset_url.replace("asset_dokumen" , item_image.nama_foto_kegiatan);
                                 $(".dokumentasi_kegiatan").append('<li class="mb-2"><img class="rounded-circle mb-2 mt-2 mr-2" src="'+asset_url+'" alt="" width="150" height="150">'+item_image.nama_foto_kegiatan+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+asset_url+'">Lihat File</button><a href="'+asset_url+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+item_image.nama_foto_kegiatan+'">Download File</a></li>');                                
                             });    

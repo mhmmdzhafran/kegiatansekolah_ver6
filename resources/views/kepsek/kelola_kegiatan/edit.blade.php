@@ -31,7 +31,7 @@
         @if (is_null($pengajuan_kegiatan->user->photo_user))
           <img class="rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="300" height="300">    
         @else
-          <img class="rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.$pengajuan_kegiatan->user->photo_user) }}" alt="" srcset="" width="300" height="300">
+          <img class="rounded-circle" src="{{ asset('storage/photo_user_simppk/'.$pengajuan_kegiatan->user->photo_user) }}" alt="" srcset="" width="300" height="300">
         @endif
       </div>
       <div class="col-6">
@@ -288,8 +288,9 @@
           }
         });
         if (statusData) {
-          var url_dokumen = "{{asset('kegiatan/pengajuan_kegiatan/nama_dokumen')}}";
+          let url_dokumen = "{{asset('storage/pengajuan_kegiatan/nama_dokumen')}}";
           url_dokumen = url_dokumen.replace('nama_dokumen', res.data_dokumen);
+          console.log(url_dokumen)
           $("#file_upload").append('<i class="fas fa-file-alt"></i> <a href="'+url_dokumen+'" class="mr-2" target="_blank">'+res.data_dokumen+'</a><button class="btn btn-primary btn-sm lihat_file mr-2" value="'+url_dokumen+'">Lihat File</button><a href="'+url_dokumen+'" download="'+res.data_dokumen+'" class="btn btn-info btn-sm mr-2">Download File</a><br>');
             // $.each(res.data_dokumen, function(key,value){
              

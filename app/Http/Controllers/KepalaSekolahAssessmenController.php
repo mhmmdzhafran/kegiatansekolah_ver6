@@ -203,11 +203,11 @@ class KepalaSekolahAssessmenController extends Controller
             return response()->json(['message' => 'Data Asesmen Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id.', System Error Message: '. $assessment], 404);
         }
 
-        $penjelasan_asesmen = PenjelasanAsesmen::all();
-        $kategori_asesmen = KategoriAsesmen::all();
+        // $penjelasan_asesmen = PenjelasanAsesmen::all();
+        $kategori_asesmen = KategoriAsesmen::with('PenjelasanAsesmen')->get();
         $json_assessmen = json_decode($assessment->indikator_skor_penilaian_ppk);
 
-        return view('kepsek.asesmen.edit', compact('assessment' , 'json_assessmen' , 'penjelasan_asesmen' , 'kategori_asesmen' ));
+        return view('kepsek.asesmen.edit', compact('assessment' , 'json_assessmen' , 'kategori_asesmen' ));
     }
 
     /**
@@ -503,20 +503,5 @@ class KepalaSekolahAssessmenController extends Controller
         $assessmen_skor_penilaian = json_encode($json_assessmen);
         return $assessmen_skor_penilaian;
     }
-
-    // private function getFileUploadSizes($files){
-    //     $sizeAllDokumen = 0;
-    //     foreach ($files as $getFileSizes) {
-    //         $sizeAllDokumen += $getFileSizes->getSize();
-    //     }
-    //     return $sizeAllDokumen;
-    // }
-
-    // public function isFileSize($file){
-    //     if ($file > 5120000) {
-    //         $fileSizesToMB = round(($file / 1000) / 1000 , 2);
-    //         return Response::json(['errors' => ['Total File Size melebihi kapasitas yang sudah ditetapkan (Total Max: 5MB), Total File Ada: '.$fileSizesToMB." MB"]], 422);
-    //     }
-    // }
 
 }

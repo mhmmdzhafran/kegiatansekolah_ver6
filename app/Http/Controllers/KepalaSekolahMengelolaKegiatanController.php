@@ -111,7 +111,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             //     $nama_dokumen = $isi_data_dokumen->nama_dokumen;
             // }
             if (!is_null($data_pengajuan_kegiatan->dokumen_kegiatan)) {
-                if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$data_pengajuan_kegiatan->dokumen_kegiatan))) {
+                if (file_exists(public_path('storage/pengajuan_kegiatan/'.$data_pengajuan_kegiatan->dokumen_kegiatan))) {
                     return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => true, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
                 }
                 return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => false, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
@@ -530,7 +530,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     // }
                     $keterangan_pengajuan = json_decode($kegiatan->keterangan_json);
                     if (!is_null($kegiatan->dokumen_kegiatan)) {
-                        if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$kegiatan->dokumen_kegiatan))) {
+                        if (file_exists(public_path('storage/pengajuan_kegiatan/'.$kegiatan->dokumen_kegiatan))) {
                             return Response::json(['status' => true, 'data_dokumen' => $kegiatan->dokumen_kegiatan , 'data' => $kegiatan, 'keterangan' => $keterangan_pengajuan], 200);
                         } else {
                             return Response::json(['status' => false, 'data_dokumen' => "Tidak terdapat Dokumen Pengajuan Kegiatan", 'data' => $kegiatan , 'keterangan' => $keterangan_pengajuan], 200);

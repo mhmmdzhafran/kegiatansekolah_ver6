@@ -595,8 +595,11 @@
                 $.get(get_data, function(res){
                     console.log(res);
                     modalState = "pengajuan_ulang_modal";
-                    let dokumen_asset = '{{asset("kegiatan/dokumentasi_kegiatan/docs")}}';
-                    let img_asset = '{{asset("kegiatan/dokumentasi_kegiatan/img")}}';
+                    // let dokumen_asset = '{{asset("kegiatan/dokumentasi_kegiatan/docs")}}';
+                    // let img_asset = '{{asset("kegiatan/dokumentasi_kegiatan/img")}}';
+                    // let form_url = '/penanggung-jawab/dokumentasi-kegiatan-ulang/dokumentasi_kegiatan/pengajuan-ulang';
+                    let dokumen_asset = '{{asset("storage/dokumentasi_kegiatan/docs")}}';
+                    let img_asset = '{{asset("storage/dokumentasi_kegiatan/img")}}';
                     let form_url = '/penanggung-jawab/dokumentasi-kegiatan-ulang/dokumentasi_kegiatan/pengajuan-ulang';
                     const formPengajuanUlang = document.querySelector('.form_ulang');
                     const keterangan_dokumentasi = JSON.parse(res.data_dokumentasi.keterangan_dokumentasi);
@@ -1206,7 +1209,8 @@
         }
 
         function fileAssets(fileName){
-            let fileLoc = '{{asset("kegiatan/dokumentasi_kegiatan/file")}}';
+            // let fileLoc = '{{asset("kegiatan/dokumentasi_kegiatan/file")}}';
+            let fileLoc = '{{asset("storage/dokumentasi_kegiatan/file")}}';
             fileLoc = fileLoc.replace('file' , fileName);
             return fileLoc;
         }

@@ -6,6 +6,7 @@ use App\DokumenAsesmen;
 use App\DokumenKegiatan;
 use App\FotoKegiatan;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 class FileUploadService {
 
@@ -49,8 +50,8 @@ class FileUploadService {
                         ["status_unggah_foto" , $type]
                     ])->first();
                 }
-
-                if(file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name)) && !is_null($checker)){
+                $exists = Storage::disk('public')->exists('dokumentasi_kegiatan/'.$new_dokumen_name);
+                if($exists && !is_null($checker)){
                     if ($file_type == "dokumen") {
                         // $input["nama_dokumen"] = $new_dokumen_name;
                         $kegiatan->dokumenKegiatan()->where([
@@ -66,7 +67,8 @@ class FileUploadService {
                         ])->touch();
                     }
                     // unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$new_dokumen_name));
-                    $simpan_file = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+                    // $simpan_file = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+                    $simpan_file = $file_kegiatan->storeAs('dokumentasi_kegiatan', $new_dokumen_name, 'public');
                     if (!$simpan_file) {
                         $this->removeKumpulanFile($kumpulan_dokumen, $kegiatan, $file_type, $type);
                         return false;
@@ -90,7 +92,8 @@ class FileUploadService {
                         ]);
                         $dokumen_final =  $kegiatan->fotoKegiatan()->save($image_create);
                     }
-                    $file_uploaded = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+                    // $file_uploaded = $file_kegiatan->move('kegiatan/dokumentasi_kegiatan/', $new_dokumen_name);
+                    $file_uploaded = $file_kegiatan->storeAs('dokumentasi_kegiatan', $new_dokumen_name, 'public');
                     if ($file_uploaded && $dokumen_final) {
                         continue;
                     } else {
@@ -158,8 +161,10 @@ class FileUploadService {
         if (count($arrFile) > 0) {
             foreach ($arrFile as $files) {
                 if ($tipe_file == 'dokumen' || $tipe_file == 'image') {
-                    if (file_exists(public_path('kegiatan/dokumentasi_kegiatan/'.$files))) {
-                        unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$files));
+                    $exists = Storage::disk('public')->exists('dokumentasi_kegiatan/'.$files);
+                    if ($exists) {
+                        // unlink(public_path('kegiatan/dokumentasi_kegiatan/'.$files));
+                        Storage::disk('public')->delete('dokumentasi_kegiatan/'.$files);
                         if ($tipe_file == "dokumen") {
                             $data->dokumenKegiatan()->where([
                                 ["nama_dokumen" , $files],
@@ -185,8 +190,10 @@ class FileUploadService {
                         }
                     }
                 } elseif($tipe_file == 'asesmen'){
-                    if (file_exists(public_path('kegiatan/asesmen_internal/'.$files))) {
-                        unlink(public_path('kegiatan/asesmen_internal/'.$files));
+                    $exists_asesmen = Storage::disk('public')->exists('asesmen_internal_ppk/'.$files);
+                    if ($exists_asesmen) {
+                        // unlink(public_path('kegiatan/asesmen_internal/'.$files));
+                        Storage::disk('public')->delete('asesmen_internal_ppk/'.$files);
                     }
                     if ($optData == 'all') {
                         $data->dokumenAsesmen()->where('nama_dokumen_asesmen', $files)->delete();

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class AdminUserController extends Controller
 {
@@ -92,13 +93,15 @@ class AdminUserController extends Controller
         
         $input['photo_user'] = $customNameFile;
         $input['password'] = bcrypt($request->password);
-        $moveImage = $fileImage->move('kegiatan/admin/foto_user/',$customNameFile);
+        // $moveImage = $fileImage->move('kegiatan/admin/foto_user/',$customNameFile);
+        $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
         if (!$moveImage) {
             return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
         }
         $user = User::create($input);
         if (!$user) {
-            unlink(public_path('kegiatan/admin/foto_user/'.$customNameFile));
+            // unlink(public_path('kegiatan/admin/foto_user/'.$customNameFile));
+            Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
             return Response::json(['message' => 'saving data is error', 'errors' => ['Terjadi Kendala saat melakukan Penyimpanan, Silahkan coba kembali']],422);
         }
         $getUser = User::where([
@@ -183,11 +186,12 @@ class AdminUserController extends Controller
             $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
             // $customNameFile = $this->photoUserNamingScheme($fileImage->getClientOriginalName(), $request->username_id);
             if (!is_null($user->photo_user)) {
-                if (file_exists(public_path('kegiatan/admin/foto_user/'.$user->photo_user))) {
-                    unlink(public_path('kegiatan/admin/foto_user/'.$user->photo_user));
+                $exists = Storage::disk('public')->exists('photo_user_simppk/'.$customNameFile);
+                if ($exists) {
+                    Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
                 }  
             }
-            $moveImage = $fileImage->move('kegiatan/admin/foto_user/',$customNameFile);
+            $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
             if (!$moveImage) {
                 return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
             }
@@ -225,8 +229,9 @@ class AdminUserController extends Controller
         }
         $user_photo = $user->photo_user;
         if (!is_null($user_photo)) {
-            if (file_exists(public_path('kegiatan/admin/foto_user/'.$user_photo))) {
-                unlink(public_path('kegiatan/admin/foto_user/'.$user_photo));
+            $exists = Storage::disk('public')->exists('photo_user_simppk/'.$user_photo);
+            if ($exists) {
+                Storage::disk('public')->delete('photo_user_simppk/'.$user_photo);
             }
         }
         

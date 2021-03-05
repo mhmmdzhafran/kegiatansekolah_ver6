@@ -273,30 +273,31 @@
         if (value_asesmen === "asesmen") {
              let url = '{{route("kepsek.asesmen.edit", "id")}}';   
              url = url.replace('id', id);
-             $.ajax({
-                url: url,
-                type: 'GET',
-                // beforeSend: function(){
-                //     // loading_bar(true);
-                // },
-                success: function(){
-                    // loading_bar(false);
-                    window.location.replace(url);
-                },
-                error: function(error){
-                    if (error.status === 401) {
-                        let login_info = JSON.parse(error.responseText);
-                        let messageNotification = login_info.message;
-                        alertNotifications(error.status , messageNotification);
-                    } else if(error.status === 404){
-                        let notFoundMessage = JSON.parse(error.responseText);
-                        let messageNotification = notFoundMessage.messages;
-                        alertNotifications(error.status , messageNotification);
-                    } else {
-                        anyErrorsNotification(error.status , error.statusText , error);
-                    }
-                }
-             });
+             window.location.replace(url);
+            //  $.ajax({
+            //     url: url,
+            //     type: 'GET',
+            //     // beforeSend: function(){
+            //     //     // loading_bar(true);
+            //     // },
+            //     success: function(){
+            //         // loading_bar(false);
+            //         window.location.replace(url);
+            //     },
+            //     error: function(error){
+            //         if (error.status === 401) {
+            //             let login_info = JSON.parse(error.responseText);
+            //             let messageNotification = login_info.message;
+            //             alertNotifications(error.status , messageNotification);
+            //         } else if(error.status === 404){
+            //             let notFoundMessage = JSON.parse(error.responseText);
+            //             let messageNotification = notFoundMessage.messages;
+            //             alertNotifications(error.status , messageNotification);
+            //         } else {
+            //             anyErrorsNotification(error.status , error.statusText , error);
+            //         }
+            //     }
+            //  });
         } else if(value_asesmen === "lihat_table") {
              let url = '{{route("kepsek.asesmen.show" , "id")}}';
              url = url.replace('id', id);

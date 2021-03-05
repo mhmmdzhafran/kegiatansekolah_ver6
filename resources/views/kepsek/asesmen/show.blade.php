@@ -170,7 +170,7 @@
                       $(".show_dokumen_text").append('Belum terdapat bukti dokummen'); 
                     } else {
                       $.each(res.data_dokumen, function(key,value){
-                        let dokumen_link = "{{asset('kegiatan/asesmen_internal/link')}}";
+                        let dokumen_link = "{{asset('storage/asesmen_internal/link')}}";
                         dokumen_link = dokumen_link.replace('link', value.nama_dokumen_asesmen);
                         $(".show-dokumen").append('<li> <i class="fa fa-file-alt"></i> '+value.nama_dokumen_asesmen+'</li> <button class="btn btn-primary btn-sm lihat_file mb-3" type="button" value="'+dokumen_link+'">Lihat File</button> <a href="'+dokumen_link+'" class="btn btn-info btn-sm mb-3" download="'+value.nama_dokumen_asesmen+'">Download File</a>');
                       });

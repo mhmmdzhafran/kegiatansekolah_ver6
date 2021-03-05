@@ -250,7 +250,8 @@
             $(".role_user").find("[value='"+users.role_id+"']").prop('selected' , true);
             if (picture !== null) {
                 $(".keterangan_foto").append('*Foto Pengguna Sudah Terunggah Sebelumnya!');
-                let fileLoc = '{{asset("kegiatan/admin/foto_user/images")}}';
+                // let fileLoc = '{{asset("kegiatan/admin/foto_user/images")}}';
+                let fileLoc = '{{asset("storage/photo_user_simppk/images")}}';
                 fileLoc = fileLoc.replace('images' , picture);
                 sourceFile = fileLoc;
                 $('.load-file').append('<li><i class="fas fa-file-alt mr-2"></i>'+picture+'<button type="button" class="btn btn-sm btn-primary preview-image mr-2 ml-2">Lihat Foto</button><a href="'+sourceFile+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+picture+'">Download Foto</a></li>');
@@ -350,6 +351,7 @@
                         title: "Berhasil",
                         text: result.store_message
                     });
+                    console.log(result);
                     $("#createUserForm")[0].reset();
                     $('#users-table').DataTable().ajax.reload();
                 },

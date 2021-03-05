@@ -8,6 +8,6 @@ class KategoriAsesmen extends Model
 {
     //
     public function PenjelasanAsesmen(){
-        return $this->hasOne('App\PenjelasanAsesmen');
+        return $this->hasMany('App\PenjelasanAsesmen');
     }
 }

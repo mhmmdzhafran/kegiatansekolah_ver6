@@ -1,11 +1,11 @@
+{{-- <script>
+    // for (let index = 2; index <= 10; index++) {
+    //     //<th class="text-center">No</th><th class="text-center">Penjelasan Assessment</th><th class="text-center">Skor</th><th class="text-center">Aksi Asesmen</th>
+    //     $(".table_asesmen_counter_"+index).append('<th class="text-center">No</th><th class="text-center">Penjelasan Asesmen</th><th class="text-center">Aksi Asesmen</th>');
+    // }
+</script> --}}
 <script>
-    for (let index = 2; index <= 10; index++) {
-        //<th class="text-center">No</th><th class="text-center">Penjelasan Assessment</th><th class="text-center">Skor</th><th class="text-center">Aksi Asesmen</th>
-        $(".table_asesmen_counter_"+index).append('<th class="text-center">No</th><th class="text-center">Penjelasan Asesmen</th><th class="text-center">Aksi Asesmen</th>');
-    }
-</script>
-<script>
-    var indikator_asesmen = "";
+    let indikator_asesmen = "";
     $(".lihat_form").on('click', function(){
             indikator_asesmen = $(this).attr('value');
             var id_asesmen = $(this).attr('data-target');
@@ -20,7 +20,7 @@
                 beforeSend: function(){
                     $(".lihat-dokumen").empty();
                     // $(".keterangan_skor").empty();
-                    $(".checkbox-keterangan-indikator").empty();
+                    $(".checkbox-keterangan-indikator_"+indikator_asesmen).empty();
                     $(".information-asesment").empty();
                     $(".information-asesment").addClass('d-none');
                     $(".state-asesmen").empty();    
@@ -29,7 +29,7 @@
                 success: function(result){
                     console.log(result);
                     loading_bar(false);
-                    var counter_penjelasan_skor = 0;
+                    // let counter_penjelasan_skor = 0;
                     $("#modalForm"+indikator_asesmen).modal();
                     var url = '{{route("kepsek.asesmen.update", "id")}}';
                     url = url.replace('id' , id_asesmen );
@@ -38,7 +38,8 @@
                     if (result.data.length >= 1) {
                         $(".lihat-dokumen").append('<b>Histori Dokumen Asesmen</b>');
                         $.each(result.data, function(key, value){
-                            let assets = "{{ asset('kegiatan/asesmen_internal/asset_dokumen')}}";
+                            // let assets = "{{ asset('kegiatan/asesmen_internal/asset_dokumen')}}";
+                            let assets = "{{ asset('storage/asesmen_internal/asset_dokumen')}}";
                             assets = assets.replace('asset_dokumen', value.nama_dokumen_asesmen);
                             $(".lihat-dokumen").append('<li class="mb-2"><i class="fas fa-file-alt mr-2"></i>'+value.nama_dokumen_asesmen+'<button class="btn btn-primary btn-sm ml-2 lihat_file" value="'+assets+'"type="button">Lihat File</button><a href="'+assets+'" class="btn btn-sm btn-info ml-2" download="'+value.nama_dokumen_asesmen+'">Download File</a><button type="button" class="btn btn-warning btn-sm ml-2 edit_file" value="'+id_asesmen+'" data-target="'+value.nama_dokumen_asesmen+'" data-target2="'+indikator_asesmen+'">Ubah File</button><button class="btn btn-danger btn-sm ml-2 delete_file" value="'+value.nama_dokumen_asesmen+'" data-target="'+indikator_asesmen+'" data-target2="'+id_asesmen+'"type="button">Hapus File</button></li>');
                             $(".lihat-dokumen").append('<input type="hidden" name="nama_dokumen_asesmen[]" value="'+value.nama_dokumen_asesmen+'">');
@@ -53,16 +54,14 @@
                     let dataSkor = $("#previous-score_"+indikator_asesmen).attr('value');
                     for (let index = 0; index < penjelasan_skor_asesmen.length; index++) {
                         const element = penjelasan_skor_asesmen[index];
-                        if (element.no == counter_penjelasan_skor) {
-                            // {!! Form::label('keterangan' , 'Keterangan Skor: ' , ['class' => 'alert alert-info']) !!}
-                            //<input type="radio" name="indikator" id="" value="0" class="form-group"><br>
-                            // $(".keterangan_skor").append('<li>'+element.keterangan_skor+'</li>');
-                            $(".checkbox-keterangan-indikator").append('<input type="radio" name="indikator" id="" value="'+index+'" class="form-group mr-2 mb-2">'+element.keterangan_skor+'<br>');
-                            if (typeof dataSkor !== 'undefined') {
-                                $(".checkbox-keterangan-indikator").find('[value="'+dataSkor+'"]').prop('checked', true);
-                            }
-                        }
-                        counter_penjelasan_skor++;
+                        $(".checkbox-keterangan-indikator_"+indikator_asesmen).append('<input type="radio" name="indikator" value="'+index+'" class="form-group mr-2 mb-2 indikator_penjelasan_'+indikator_asesmen+'">'+element.keterangan_skor+'<br>');
+                        // if (element.no == counter_penjelasan_skor) {
+                        //     // {!! Form::label('keterangan' , 'Keterangan Skor: ' , ['class' => 'alert alert-info']) !!}
+                        //     //<input type="radio" name="indikator" id="" value="0" class="form-group"><br>
+                        //     // $(".keterangan_skor").append('<li>'+element.keterangan_skor+'</li>');
+                        //     // $(".checkbox-keterangan-indikator").append('<input type="radio" name="indikator" value="'+index+'" class="form-group mr-2 mb-2 indikator_penjelasan_'+indikator_asesmen+'">'+element.keterangan_skor+'<br>');
+                        // }
+                        // counter_penjelasan_skor++;
                     }
                     if (result.histori_asesmen === "") {
                         //tambahin keterangan belom melakukan asesmen
@@ -70,6 +69,9 @@
                     } else {
                         $(".information-asesment").append('*Jika Ingin Menambah Dokumen Asesmen PPK / Mengubah Nilai Asesmen PPK, Isi bagian yang diperlukan!');
                         $(".information-asesment").removeClass('d-none');
+                        if (typeof dataSkor !== 'undefined') {
+                            $(".indikator_penjelasan_"+indikator_asesmen+"[value='"+dataSkor+"']").prop('checked', true)
+                        }
                     }
                 },
                 error: function(error){
@@ -348,7 +350,7 @@
                 url_ubah = url_ubah.replace("file" , file_name);
                 url_ubah = url_ubah.replace("body_indikator", body_indikator);
                 url_ubah = url_ubah.replace("id" , id_asesmen_dokumen);
-                var asset_dokumen_lama = '{{asset("kegiatan/asesmen_internal/docs")}}';
+                var asset_dokumen_lama = '{{asset("storage/asesmen_internal/docs")}}';
                 asset_dokumen_lama = asset_dokumen_lama.replace('docs' , file_name);
                 $("#ubah_dokumen_asesmen").attr('action', url_ubah);
                 $("#modalForm"+body_indikator).modal('hide');
@@ -429,7 +431,7 @@
               $("#error_indikator_"+indikator_body).empty();
               $(".dokumen-asesmen").empty();
               var url = '{{route("kepsek.asesmen.destroy" , ["file_name" => "file" , "id_indikator" => "id", "id_asesmen" => "asesmen_id"])}}';
-              let asset_dokumen_lama = '{{asset("kegiatan/asesmen_internal/docs")}}';
+              let asset_dokumen_lama = '{{asset("storage/asesmen_internal/docs")}}';
               asset_dokumen_lama = asset_dokumen_lama.replace('docs' , value_file);
               $(".dokumen-asesmen").append('<i class="fas fa-file-alt"></i><b class="ml-2">'+value_file+'</b><button class="btn btn-primary btn-sm ml-2 lihat_file" value="'+asset_dokumen_lama+'"type="button">Lihat File</button><a href="'+asset_dokumen_lama+'" class="btn btn-info btn-sm ml-2" download="'+value_file+'">Download File</a>');
               url = url.replace('file' , value_file);

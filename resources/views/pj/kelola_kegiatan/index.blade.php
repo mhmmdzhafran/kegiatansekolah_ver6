@@ -354,7 +354,8 @@ $('#pengajuan-table').DataTable({
                     }
 
                     if (res.status_dokumen) {
-                            var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                            // var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                            let asset = '{{asset("storage/pengajuan_kegiatan/asset_kegiatan")}}';
                             asset = asset.replace('asset_kegiatan', res.data.dokumen_kegiatan);
                             $("#upload-file").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
                         // $.each(dokumen, function(key, value){
@@ -416,7 +417,8 @@ $('#pengajuan-table').DataTable({
                     });
 
                     if (res.status_dokumen) {
-                            var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                            // var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                            let asset = '{{asset("storage/pengajuan_kegiatan/asset_kegiatan")}}';
                             asset = asset.replace('asset_kegiatan', res.data.dokumen_kegiatan);
                             $("#upload-ulang").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
                         // $.each(dokumen, function(key, value){

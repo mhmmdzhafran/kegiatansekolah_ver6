@@ -31,7 +31,7 @@
         @if (is_null($dokumentasi_kegiatan->user->photo_user))
           <img class="rounded-circle" src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" width="300" height="300">    
         @else
-          <img class="rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.$dokumentasi_kegiatan->user->photo_user) }}" alt="" srcset="" width="300" height="300">
+          <img class="rounded-circle" src="{{ asset('storage/photo_user_simppk/'.$dokumentasi_kegiatan->user->photo_user) }}" alt="" srcset="" width="300" height="300">
         @endif
       </div>
       <div class="col-6">
@@ -296,7 +296,7 @@
           if (dokumen_kegiatan.length > 0) {
             dokumen_kegiatan.forEach(element => {      
               const fileName = element.nama_dokumen;
-              let assets = '{{asset("kegiatan/dokumentasi_kegiatan/docs")}}';
+              let assets = '{{asset("storage/dokumentasi_kegiatan/docs")}}';
               assets = assets.replace('docs' , fileName);
               if (fileName.search('.docx') === -1 || fileName.search('.doc') === -1) {
                 $("#file_upload").append('<li class="mb-2"><i class="fas fa-file-alt mr-2"></i>'+fileName+'<button class="btn btn-primary btn-sm lihat_file ml-2 mr-2" value="'+assets+'">Lihat File</button><a href="'+assets+'" download="'+fileName+'" class="btn btn-info btn-sm mr-2">Download File</a></li>');
@@ -312,7 +312,7 @@
           if (image_kegiatan.length > 0) {
             image_kegiatan.forEach(element => {
               const imgName = element.nama_foto_kegiatan;
-              let assets = '{{asset("kegiatan/dokumentasi_kegiatan/image")}}';
+              let assets = '{{asset("storage/dokumentasi_kegiatan/image")}}';
               assets = assets.replace('image' , imgName);
               $("#img_upload").append('<img class="rounded-circle mb-2 mt-2 mr-2" src="'+assets+'" alt="" width="150" height="150">'+imgName+'<button type="button" class="btn btn-primary btn-sm lihat_file mr-2 ml-2" value="'+assets+'">Lihat File</button><a href="'+assets+'" class="btn btn-info btn-sm ml-2 mr-2" download="'+imgName+'">Download File</a><br>');
             });  

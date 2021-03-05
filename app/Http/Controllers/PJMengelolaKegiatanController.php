@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 // use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class PJMengelolaKegiatanController extends Controller
@@ -105,23 +106,10 @@ class PJMengelolaKegiatanController extends Controller
                 // );
                 $nama_dokumen_baru = $request->mulai_kegiatan."_Pengajuan-".$input['PJ_nama_kegiatan']."-".$name;
                 $input['dokumen_kegiatan'] = $nama_dokumen_baru;
-                $masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
+                // $masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
+                $masuk_file = $file->storeAs('pengajuan_kegiatan', $nama_dokumen_baru, 'public');
                     if($masuk_file){
-                       
-                        // $keterangan_default [] = array(
-                        //     'no' => 1,
-                        //     'keterangan_opsional' => ''
-                        // );
-                        // $keterangan_default [] = array(
-                        //     'no' => 2,
-                        //     'keterangan_wajib_ulang' => ''
-                        // );
-                        // $keterangan_default [] = array(
-                        //     'no' => 3,
-                        //     'keterangan_wajib' => ''
-                        // );
                         $input['nilai_ppk'] = $this->countPPK($request->nilai_ppk);
-                        // $keterangan = json_encode($keterangan_default);
                         $input['user_id'] = Auth::user()->id;
                         $input['keterangan_json'] = $dataPPKService->createKeteranganKegiatanPPK('Proposal');
                         $input['nama_pj'] = Auth::user()->name;
@@ -129,7 +117,8 @@ class PJMengelolaKegiatanController extends Controller
                         $kegiatan = PengajuanKegiatan::create($input);
                         if (!$kegiatan) {
                             //unlink dokumen
-                            unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
+                            // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
+                            Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
                             return Response::json(['errors' => ['Tidak dapat membentuk data Pengajuan Kegiatan, Silahkan coba kembali']], 422);
                         }
                         $statusSave = $kegiatan->StatusKegiatan()->save($statusDefault);
@@ -143,7 +132,8 @@ class PJMengelolaKegiatanController extends Controller
                                 'akhir_kegiatan' => $request->akhir_kegiatan
                             ])->first();
                             $searchKegiatan->delete();
-                            unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
+                            // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
+                            Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
                             return Response::json(['errors' => ['Sistem gagal menyimpan Kegiatan, Silahkan Coba Kembali']], 422);
                         }
                         event(new AjukanProposalKegiatanToKepalaSekolahEvent($kegiatan, $statusDefault));
@@ -170,13 +160,12 @@ class PJMengelolaKegiatanController extends Controller
             }
             $status_proposal = $pengajuan_kegiatan->statusKegiatan()->first();
             // $dokumen = json_decode($pengajuan_kegiatan->dokumen_kegiatan);
-            if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$pengajuan_kegiatan->nama_dokumen))) {
+            $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$pengajuan_kegiatan->nama_dokumen);
+            if ($exists) {
                 return Response::json(['data' => $pengajuan_kegiatan, 'status_dokumen' => true , 'status_proposal' => $status_proposal ], 200);   
             } else {
                 return Response::json(['data' => $pengajuan_kegiatan, 'status_dokumen' => false , 'status_proposal' => $status_proposal], 200);      
             }
-            // foreach ($dokumen as $item) {
-            // }
         }
     }
 
@@ -196,13 +185,12 @@ class PJMengelolaKegiatanController extends Controller
                 return Response::json(['messages' => 'Data Pengajuan Kegiatan tidak dapat ditemukan, Silahkan Coba kembali dan kontak Admin! ID yang diberikan: '.$id." System error message: ".$pengajuan_kegiatan ], 404);
             }
             // $dokumen = json_decode($pengajuan_kegiatan->dokumen_kegiatan);
-            if (file_exists(public_path('kegiatan/pengajuan_kegiatan/'.$pengajuan_kegiatan->nama_dokumen))) {
+            $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$pengajuan_kegiatan->nama_dokumen);
+            if ($exists) {
                 return Response::json(['data' => $pengajuan_kegiatan, 'status_dokumen' => true], 200);   
             } else {
                 return Response::json(['data' => $pengajuan_kegiatan, 'status_dokumen' => false], 200);      
             }
-            // foreach ($dokumen as $item) {
-            // }
         }
     }
 
@@ -261,9 +249,11 @@ class PJMengelolaKegiatanController extends Controller
                 return response()->json(['data' => 'data is not valid', 'errors' => ['Tidak dapat memproses data, silahkan mencoba lagi']], 422);   
             }
             //unlink file dokumen yang kemaren dikirim
-            unlink(public_path('kegiatan/pengajuan_kegiatan/'.$file_lama));
+            // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$file_lama));
+            Storage::disk('public')->delete('pengajuan_kegiatan/'.$file_lama);
             //update menjadi file baru dan taro di directory
-            $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_ulang);
+            // $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_ulang);
+            $file->storeAs('pengajuan_kegiatan', $nama_dokumen_ulang, 'public');
             
             event(new AjukanProposalKegiatanToKepalaSekolahEvent($pengajuan_ulang, $status_ulang));
             return response()->json(['data' => 'data is valid'], 200);

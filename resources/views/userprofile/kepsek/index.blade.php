@@ -30,9 +30,9 @@
                         <div class="row mt-5">
                             <div class="col-sm-12 col-lg-3">
                                 @if (is_null(Auth::user()->photo_user))
-                                <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" style=" width: 100%; max-width: 400px; height: auto;">
+                                    <img src="{{ asset('logo/logo_smp_islam_sabilurrosyad.png') }}" alt="" srcset="" style=" width: 100%; max-width: 400px; height: auto;">
                                 @else
-                                <img class="rounded-circle" src="{{ asset('kegiatan/admin/foto_user/'.Auth::user()->photo_user) }}" alt="" srcset="" width="300" height="300" style="width: 100%">
+                                    <img class="rounded-circle" src="{{ asset('storage/photo_user_simppk/'.Auth::user()->photo_user) }}" alt="" srcset="" width="300" height="300" style="width: 100%">
                                 @endif
                             </div>
                             <div class="col-sm-12 col-lg-9">
