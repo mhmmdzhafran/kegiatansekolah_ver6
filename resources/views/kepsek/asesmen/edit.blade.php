@@ -57,7 +57,7 @@
                           <div class="collapse show" id="collapseCardExample">
                             <div class="card-body">
                                 <div id="accordion">
-                                    @include('_partials/internal/test_view_asesmen')
+                                    @include('_partials/internal/format_asesmen_indikator')
                                 </div>
                             </div>
                           </div>
@@ -194,6 +194,6 @@
 @endsection
 
 @section('script')
-  @include('_partials/internal/assessment_internal_script')
+  @include('_partials/internal/assessment_internal_scripts')
 @endsection
 

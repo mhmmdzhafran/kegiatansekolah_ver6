@@ -9,23 +9,22 @@ use App\Mail\DeletedUserAccountMail;
 use App\Mail\UpdatedUserAccountMail;
 use App\Repository\FindDataRepository;
 use App\Role;
+use App\Services\FileUploadService;
 use App\User;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 
 class AdminUserController extends Controller
 {
     protected $findData;
-    public function __construct(FindDataRepository $findDataRepository)
+    protected $fileService;
+    public function __construct(FindDataRepository $findDataRepository, FileUploadService $fileUploadService)
     {
         $this->middleware('auth');
         $this->findData = $findDataRepository;
+        $this->fileService = $fileUploadService;
     }
 
     /**
@@ -59,18 +58,6 @@ class AdminUserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-        // $roles = Role::pluck('role_title', 'id')->all();
-        // return view('admin.user.create', compact('roles'));
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -89,19 +76,18 @@ class AdminUserController extends Controller
         ]);
         $fileImage = $request->file('photo_user');
         $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
-        // $customNameFile = $this->photoUserNamingScheme($fileImage->getClientOriginalName(), $request->username_id);
-        
-        $input['photo_user'] = $customNameFile;
-        $input['password'] = bcrypt($request->password);
-        // $moveImage = $fileImage->move('kegiatan/admin/foto_user/',$customNameFile);
-        $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
-        if (!$moveImage) {
+        $moveImage = $this->fileService->singleFileUpload($fileImage, $customNameFile, 'upload_img_user');
+        // $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
+        if (gettype($moveImage) == 'boolean' && !$moveImage) {
             return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
         }
+        $input['photo_user'] = $customNameFile;
+        $input['password'] = bcrypt($request->password);
         $user = User::create($input);
         if (!$user) {
             // unlink(public_path('kegiatan/admin/foto_user/'.$customNameFile));
-            Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
+            $this->fileService->removeSingleFileUpload($input['photo_user'], 'delete_user_img');
+            // Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
             return Response::json(['message' => 'saving data is error', 'errors' => ['Terjadi Kendala saat melakukan Penyimpanan, Silahkan coba kembali']],422);
         }
         $getUser = User::where([
@@ -118,17 +104,6 @@ class AdminUserController extends Controller
         Mail::to($request->email_user)->send(new CreatedUserAccountMail($getUser, $request->passwordChecker, $url));
         return Response::json(['data' => 'data is valid' , 'store_message' => 'Akun Pengguna Berhasil Dibentuk'], 200);
            
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -164,7 +139,7 @@ class AdminUserController extends Controller
         if (gettype($user) == 'string') {
             return Response::json(['messages' => 'Data User PPK tidak dapat ditemukan, Silahkan Coba Kembali dan cek Database untuk melihat User ini! id yang diberikan dalam user db: '.$id.'System Error Code: '.$user], 404);
         }
-        
+        $customNameFile = '';
         $input = $request->only([
             'name', 
             'username_id',
@@ -182,17 +157,17 @@ class AdminUserController extends Controller
                 $customNameFile = $user->photo_user;       
             }
         } else {
-            //"USER-ACC-".$username."-".$photo
             $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
-            // $customNameFile = $this->photoUserNamingScheme($fileImage->getClientOriginalName(), $request->username_id);
             if (!is_null($user->photo_user)) {
                 $exists = Storage::disk('public')->exists('photo_user_simppk/'.$customNameFile);
                 if ($exists) {
-                    Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
+                    $this->fileService->removeSingleFileUpload($customNameFile, 'delete_user_img');
+                    // Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
                 }  
             }
-            $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
-            if (!$moveImage) {
+            $moveImage = $this->fileService->singleFileUpload($fileImage, $customNameFile, 'upload_img_user');
+            // $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
+            if (gettype($moveImage) == 'boolean' && !$moveImage) {
                 return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
             }
         }
@@ -231,7 +206,8 @@ class AdminUserController extends Controller
         if (!is_null($user_photo)) {
             $exists = Storage::disk('public')->exists('photo_user_simppk/'.$user_photo);
             if ($exists) {
-                Storage::disk('public')->delete('photo_user_simppk/'.$user_photo);
+                $this->fileService->removeSingleFileUpload($user_photo, 'delete_user_img');
+                // Storage::disk('public')->delete('photo_user_simppk/'.$user_photo);
             }
         }
         

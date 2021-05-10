@@ -115,7 +115,7 @@ class KepalaSekolahAssessmenController extends Controller
         $assessment_json = json_decode($assessmen_internal->indikator_skor_penilaian_ppk);
         // $dokumen = $assessmen_internal->dokumenAsesmen()->get();
         $id_asesmen = $id;
-        $kategori_asesmen = KategoriAsesmen::all();
+        $kategori_asesmen = KategoriAsesmen::withCount('PenjelasanAsesmen')->get();
         // $get_kategori = KategoriAsesmen::all();
         // return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json', 'dokumen' , 'id_asesmen' , 'get_kategori'));
         return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json',  'id_asesmen', 'kategori_asesmen'));
@@ -168,13 +168,13 @@ class KepalaSekolahAssessmenController extends Controller
         if (request()->ajax()) {
             // if (Auth::check()) {
                 $assessmen_internal =  $this->findData->findDataModel($id_asesmen, 'Asesmen');
-                $penjelasan_asesmen = $this->findData->findDataModel($body_indikator_dokumen, 'Penjelasan');
+                $data_penjelasan_asesmen = $this->findData->findDataModel($body_indikator_dokumen, 'Penjelasan');
                 if (gettype($assessmen_internal) == 'string') {
                     return response()->json(['message' => 'Data Asesmen Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id_asesmen.', System Error Message: '. $assessmen_internal], 404);
-                } elseif(gettype($penjelasan_asesmen) == 'string'){
-                    return response()->json(['message' => 'Data Asesmen Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$body_indikator_dokumen.', System Error Message: '. $penjelasan_asesmen], 404);
+                } elseif(gettype($data_penjelasan_asesmen) == 'string'){
+                    return response()->json(['message' => 'Data Asesmen Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$body_indikator_dokumen.', System Error Message: '. $data_penjelasan_asesmen], 404);
                 }
-                $keterangan_skor = $penjelasan_asesmen->KeteranganSkor()->get();
+                $keterangan_skor = $data_penjelasan_asesmen->KeteranganSkor()->get();
                 foreach ($keterangan_skor as $item_skor) {
                     $informasi_skor_asesmen = json_decode($item_skor->keterangan_skor);
                 }
@@ -183,7 +183,8 @@ class KepalaSekolahAssessmenController extends Controller
                 foreach ($json_assessmen as $ambil_penjelasan) {
                     if ($ambil_penjelasan->no == $body_indikator_dokumen) {                       
                         $histori_asesmen = $ambil_penjelasan->penjelasan_assessment;
-                        return Response::json(['data' => $dokumen , 'penjelasan_skor' => $informasi_skor_asesmen , 'penjelasan_asesmen' => $penjelasan_asesmen , 'histori_asesmen' => $histori_asesmen], 200);           
+                        $skor_asesmen = $ambil_penjelasan->skor_penilaian_assessment;
+                        return Response::json(['data' => $dokumen , 'penjelasan_skor' => $informasi_skor_asesmen , 'data_penjelasan_asesmen' => $data_penjelasan_asesmen , 'histori_asesmen' => $histori_asesmen, 'skor_asesmen' => $skor_asesmen], 200);           
                     }
                 }
         }
@@ -204,7 +205,7 @@ class KepalaSekolahAssessmenController extends Controller
         }
 
         // $penjelasan_asesmen = PenjelasanAsesmen::all();
-        $kategori_asesmen = KategoriAsesmen::with('PenjelasanAsesmen')->get();
+        $kategori_asesmen = KategoriAsesmen::withCount('PenjelasanAsesmen')->with('PenjelasanAsesmen')->get();
         $json_assessmen = json_decode($assessment->indikator_skor_penilaian_ppk);
 
         return view('kepsek.asesmen.edit', compact('assessment' , 'json_assessmen' , 'kategori_asesmen' ));
@@ -239,7 +240,7 @@ class KepalaSekolahAssessmenController extends Controller
         $kumpulan_dokumen = [];
         $json_assessmen = json_decode($assessmen_internal->indikator_skor_penilaian_ppk);
         foreach ($json_assessmen as $item) {
-            if ($item->no == $request->assessment) {
+            if ($item->no == $request->indikator_assessment) {
                 $item->skor_penilaian_assessment = intval($request->indikator);
                 $item->penjelasan_assessment = $request->penjelasan_assessment;
             }
@@ -298,7 +299,7 @@ class KepalaSekolahAssessmenController extends Controller
         $input['skor_penilaian_kegiatan_akhir'] = $skor_akhir;
         
         if (is_null($file)) {
-            $is_dokumen_uploaded = $assessmen_internal->dokumenAsesmen()->where([['body_indikator_dokumen' , '=' , $request->assessment]])->get();
+            $is_dokumen_uploaded = $assessmen_internal->dokumenAsesmen()->where([['body_indikator_dokumen' , '=' , $request->indikator_assessment]])->get();
             if (count($is_dokumen_uploaded) == 0) {
                 return Response::json(['errors' => ['Indikator ini belum terdapat File yang diunggah, silahkan mengunggah file dengan ekstensi .pdf']], 422);
             }
@@ -320,7 +321,7 @@ class KepalaSekolahAssessmenController extends Controller
         
         //strictly for storing skor dan upload dokumen
         /** Revision Code Here */
-        $kumpulan_dokumen = $fileUploadService->multipleStoreFileKegiatan($file, $assessmen_internal, 'Asesmen', 'dokumenAsesmen', $request->assessment);
+        $kumpulan_dokumen = $fileUploadService->multipleStoreFileKegiatan($file, $assessmen_internal, 'Asesmen', 'dokumenAsesmen', $request->indikator_assessment);
         if (gettype($kumpulan_dokumen) == 'object') {
             return $kumpulan_dokumen;
         }
@@ -330,7 +331,7 @@ class KepalaSekolahAssessmenController extends Controller
             return Response::json(['message' => 'data is valid'], 200);
         } else {
             $res_kumpulan_dokumen = $fileUploadService->fileArrTypeChecker($kumpulan_dokumen);
-            $fileUploadService->removeKumpulanFile($res_kumpulan_dokumen, $assessmen_internal, 'asesmen', $request->assessment);
+            $fileUploadService->removeKumpulanFile($res_kumpulan_dokumen, $assessmen_internal, 'asesmen', $request->indikator_assessment);
             return Response::json(['message'=>'data is not valid' , 'errors' => ['Tidak dapat melakukan Update Penilaian, Silahkan Coba Kembali']], 422);
         }
     }

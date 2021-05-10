@@ -11,12 +11,8 @@ use App\PengajuanKegiatan;
 use App\Repository\FindDataRepository;
 use App\Services\DataPPKService;
 use App\StatusKegiatan;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
 
 class KepalaSekolahMengelolaKegiatanController extends Controller
 {
@@ -44,7 +40,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 $status_pengajuan =  $pengajuan->statusKegiatan->pluck('nama')->implode('<br>');
                 $status_indikator = $this->dataPPK->statusKegiatanPPK("Pengajuan", $status_pengajuan, "Proposal Kegiatan");
                 return $status_indikator;
-            })->addColumn('data_pengajuan', function($data){
+            })->addColumn('action_btn', function($data){
                 foreach($data->statusKegiatan as $data_pengajuan){
                     if($data_pengajuan->pivot->status_kegiatanable_type == "App\PengajuanKegiatan"){
                         if ($data_pengajuan->pivot->status_kegiatan_id == 3 && $data_pengajuan->pivot->status_kegiatanable_id == $data->id) {
@@ -75,7 +71,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 }
                 return $data_user;
             })
-            ->rawColumns(['statusKegiatan', 'data_pengajuan', 'nilai_ppk'])->make(true);       
+            ->rawColumns(['statusKegiatan', 'action_btn', 'nilai_ppk'])->make(true);       
         }        
 
        return view('kepsek.kelola_kegiatan.index');
@@ -111,7 +107,8 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
             //     $nama_dokumen = $isi_data_dokumen->nama_dokumen;
             // }
             if (!is_null($data_pengajuan_kegiatan->dokumen_kegiatan)) {
-                if (file_exists(public_path('storage/pengajuan_kegiatan/'.$data_pengajuan_kegiatan->dokumen_kegiatan))) {
+                $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$data_pengajuan_kegiatan->dokumen_kegiatan);
+                if ($exists) {
                     return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => true, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
                 }
                 return Response::json(['data' => $data_pengajuan_kegiatan, 'status_kegiatan' => $status_kegiatan ,'status_dokumen' => false, 'username' => $usersName, 'image_status' => $imgState, 'user' => $data_user], 200);
@@ -341,7 +338,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 $status_indikator = $dokumentasi->statusKegiatan->pluck('nama')->implode('<br>');
                 $status = $this->dataPPK->statusKegiatanPPK("Dokumentasi",$status_indikator, $dokumentasi->tipe_kegiatan);
                 return $status;
-             })->addColumn('unggah_dokumentasi', function($data){
+             })->addColumn('action_btn', function($data){
                 foreach ($data->statusKegiatan as $item) {
                     if ($item->pivot->status_kegiatanable_type == "App\DokumentasiKegiatan") {
                         if ($item->pivot->status_kegiatan_id == 2) {
@@ -369,7 +366,7 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                 }
                 return $data_user;
              })
-             ->rawColumns(['statusKegiatan', 'unggah_dokumentasi' , 'nilai_ppk'])->make(true);
+             ->rawColumns(['statusKegiatan', 'action_btn' , 'nilai_ppk'])->make(true);
          }
         return view('kepsek.pengajuan_dokumentasi_kegiatan.index');
     }
@@ -530,7 +527,8 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
                     // }
                     $keterangan_pengajuan = json_decode($kegiatan->keterangan_json);
                     if (!is_null($kegiatan->dokumen_kegiatan)) {
-                        if (file_exists(public_path('storage/pengajuan_kegiatan/'.$kegiatan->dokumen_kegiatan))) {
+                        $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$kegiatan->dokumen_kegiatan);
+                        if ($exists) {
                             return Response::json(['status' => true, 'data_dokumen' => $kegiatan->dokumen_kegiatan , 'data' => $kegiatan, 'keterangan' => $keterangan_pengajuan], 200);
                         } else {
                             return Response::json(['status' => false, 'data_dokumen' => "Tidak terdapat Dokumen Pengajuan Kegiatan", 'data' => $kegiatan , 'keterangan' => $keterangan_pengajuan], 200);
@@ -634,55 +632,4 @@ class KepalaSekolahMengelolaKegiatanController extends Controller
         }
     }
 
-    // private function statusKegiatan($kegiatan, $status , $type){
-    //     if ($kegiatan == "Pengajuan" && $type == "Proposal Kegiatan") {
-    //         if($status =="Belum Disetujui"){
-    //             $btn_status = "<h6 class='text-center alert alert-info alert-heading font-weight-bolder'>".$status."</h6>";
-    //         }
-    //         elseif($status == "Sudah Disetujui"){
-    //             $btn_status ="<h6 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status."</h6>";
-    //         }
-    //         elseif($status == "Pengajuan Ulang"){
-    //             $btn_status = "<h6 class='text-center alert alert-warning alert-heading font-weight-bolder'>Sedang ".$status."</h6>";
-    //         }
-    //         elseif($status == "Menolak"){
-    //             $btn_status = "<h6 class='text-center alert alert-danger alert-heading font-weight-bolder'>".$status."</h6>";
-    //         }
-    //     } elseif($kegiatan == "Dokumentasi"){
-    //         if ($status == "Unggah Dokumentasi") {
-    //             if($type == "Pengajuan Historis"){
-    //                 $btn_status = "<h6 class='text-center alert alert-warning alert-heading font-weight-bolder'>Belum ".$status."(".$type.")</h6>";
-    //             } else {
-    //                 $btn_status = "<h6 class='text-center alert alert-warning alert-heading font-weight-bolder'>Belum ".$status."</h6>";
-    //             }
-    //         } elseif($status == "Sudah Mengunggah Dokumentasi"){
-    //             if($type == "Pengajuan Historis"){
-    //                 $btn_status = "<h6 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status."(".$type.")</h6>";
-    //             } else {
-    //                 $btn_status = "<h6 class='text-center alert alert-success alert-heading font-weight-bolder'>".$status."</h6>";
-    //             }
-    //         } elseif($status == "Belum Disetujui"){
-    //             $btn_status = "<h6 class='text-center alert alert-primary alert-heading font-weight-bolder'>".$status."</h6>";
-    //         } elseif($status == "Pengajuan Ulang"){
-    //            $btn_status = "<h6 class='text-center alert alert-info alert-heading font-weight-bolder'>Sedang ".$status."</h6>";
-    //         }
-    //     }
-    //     return $btn_status;
-    // }
-
-    // private function getDataPPK($dataPPK){
-    //     $id_nilai_ppk = 1;
-    //     $data_ppk = "";
-    //     foreach ($dataPPK as $item_ppk) {
-    //         if (count($dataPPK) == $id_nilai_ppk) {
-    //             $data_ppk .=  $item_ppk->nilai_ppk;
-    //         }
-    //         else{
-    //             $data_ppk .= $item_ppk->nilai_ppk.", ";
-    //         }
-    //         $id_nilai_ppk++;
-    //     }
-    //     return $data_ppk;
-    // }
-    
 }

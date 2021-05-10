@@ -54,7 +54,7 @@
           $assessment_limit_kategori_10 = 49;
         @endphp
 
-        @include('_partials/skor/skor_akhir_1')
+        {{-- @include('_partials/skor/skor_akhir_1')
 
         @include('_partials/skor/skor_akhir_2')
 
@@ -72,7 +72,9 @@
         
         @include('_partials/skor/skor_akhir_9')
 
-        @include('_partials/skor/skor_akhir_10')
+        @include('_partials/skor/skor_akhir_10') --}}
+
+        @include('_partials/skor/testing_skor')
         
         <tbody>
             <td class="font-weight-bold text-center">Hasil Akhir</td>

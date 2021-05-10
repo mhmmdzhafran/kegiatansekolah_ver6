@@ -1,4 +1,5 @@
 <div class="card shadow-sm">
+  {{-- TODO: FIX THIS --}}
     @php
         $counter_indikator = 1;
         $counter_asesmen = 1;

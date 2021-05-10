@@ -537,7 +537,7 @@
                 {data: 'kegiatan_berbasis', name: 'kegiatan_berbasis'},
                 {data: 'updated_at' , name: 'updated_at'},
                 {data: 'statusKegiatan', name: 'statusKegiatan.nama' , orderable: false},
-                {data: 'unggah_dokumentasi' , name: 'unggah_dokumentasi', orderable: false}
+                {data: 'action_btn' , name: 'action_btn', orderable: false}
             ],
             order: [[4, "desc"]]
         });

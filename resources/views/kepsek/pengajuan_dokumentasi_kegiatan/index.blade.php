@@ -208,7 +208,7 @@
                 {data: 'updated_at' , name:'updated_at'},
                 {data: 'nama_pj' , name: 'nama_pj'},
                 {data: 'statusKegiatan', name: 'statusKegiatan.nama' , orderable: false},
-                {data: 'unggah_dokumentasi', name:'unggah_dokumentasi', orderable: false}
+                {data: 'action_btn', name:'action_btn', orderable: false}
             ],
             order: [[4, "desc"]]
         });

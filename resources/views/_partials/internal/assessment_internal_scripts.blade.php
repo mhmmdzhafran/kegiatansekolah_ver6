@@ -1,9 +1,10 @@
 <script>
     let indikator_asesmen = "";
     $(".lihat_form").on('click', function(){
+            $("#form_indikator")[0].reset();
             indikator_asesmen = $(this).attr('value');
-            var id_asesmen = $(this).attr('data-target');
-            var url_dokumen = "{{route('kepsek.asesmen.ambilDetail', ['id_asesmen' => 'ids', 'id' => 'id_indikator'])}}";
+            let id_asesmen = $(this).attr('data-target');
+            let url_dokumen = "{{route('kepsek.asesmen.ambilDetail', ['id_asesmen' => 'ids', 'id' => 'id_indikator'])}}";
             url_dokumen = url_dokumen.replace('ids', id_asesmen);
             url_dokumen = url_dokumen.replace('id_indikator', indikator_asesmen);
             $.ajax({
@@ -12,23 +13,26 @@
                 dataType: 'JSON',
                 cache: false,
                 beforeSend: function(){
-                    $(".lihat-dokumen").empty();
+                    $("#lihat-dokumen").empty();
                     // $(".keterangan_skor").empty();
-                    $(".checkbox-keterangan-indikator_"+indikator_asesmen).empty();
-                    $(".information-asesment").empty();
-                    $(".information-asesment").addClass('d-none');
-                    $(".state-asesmen").empty();    
+                    $("#checkbox-keterangan-indikator").empty();
+                    $("#penjelasan_assessment").val();
+                    $("#show_penjelasan").empty();
+                    $("#information-asesment").empty();
+                    $("#information-asesment").addClass('d-none');
+                    $("#show-score").empty();
                     loading_bar(true);
                 },
                 success: function(result){
                     console.log(result);
                     loading_bar(false);
                     // let counter_penjelasan_skor = 0;
-                    $("#modalForm"+indikator_asesmen).modal();
-                    var url = '{{route("kepsek.asesmen.update", "id")}}';
+                    $("#modalForm").modal();
+                    let url = '{{route("kepsek.asesmen.update", "id")}}';
                     url = url.replace('id' , id_asesmen );
-                    $("#form_"+indikator_asesmen).attr('action' , url); 
-                    $(".lihat-dokumen").show();
+                    $("#indikator_assessment").val(indikator_asesmen);
+                    $("#form_indikator").attr('action' , url); 
+                    $(".lihat-dokumen").empty();
                     if (result.data.length >= 1) {
                         $(".lihat-dokumen").append('<b>Histori Dokumen Asesmen</b>');
                         $.each(result.data, function(key, value){
@@ -42,45 +46,43 @@
                     else if(result.data.length === 0){
                         $(".lihat-dokumen").append('<b class="text-center font-weight-bolder">Belum Mengunggah Dokumen</b>');
                     }
-                    // var penjelasan
-                    // $(".keterangan_skor").append('{!! Form::label("keterangan" , "Keterangan Skor: ") !!}<br>');
+                    $("#penjelasan_assessment").val(result.data_penjelasan_asesmen.penjelasan_asesmen);
+                    $("#show_penjelasan").append(result.data_penjelasan_asesmen.penjelasan_asesmen);
                     let penjelasan_skor_asesmen = result.penjelasan_skor;
-                    let dataSkor = $("#previous-score_"+indikator_asesmen).attr('value');
+                    let dataSkor = result.skor_asesmen;
                     for (let index = 0; index < penjelasan_skor_asesmen.length; index++) {
                         const element = penjelasan_skor_asesmen[index];
-                        $(".checkbox-keterangan-indikator_"+indikator_asesmen).append('<input type="radio" name="indikator" id="indikator" value="'+index+'" class="form-group mr-2 mb-2 indikator_penjelasan_'+indikator_asesmen+'">'+element.keterangan_skor+'<br>');
-                        // if (element.no == counter_penjelasan_skor) {
-                        //     // {!! Form::label('keterangan' , 'Keterangan Skor: ' , ['class' => 'alert alert-info']) !!}
-                        //     //<input type="radio" name="indikator" id="" value="0" class="form-group"><br>
-                        //     // $(".keterangan_skor").append('<li>'+element.keterangan_skor+'</li>');
-                        //     // $(".checkbox-keterangan-indikator").append('<input type="radio" name="indikator" value="'+index+'" class="form-group mr-2 mb-2 indikator_penjelasan_'+indikator_asesmen+'">'+element.keterangan_skor+'<br>');
-                        // }
-                        // counter_penjelasan_skor++;
+                        $("#checkbox-keterangan-indikator").append('<input type="radio" name="indikator" id="indikator" value="'+index+'" class="form-group mr-2 mb-2 indikator_penjelasan">'+element.keterangan_skor+'<br>');
                     }
                     if (result.histori_asesmen === "") {
                         //tambahin keterangan belom melakukan asesmen
-                        $(".state-asesmen").append('<b class="text-center font-weight-bolder">Belum Melakukan Asesmen</b>');
+                        $("#show-score").removeClass('alert-success');
+                        $("#show-score").addClass('alert-info');
+                        $("#show-score").append('<b class="text-center font-weight-bolder">Belum Melakukan Asesmen</b>');
                     } else {
-                        $(".information-asesment").append('*Jika Ingin Menambah Dokumen Asesmen PPK / Mengubah Nilai Asesmen PPK, Isi bagian yang diperlukan!');
-                        $(".information-asesment").removeClass('d-none');
+                        $("#show-score").removeClass('alert-info');
+                        $("#show-score").addClass('alert-success');
+                        $("#information-asesment").append('*Jika Ingin Menambah Dokumen Asesmen PPK / Mengubah Nilai Asesmen PPK, Isi bagian yang diperlukan!');
+                        $("#information-asesment").removeClass('d-none');
                         if (typeof dataSkor !== 'undefined') {
-                            $(".indikator_penjelasan_"+indikator_asesmen+"[value='"+dataSkor+"']").prop('checked', true)
+                            $("#show-score").append(`<b>Histori Asesmen</b><ul><li>Skor Asesmen: ${dataSkor}</li><input type="hidden" id="previous-score_asesmen" value="${dataSkor}"></ul>`);
+                            $(".indikator_penjelasan[value='"+dataSkor+"']").prop('checked', true)
                         }
                     }
                 },
                 error: function(error){
                     loading_bar(false);
-                        if (error.status === 404) {
-                            let errors = JSON.parse(error.responseText);
-                            alertNotificationErrorAndLogin(error.status, errors.messages);
-                        }
-                        else if (error.status === 401){
-                            let errors = JSON.parse(error.responseText);
-                            alertNotificationErrorAndLogin(error.status, errors.message);
-                        }
-                        else{
-                           anyErrors(error.status , error.statusText , error);
-                        }
+                    if (error.status === 404) {
+                        let errors = JSON.parse(error.responseText);
+                        alertNotificationErrorAndLogin(error.status, errors.messages);
+                    }
+                    else if (error.status === 401){
+                        let errors = JSON.parse(error.responseText);
+                        alertNotificationErrorAndLogin(error.status, errors.message);
+                    }
+                    else{
+                        anyErrors(error.status , error.statusText , error);
+                    }
                 }
             });
                
@@ -93,7 +95,7 @@
                 'X-CSRF-TOKEN': $('[name = "_token"]').val()
             }
           });
-        var formHas = $(this).attr("id").search('form');
+        var formHas = $(this).attr("id").search('form_indikator');
         if (formHas === 0) {
         //   var value_indikator = $(this).attr('data-form');        
           var url = '{{route("kepsek.asesmen.update", "id")}}';
@@ -110,8 +112,8 @@
               beforeSend: function(){
                 $(".submit_form").attr('disabled', true);
                 $(".close_modal").attr('disabled', true);
-                $("#error_indikator_"+indikator_asesmen).empty();
-                $("#error_indikator_"+indikator_asesmen).addClass('d-none');
+                $("#error_indikator").empty();
+                $("#error_indikator").addClass('d-none');
                 progressBar('show');
               },
               xhr: function(){
@@ -142,7 +144,7 @@
                 progressBar('hide');
                 $(".submit_form").attr('disabled', false);
                 $(".close_modal").attr('disabled', false);
-                $("#error_indikator_"+indikator_asesmen).removeClass('d-none');
+                $("#error_indikator").removeClass('d-none');
                 if (result.status === 404) {
                     let error_not_found = JSON.parse(result.responseText);
                     alertNotificationErrorAndLogin(result.status , error_not_found.messages);
@@ -152,7 +154,7 @@
                 } else if(result.status === 422){
                     let value_error = JSON.parse(result.responseText);
                     $.each(value_error.errors, function(key, value){
-                        $("#error_indikator_"+indikator_asesmen).append('<li class="mb-2">'+value+'</li>');
+                        $("#error_indikator").append('<li class="mb-2">'+value+'</li>');
                     });   
                     Swal.fire({
                         icon: 'error',
@@ -316,12 +318,10 @@
                 });
             });
 
-            for (let index = 1; index <= 49; index++) {
-                $("#modalForm"+index).on('hidden.bs.modal', function(){
-                    $("#error_indikator_"+index).empty();
-                    $("#error_indikator_"+index).addClass('d-none');
-                });
-            }
+            $("#modalForm").on('hidden.bs.modal', function(){
+                $("#error_indikator").empty();
+                $("#error_indikator").addClass('d-none');
+            });
     
             $(document).on('click', '.lihat_file', function(){
                     var value = $(this).attr('value');
@@ -347,7 +347,7 @@
                 var asset_dokumen_lama = '{{asset("storage/asesmen_internal/docs")}}';
                 asset_dokumen_lama = asset_dokumen_lama.replace('docs' , file_name);
                 $("#ubah_dokumen_asesmen").attr('action', url_ubah);
-                $("#modalForm"+body_indikator).modal('hide');
+                $("#modalForm").modal('hide');
                 $(".lihat_dokumen").append('<i class="fas fa-file-alt"></i><b class="ml-2">'+file_name+'</b><button class="btn btn-primary btn-sm ml-2 lihat_file" value="'+asset_dokumen_lama+'"type="button">Lihat File</button><a href="'+asset_dokumen_lama+'" class="btn btn-info btn-sm ml-2" download="'+file_name+'">Download File</a>');
                 $("#edit_file").css({
                     'overflow-y' : 'auto'
@@ -359,7 +359,7 @@
                 $(".lihat_dokumen").empty();
                 $("#kurang_indikator_asesmen_dokumen").empty();
                 $("#kurang_indikator_asesmen_dokumen").addClass('d-none');
-                $("#modalForm"+indikator_asesmen).modal();
+                $("#modalForm").modal();
             });
 
         // });
@@ -410,19 +410,23 @@
       $(".add_file").click(function(){
           var value = $(this).attr('value');
           document_row++;
-          $('#upload-file_'+value).append('<input type="file" name="file[]" id="row'+document_row+'" placeholder="Enter your Name" class = "mb-2" /><button type="button" name="remove" id="'+document_row+'" class="btn btn-sm btn-danger btn_remove">X</button>');          
+          $('#upload-file_indikator_asesmen').append('<input type="file" name="file[]" id="row'+document_row+'" placeholder="Enter your Name" class = "mb-2" /><button type="button" name="remove" id="'+document_row+'" class="btn btn-sm btn-danger btn_remove">X</button>');          
       })
           $(document).on('click', '.btn_remove', function(){  
               var button_id = $(this).attr("id");   
               $('#'+button_id+'').remove();  
               $('#row'+button_id).remove();
+              document_row--;
+              if (document_row <= 0) {
+                  document_row = 1;
+              }
           });
 
           $(document).on('click' , '.delete_file', function(){
               let value_file = $(this).attr('value');
               indikator_body = $(this).attr('data-target');
               let id_asesmen = $(this).attr('data-target2');
-              $("#error_indikator_"+indikator_body).empty();
+              $("#error_indikator").empty();
               $(".dokumen-asesmen").empty();
               var url = '{{route("kepsek.asesmen.destroy" , ["file_name" => "file" , "id_indikator" => "id", "id_asesmen" => "asesmen_id"])}}';
               let asset_dokumen_lama = '{{asset("storage/asesmen_internal/docs")}}';
@@ -432,12 +436,12 @@
               url = url.replace('id' , indikator_body);
               url = url.replace('asesmen_id', id_asesmen);    
               $("#delete_dokumen").attr('action', url);              
-              $("#modalForm"+indikator_body).modal('hide');
+              $("#modalForm").modal('hide');
               $("#modalConfirmationDelete").modal();
           });
 
           $("#modalConfirmationDelete").on('hidden.bs.modal', function(){
-            $("#modalForm"+indikator_body).modal('show');
+            $("#modalForm").modal('show');
           });
 
           $(".submit_delete").on('click', function(e){

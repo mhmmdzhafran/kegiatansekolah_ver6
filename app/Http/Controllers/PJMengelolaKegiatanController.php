@@ -53,7 +53,7 @@ class PJMengelolaKegiatanController extends Controller
                 $status_indikator = $dataPPKService->statusKegiatanPPK('Pengajuan', $status, 'Proposal Kegiatan');
                 return $status_indikator;
             })
-            ->addColumn('pengajuan', function($data){
+            ->addColumn('action_btn', function($data){
                 foreach ($data->StatusKegiatan as $status) {
                     if ($status->pivot->status_kegiatanable_type == "App\PengajuanKegiatan") {
                       if ($status->pivot->status_kegiatanable_id == $data->id && $status->pivot->status_kegiatan_id == 3) {
@@ -75,7 +75,7 @@ class PJMengelolaKegiatanController extends Controller
                 $data_ppk = $dataPPKService->showDataPPK($nilai_ppk_kegiatan);
                 return $data_ppk;
             })
-            ->rawColumns(['pengajuan', 'statusKegiatan'])->make(true);
+            ->rawColumns(['action_btn', 'statusKegiatan', 'nilai_ppk'])->make(true);
         }
         return view('pj.kelola_kegiatan.index');
         
@@ -90,57 +90,56 @@ class PJMengelolaKegiatanController extends Controller
     public function store(PengajuanKegiatanValidationRequest $request, DataPPKService $dataPPKService)
     {
         //
-            $input = $request->only([
-                'PJ_nama_kegiatan',
-                'nilai_ppk',
-                'kegiatan_berbasis',
-                'dokumen_kegiatan',
-                'mulai_kegiatan',
-                'akhir_kegiatan'
-            ]);                
-            $file =  $request->file('dokumen_kegiatan');
-                $name = $file->getClientOriginalName();
-                // $json_dokumen_kegiatan[] = array(
-                //         "dokumen_id" => 1,
-                //         "nama_dokumen" => $request->mulai_kegiatan."_Pengajuan-".$input['PJ_nama_kegiatan']."-".$name
-                // );
-                $nama_dokumen_baru = $request->mulai_kegiatan."_Pengajuan-".$input['PJ_nama_kegiatan']."-".$name;
-                $input['dokumen_kegiatan'] = $nama_dokumen_baru;
-                // $masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
-                $masuk_file = $file->storeAs('pengajuan_kegiatan', $nama_dokumen_baru, 'public');
-                    if($masuk_file){
-                        $input['nilai_ppk'] = $this->countPPK($request->nilai_ppk);
-                        $input['user_id'] = Auth::user()->id;
-                        $input['keterangan_json'] = $dataPPKService->createKeteranganKegiatanPPK('Proposal');
-                        $input['nama_pj'] = Auth::user()->name;
-                        $statusDefault = StatusKegiatan::findOrFail(3);
-                        $kegiatan = PengajuanKegiatan::create($input);
-                        if (!$kegiatan) {
-                            //unlink dokumen
-                            // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
-                            Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
-                            return Response::json(['errors' => ['Tidak dapat membentuk data Pengajuan Kegiatan, Silahkan coba kembali']], 422);
-                        }
-                        $statusSave = $kegiatan->StatusKegiatan()->save($statusDefault);
-                        if (!$statusSave) {
-                            $searchKegiatan = PengajuanKegiatan::where([
-                                'PJ_nama_kegiatan' => $request->PJ_nama_kegiatan,
-                                'user_id' => Auth::user()->id,
-                                'nama_pj' => Auth::user()->name,
-                                'kegiatan_berbasis' => $request->kegiatan_berbasis,
-                                'mulai_kegiatan' => $request->mulai_kegiatan,
-                                'akhir_kegiatan' => $request->akhir_kegiatan
-                            ])->first();
-                            $searchKegiatan->delete();
-                            // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
-                            Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
-                            return Response::json(['errors' => ['Sistem gagal menyimpan Kegiatan, Silahkan Coba Kembali']], 422);
-                        }
-                        event(new AjukanProposalKegiatanToKepalaSekolahEvent($kegiatan, $statusDefault));
-                        return Response::json(['data' => 'data is valid'], 200);
-                    } else{
-                        return Response::json(['errors' => ['Sistem gagal menyimpan File Dokumen, Silahkan Coba Lagi']], 422);
-                    }   
+        $input = $request->only([
+            'PJ_nama_kegiatan',
+            'nilai_ppk',
+            'kegiatan_berbasis',
+            'dokumen_kegiatan',
+            'mulai_kegiatan',
+            'akhir_kegiatan'
+        ]);                
+        $file =  $request->file('dokumen_kegiatan');
+        $name = $file->getClientOriginalName();
+        $nama_dokumen_baru = $request->mulai_kegiatan."_Pengajuan-".$input['PJ_nama_kegiatan']."-".$name;
+        $input['dokumen_kegiatan'] = $nama_dokumen_baru;
+        // $masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
+        $masuk_file = $this->fileService->singleFileUpload($file, $input['dokumen_kegiatan'], 'upload_proposal');
+        // $masuk_file = $file->storeAs('pengajuan_kegiatan', $nama_dokumen_baru, 'public');
+        if(gettype($masuk_file) == 'string'){
+            $input['nilai_ppk'] = $this->countPPK($request->nilai_ppk);
+            $input['user_id'] = Auth::user()->id;
+            $input['keterangan_json'] = $dataPPKService->createKeteranganKegiatanPPK('Proposal');
+            $input['nama_pj'] = Auth::user()->name;
+            $statusDefault = StatusKegiatan::findOrFail(3);
+            $kegiatan = PengajuanKegiatan::create($input);
+            if (!$kegiatan) {
+                //unlink dokumen
+                // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
+                $this->fileService->removeSingleFileUpload($input['dokumen_kegiatan'], 'delete_upload_proposal');
+                // Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
+                return Response::json(['errors' => ['Tidak dapat membentuk data Pengajuan Kegiatan, Silahkan coba kembali']], 422);
+            }
+            $statusSave = $kegiatan->StatusKegiatan()->save($statusDefault);
+            if (!$statusSave) {
+                $searchKegiatan = PengajuanKegiatan::where([
+                    'PJ_nama_kegiatan' => $request->PJ_nama_kegiatan,
+                    'user_id' => Auth::user()->id,
+                    'nama_pj' => Auth::user()->name,
+                    'kegiatan_berbasis' => $request->kegiatan_berbasis,
+                    'mulai_kegiatan' => $request->mulai_kegiatan,
+                    'akhir_kegiatan' => $request->akhir_kegiatan
+                ])->first();
+                $searchKegiatan->delete();
+                // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
+                $this->fileService->removeSingleFileUpload($input['dokumen_kegiatan'], 'delete_upload_proposal');
+                // Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
+                return Response::json(['errors' => ['Sistem gagal menyimpan Kegiatan, Silahkan Coba Kembali']], 422);
+            }
+            event(new AjukanProposalKegiatanToKepalaSekolahEvent($kegiatan, $statusDefault));
+            return Response::json(['data' => 'data is valid'], 200);
+        } elseif(gettype($masuk_file) == 'boolean' && !$masuk_file) {
+            return Response::json(['errors' => ['Sistem gagal menyimpan File Dokumen, Silahkan Coba Lagi']], 422);
+        }   
         
     }
 
@@ -160,7 +159,7 @@ class PJMengelolaKegiatanController extends Controller
             }
             $status_proposal = $pengajuan_kegiatan->statusKegiatan()->first();
             // $dokumen = json_decode($pengajuan_kegiatan->dokumen_kegiatan);
-            $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$pengajuan_kegiatan->nama_dokumen);
+            $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$pengajuan_kegiatan->dokumen_kegiatan);
             if ($exists) {
                 return Response::json(['data' => $pengajuan_kegiatan, 'status_dokumen' => true , 'status_proposal' => $status_proposal ], 200);   
             } else {
@@ -185,7 +184,7 @@ class PJMengelolaKegiatanController extends Controller
                 return Response::json(['messages' => 'Data Pengajuan Kegiatan tidak dapat ditemukan, Silahkan Coba kembali dan kontak Admin! ID yang diberikan: '.$id." System error message: ".$pengajuan_kegiatan ], 404);
             }
             // $dokumen = json_decode($pengajuan_kegiatan->dokumen_kegiatan);
-            $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$pengajuan_kegiatan->nama_dokumen);
+            $exists = Storage::disk('public')->exists('pengajuan_kegiatan/'.$pengajuan_kegiatan->dokumen_kegiatan);
             if ($exists) {
                 return Response::json(['data' => $pengajuan_kegiatan, 'status_dokumen' => true], 200);   
             } else {
@@ -224,16 +223,10 @@ class PJMengelolaKegiatanController extends Controller
         ]);
         
         $file_lama = $pengajuan_ulang->dokumen_kegiatan;
-        // foreach($dokumen_lama as $file_terdahulu){
-        //     $file_lama = $file_terdahulu->nama_dokumen;
-        // };
+       
         $file = $request->file('dokumen_kegiatan');
         $name = $file->getClientOriginalName();
         
-        // $json_dokumen_kegiatan[] = array(
-        //     "dokumen_id" => 1,
-        //     "nama_dokumen" => $request->mulai_kegiatan."_Pengajuan_Kegiatan_Ulang-".$input['PJ_nama_kegiatan']."-".$name
-        // );
         $nama_dokumen_ulang = $request->mulai_kegiatan."_Pengajuan_Kegiatan_Ulang-".$input['PJ_nama_kegiatan']."-".$name;
         $input['dokumen_kegiatan'] = $nama_dokumen_ulang;
         $input['user_id'] = Auth::user()->id;
@@ -249,11 +242,12 @@ class PJMengelolaKegiatanController extends Controller
                 return response()->json(['data' => 'data is not valid', 'errors' => ['Tidak dapat memproses data, silahkan mencoba lagi']], 422);   
             }
             //unlink file dokumen yang kemaren dikirim
-            // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$file_lama));
-            Storage::disk('public')->delete('pengajuan_kegiatan/'.$file_lama);
+            $this->fileService->removeSingleFileUpload($file_lama, 'delete_upload_proposal');
+            // Storage::disk('public')->delete('pengajuan_kegiatan/'.$file_lama);
+
             //update menjadi file baru dan taro di directory
-            // $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_ulang);
-            $file->storeAs('pengajuan_kegiatan', $nama_dokumen_ulang, 'public');
+            $this->fileService->singleFileUpload($file, $input['dokumen_kegiatan'], 'upload_proposal');
+            // $file->storeAs('pengajuan_kegiatan', $nama_dokumen_ulang, 'public');
             
             event(new AjukanProposalKegiatanToKepalaSekolahEvent($pengajuan_ulang, $status_ulang));
             return response()->json(['data' => 'data is valid'], 200);
@@ -276,7 +270,7 @@ class PJMengelolaKegiatanController extends Controller
                 $status =  $dokumentasi_kegiatan->statusKegiatan->pluck('nama')->implode('<br>');
                 $status_indikator = $dataPPKService->statusKegiatanPPK('Dokumentasi',$status, $dokumentasi_kegiatan->tipe_kegiatan);
                 return $status_indikator;
-            })->addColumn('unggah_dokumentasi', function($data){
+            })->addColumn('action_btn', function($data){
                 foreach ($data->statusKegiatan as $status) {
                     if ($status->pivot->status_kegiatanable_type == "App\DokumentasiKegiatan") {
                         if ($status->pivot->status_kegiatanable_id == $data->id && $status->pivot->status_kegiatan_id == 6) {
@@ -300,7 +294,7 @@ class PJMengelolaKegiatanController extends Controller
                 $data_ppk = $dataPPKService->showDataPPK($data_nilai);
                 return $data_ppk; 
             })
-            ->rawColumns(['statusKegiatan', 'unggah_dokumentasi'])->make(true);
+            ->rawColumns(['statusKegiatan', 'action_btn', 'nilai_ppk'])->make(true);
         }   
             return view('pj.dokumentasi_kegiatan.index');
     }
