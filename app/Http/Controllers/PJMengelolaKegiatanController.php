@@ -103,7 +103,7 @@ class PJMengelolaKegiatanController extends Controller
         $nama_dokumen_baru = $request->mulai_kegiatan."_Pengajuan-".$input['PJ_nama_kegiatan']."-".$name;
         $input['dokumen_kegiatan'] = $nama_dokumen_baru;
         // $masuk_file = $file->move('kegiatan/pengajuan_kegiatan/',$nama_dokumen_baru);
-        $masuk_file = $this->fileService->singleFileUpload($file, $input['dokumen_kegiatan'], 'upload_proposal');
+        $masuk_file = $this->fileService->storeSingleFile($file, $input['dokumen_kegiatan'], 'upload_proposal');
         // $masuk_file = $file->storeAs('pengajuan_kegiatan', $nama_dokumen_baru, 'public');
         if(gettype($masuk_file) == 'string'){
             $input['nilai_ppk'] = $this->countPPK($request->nilai_ppk);
@@ -115,7 +115,7 @@ class PJMengelolaKegiatanController extends Controller
             if (!$kegiatan) {
                 //unlink dokumen
                 // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
-                $this->fileService->removeSingleFileUpload($input['dokumen_kegiatan'], 'delete_upload_proposal');
+                $this->fileService->removeSingleFile($input['dokumen_kegiatan'], 'delete_upload_proposal');
                 // Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
                 return Response::json(['errors' => ['Tidak dapat membentuk data Pengajuan Kegiatan, Silahkan coba kembali']], 422);
             }
@@ -131,7 +131,7 @@ class PJMengelolaKegiatanController extends Controller
                 ])->first();
                 $searchKegiatan->delete();
                 // unlink(public_path('kegiatan/pengajuan_kegiatan/'.$nama_dokumen_baru));
-                $this->fileService->removeSingleFileUpload($input['dokumen_kegiatan'], 'delete_upload_proposal');
+                $this->fileService->removeSingleFile($input['dokumen_kegiatan'], 'delete_upload_proposal');
                 // Storage::disk('public')->delete('pengajuan_kegiatan'/$nama_dokumen_baru);
                 return Response::json(['errors' => ['Sistem gagal menyimpan Kegiatan, Silahkan Coba Kembali']], 422);
             }
@@ -242,11 +242,11 @@ class PJMengelolaKegiatanController extends Controller
                 return response()->json(['data' => 'data is not valid', 'errors' => ['Tidak dapat memproses data, silahkan mencoba lagi']], 422);   
             }
             //unlink file dokumen yang kemaren dikirim
-            $this->fileService->removeSingleFileUpload($file_lama, 'delete_upload_proposal');
+            $this->fileService->removeSingleFile($file_lama, 'delete_upload_proposal');
             // Storage::disk('public')->delete('pengajuan_kegiatan/'.$file_lama);
 
             //update menjadi file baru dan taro di directory
-            $this->fileService->singleFileUpload($file, $input['dokumen_kegiatan'], 'upload_proposal');
+            $this->fileService->storeSingleFile($file, $input['dokumen_kegiatan'], 'upload_proposal');
             // $file->storeAs('pengajuan_kegiatan', $nama_dokumen_ulang, 'public');
             
             event(new AjukanProposalKegiatanToKepalaSekolahEvent($pengajuan_ulang, $status_ulang));
@@ -418,15 +418,15 @@ class PJMengelolaKegiatanController extends Controller
                     "tipe_kegiatan" => 'Pengajuan Historis'
                 ])->first();
                
-                $kumpulan_dokumen = $this->fileService->multipleStoreFileKegiatan($file, $cari_dokumentasi, "Pengajuan Historis", "dokumen");
+                $kumpulan_dokumen = $this->fileService->multipleStoreDataFileKegiatan($file, $cari_dokumentasi, "Pengajuan Historis", "dokumen");
                 if (!$kumpulan_dokumen || gettype($kumpulan_dokumen) == 'object') {
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan dan Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
                 }
-                $kumpulan_foto = $this->fileService->multipleStoreFileKegiatan($img, $cari_dokumentasi, "Pengajuan Historis", "image");
+                $kumpulan_foto = $this->fileService->multipleStoreDataFileKegiatan($img, $cari_dokumentasi, "Pengajuan Historis", "image");
                 if (!$kumpulan_foto || gettype($kumpulan_foto) == 'object') {
                     $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
-                    $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
+                    $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan dan Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
                 }
@@ -437,8 +437,8 @@ class PJMengelolaKegiatanController extends Controller
                 $save_status = $cari_dokumentasi->statusKegiatan()->save($statusDefault);
                 if (!$save_status) {
                    
-                    $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
-                    $this->fileService->removeKumpulanFile($res_kumpulan_foto, $cari_dokumentasi, "image", "Pengajuan Historis");
+                    $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen, $cari_dokumentasi, "dokumen", "Pengajuan Historis");
+                    $this->fileService->removeKumpulanDataFile($res_kumpulan_foto, $cari_dokumentasi, "image", "Pengajuan Historis");
                     $dokumentasi_kegiatan_baru->delete();
                     return Response::json(['errors' => ['Tidak Berhasil Membentuk Dokumentasi dan unggah Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
                 }
@@ -485,14 +485,14 @@ class PJMengelolaKegiatanController extends Controller
         }
         $status_update = StatusKegiatan::findOrFail(3);
                
-        $kumpulan_dokumen = $this->fileService->multipleStoreFileKegiatan($file, $dokumentasi_kegiatan, "Pengajuan", "dokumen");
+        $kumpulan_dokumen = $this->fileService->multipleStoreDataFileKegiatan($file, $dokumentasi_kegiatan, "Pengajuan", "dokumen");
         if (!$kumpulan_dokumen || gettype($kumpulan_dokumen) == 'object') {
             return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
         }
-        $kumpulan_foto = $this->fileService->multipleStoreFileKegiatan($img, $dokumentasi_kegiatan, "Pengajuan" , "image");
+        $kumpulan_foto = $this->fileService->multipleStoreDataFileKegiatan($img, $dokumentasi_kegiatan, "Pengajuan" , "image");
         if (!$kumpulan_foto || gettype($kumpulan_foto) == 'object') {
             $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
-            $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $dokumentasi_kegiatan, "dokumen", "Pengajuan");
+            $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen, $dokumentasi_kegiatan, "dokumen", "Pengajuan");
             return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Laporan Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
         }
       
@@ -500,8 +500,8 @@ class PJMengelolaKegiatanController extends Controller
         $res_kumpulan_foto = $this->fileService->fileArrTypeChecker($kumpulan_foto);
         $updateLinksDokumentasi = $dokumentasi_kegiatan->update($input); 
         if (!$updateLinksDokumentasi) {
-            $this->fileService->removeKumpulanFile($res_kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
-            $this->fileService->removeKumpulanFile($res_kumpulan_foto, $dokumentasi_kegiatan, "image", "Pengajuan");
+            $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
+            $this->fileService->removeKumpulanDataFile($res_kumpulan_foto, $dokumentasi_kegiatan, "image", "Pengajuan");
             return Response::json(['errors' => ['sistem tidak dapat memproseskan data, silahkan dicoba kembali']], 422); 
         }
         
@@ -510,8 +510,8 @@ class PJMengelolaKegiatanController extends Controller
         ]);
         if (!$status_update_dokumentasi) {
           
-            $this->fileService->removeKumpulanFile($res_kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
-            $this->fileService->removeKumpulanFile($res_kumpulan_foto, $dokumentasi_kegiatan, "image", "Pengajuan");
+            $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen , $dokumentasi_kegiatan , "dokumen", "Pengajuan");
+            $this->fileService->removeKumpulanDataFile($res_kumpulan_foto, $dokumentasi_kegiatan, "image", "Pengajuan");
             return Response::json(['errors' => ['sistem tidak dapat memproseskan data, silahkan dicoba kembali']], 422); 
         }
         event(new UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent($dokumentasi_kegiatan, $status_update));
@@ -584,28 +584,28 @@ class PJMengelolaKegiatanController extends Controller
         $status_update = StatusKegiatan::findOrFail(3);
 
         // if($status_unggah_laporan == "Pengajuan"){
-            $kumpulan_dokumen = $this->fileService->multipleStoreFileKegiatan($file, $dokumentasi_ulang, $status_unggah_laporan, "dokumen");
+            $kumpulan_dokumen = $this->fileService->multipleStoreDataFileKegiatan($file, $dokumentasi_ulang, $status_unggah_laporan, "dokumen");
             if (!$kumpulan_dokumen || gettype($kumpulan_dokumen) == 'object') {
                 return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumen Kegiatan, Silahkan Coba Kembali']], 422);
             }
-            $kumpulan_foto = $this->fileService->multipleStoreFileKegiatan($img, $dokumentasi_ulang, $status_unggah_laporan , "image");
+            $kumpulan_foto = $this->fileService->multipleStoreDataFileKegiatan($img, $dokumentasi_ulang, $status_unggah_laporan , "image");
             if (!$kumpulan_foto || gettype($kumpulan_foto) == 'object') {
                 $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
-                $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
+                $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
                 return Response::json(['errors' => ['Tidak Dapat Menyimpan Data Dokumentasi Kegiatan, Silahkan Coba Kembali']], 422);
             }
             $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
             $res_kumpulan_foto = $this->fileService->fileArrTypeChecker($kumpulan_foto);
             $update_links_dokumentasi = $dokumentasi_ulang->update($input);
             if (!$update_links_dokumentasi) {
-                $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
-                $this->fileService->removeKumpulanFile($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
+                $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
+                $this->fileService->removeKumpulanDataFile($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
                 return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Pengajuan Ulang Laporan Kegiatan, Silahkan Coba Kembali']], 422);
             }
             $pembuatan_laporan_kegiatan = $this->storePengajuanUlangLaporanKegiatan($dokumentasi_ulang, $file_dokumen_lama, $file_img_lama, $tempFileDocs, $tempFileImg, $statusSebelumnya , $status_unggah_laporan, $status_update);
             if (!$pembuatan_laporan_kegiatan) {
-                $this->fileService->removeKumpulanFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
-                $this->fileService->removeKumpulanFile($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
+                $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen, $dokumentasi_ulang, "dokumen", $status_unggah_laporan);
+                $this->fileService->removeKumpulanDataFile($res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan);
                 return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Pengajuan Ulang Laporan Kegiatan, Silahkan Coba Kembali']], 422);
             }
             event(new UnggahDokumentasiKegiatanNotifyKepalaSekolahEvent($dokumentasi_ulang , $status_update));
@@ -631,7 +631,7 @@ class PJMengelolaKegiatanController extends Controller
                 }
             }
             //$res_kumpulan_foto, $dokumentasi_ulang, "image", $status_unggah_laporan
-            $this->fileService->removeKumpulanFile($dokumen_laporan_sebelumnya, $data_laporan, "dokumen" , $statusUnggah);
+            $this->fileService->removeKumpulanDataFile($dokumen_laporan_sebelumnya, $data_laporan, "dokumen" , $statusUnggah);
             // if (!$deleteFile) {
             //     $data_laporan->statusKegiatan()->updateExistingPivot($status_baru->id, [
             //         'status_kegiatan_id' => $status_laporan_sebelumnya
@@ -646,7 +646,7 @@ class PJMengelolaKegiatanController extends Controller
                     }
                 }
             }
-            $this->fileService->removeKumpulanFile($foto_kegiatan_sebelumnya, $data_laporan, "image" , $statusUnggah); 
+            $this->fileService->removeKumpulanDataFile($foto_kegiatan_sebelumnya, $data_laporan, "image" , $statusUnggah); 
             // if (!$deleteFile || !$deleteImg) {
             //     $data_laporan->statusKegiatan()->updateExistingPivot($status_baru->id, [
             //         'status_kegiatan_id' => $status_laporan_sebelumnya

@@ -3,17 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\AssessmentInternal;
-use App\DokumenAsesmen;
 use App\Http\Requests\InformasiAssessmenInternalRequest;
 use App\Http\Requests\InformasiAssessmenInternalUpdateRequest;
 use App\Http\Requests\UpdateDokumenAsesmenRequest;
 use App\KategoriAsesmen;
-use App\PenjelasanAsesmen;
 use App\Repository\FindDataRepository;
 use App\Services\FileUploadService;
-// use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Response;
 
@@ -21,10 +16,12 @@ class KepalaSekolahAssessmenController extends Controller
 {
 
     protected $findData;
-    public function __construct(FindDataRepository $findDataRepository)
+    protected $fileService;
+    public function __construct(FindDataRepository $findDataRepository, FileUploadService $fileUploadService)
     {
         $this->middleware('auth');        
         $this->findData = $findDataRepository;
+        $this->fileService = $fileUploadService;
         
     }
     /**
@@ -218,7 +215,7 @@ class KepalaSekolahAssessmenController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(InformasiAssessmenInternalUpdateRequest $request, FileUploadService $fileUploadService, $id)
+    public function update(InformasiAssessmenInternalUpdateRequest $request, $id)
     {
         //     
         $assessmen_internal =  $this->findData->findDataModel($id, 'Asesmen');
@@ -313,7 +310,7 @@ class KepalaSekolahAssessmenController extends Controller
             }
         }
 
-        $documentCheck = $fileUploadService->isFileSize($file);
+        $documentCheck = $this->fileService->isFileSize($file);
         if (gettype($documentCheck) == 'object') {
             return $documentCheck;
         }
@@ -321,7 +318,7 @@ class KepalaSekolahAssessmenController extends Controller
         
         //strictly for storing skor dan upload dokumen
         /** Revision Code Here */
-        $kumpulan_dokumen = $fileUploadService->multipleStoreFileKegiatan($file, $assessmen_internal, 'Asesmen', 'dokumenAsesmen', $request->indikator_assessment);
+        $kumpulan_dokumen = $this->fileService->multipleStoreDataFileKegiatan($file, $assessmen_internal, 'Asesmen', 'dokumenAsesmen', $request->indikator_assessment);
         if (gettype($kumpulan_dokumen) == 'object') {
             return $kumpulan_dokumen;
         }
@@ -330,8 +327,8 @@ class KepalaSekolahAssessmenController extends Controller
         if ($update) {
             return Response::json(['message' => 'data is valid'], 200);
         } else {
-            $res_kumpulan_dokumen = $fileUploadService->fileArrTypeChecker($kumpulan_dokumen);
-            $fileUploadService->removeKumpulanFile($res_kumpulan_dokumen, $assessmen_internal, 'asesmen', $request->indikator_assessment);
+            $res_kumpulan_dokumen = $this->fileService->fileArrTypeChecker($kumpulan_dokumen);
+            $this->fileService->removeKumpulanDataFile($res_kumpulan_dokumen, $assessmen_internal, 'asesmen', $request->indikator_assessment);
             return Response::json(['message'=>'data is not valid' , 'errors' => ['Tidak dapat melakukan Update Penilaian, Silahkan Coba Kembali']], 422);
         }
     }
@@ -362,8 +359,8 @@ class KepalaSekolahAssessmenController extends Controller
                     $dokumenUpdate = $checker->save();
                    
                     if ($dokumenUpdate) {
-                       
-                        $file->move('kegiatan/asesmen_internal/', $nama_dokumen_baru);
+                        $this->fileService->storeSingleFile($file,$nama_dokumen_baru,'update_single_dokumen_asesmen');
+                        // $file->move('kegiatan/asesmen_internal/', $nama_dokumen_baru);
                         return Response::json(['message' => 'data is valid'], 200);
                     }
                     return Response::json(['message' => 'data error', 'errors' => ['Terjadi Kegagalan Saat Melakukan Penyimpanan Dokumen, Silahkan Coba Kembali lalu kontak Admin jika masih terdapat kendala']], 422);
@@ -387,9 +384,10 @@ class KepalaSekolahAssessmenController extends Controller
                 $save_new_dokumen = $dokumen_asesmen_sesuai->save();
                
                 if ($save_new_dokumen) {
-                  
-                    unlink(public_path('kegiatan/asesmen_internal/'.$dokumen_lama));
-                    $file->move('kegiatan/asesmen_internal', $nama_dokumen_baru);
+                    $this->fileService->removeSingleFile($dokumen_lama, 'delete_single_asesmen_file');
+                    // unlink(public_path('kegiatan/asesmen_internal/'.$dokumen_lama));
+                    $this->fileService->storeSingleFile($file, $nama_dokumen_baru, 'update_single_dokumen_asesmen');
+                    // $file->move('kegiatan/asesmen_internal', $nama_dokumen_baru);
                     return Response::json(['data'=> 'data is valid'], 200);
                 } else{
                     return Response::json(['errors' => ['Terjadi Kegagalan Saat Melakukan Penyimpanan Dokumen, Silahkan Coba Kembali']], 422);
@@ -427,7 +425,7 @@ class KepalaSekolahAssessmenController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(FileUploadService $fileUploadService, $file_name, $indikator_asesmen, $id_asesmen)
+    public function destroy($file_name, $indikator_asesmen, $id_asesmen)
     {
         // for delete a file with id and body indikator
         $assessmen_internal =  $this->findData->findDataModel($id_asesmen, 'Asesmen');
@@ -442,21 +440,18 @@ class KepalaSekolahAssessmenController extends Controller
         if (is_null($getDataDokumen)) {
             return response()->json(['errors' => ['Dokumen Asesmen Tidak Dapat Ditemukan, Silahkan Coba Kembali!']], 422);
         }
-        $dokumen [] = $getDataDokumen->nama_dokumen_asesmen;
-        $fileUploadService->removeKumpulanFile($dokumen, $assessmen_internal, 'asesmen', $indikator_asesmen);
+        // $dokumen [] = $getDataDokumen->nama_dokumen_asesmen;
+        $delete_dokumen_asesmen = $getDataDokumen->delete();
+        if ($delete_dokumen_asesmen) {
+            $this->fileService->removeSingleFile($getDataDokumen->nama_dokumen_asesmen, 'delete_asesmen_file');
+        } else {
+            return response()->json(['errors' => ['Terdapat Error Ketika Menghapus File Asesmen, Silahkan Coba Kembali']], 422);
+        }
         return response()->json(['message' => 'Dokumen berhasil dihapus dari database dan server'], 200);
-            // if ($dokumen_delete) {
-            //     unlink(public_path('kegiatan/asesmen_internal/'.$file_name));
-            //     return Response::json(['message' => 'Dokumen berhasil dihapus dari database dan server'], 200);
-            // } else {
-            //     return Response::json(['message' => 'data is not valid', 'errors' => ['Penghapusan tidak berhasil dilakukan dikarenakan dokumen tidak ada, Silahkan Kontak Admin untuk melakukan cek dalam database dan server']], 422);
-            // }
-        // } else {
-        //     return Response::json(['errors'=> ['Dokumen Tidak dapat ditemukan dalam server, silahkan refresh browser Anda dan Kontak Admin']], 422);
-        // }
+         
     } 
     
-    public function destroyAsesmen(FileUploadService $fileUploadService,$id){
+    public function destroyAsesmen($id){
         $tempDokumen = [];
         $assessmen_internal =  $this->findData->findDataModel($id, 'Asesmen');
         if (gettype($assessmen_internal) == 'string') {
@@ -468,7 +463,7 @@ class KepalaSekolahAssessmenController extends Controller
             $tempDokumen [] = $dataDokumen->nama_dokumen_asesmen;
         }
         if (count($tempDokumen) > 0) {
-            $fileUploadService->removeKumpulanFile($tempDokumen, $assessmen_internal, 'asesmen', 'all');
+            $this->fileService->removeKumpulanDataFile($tempDokumen, $assessmen_internal, 'asesmen', 'all');
         }
         $delete_asesmen = $assessmen_internal->delete();
         if (!$delete_asesmen) {

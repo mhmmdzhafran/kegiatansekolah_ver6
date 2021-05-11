@@ -76,7 +76,7 @@ class AdminUserController extends Controller
         ]);
         $fileImage = $request->file('photo_user');
         $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
-        $moveImage = $this->fileService->singleFileUpload($fileImage, $customNameFile, 'upload_img_user');
+        $moveImage = $this->fileService->storeSingleFile($fileImage, $customNameFile, 'upload_img_user');
         // $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
         if (gettype($moveImage) == 'boolean' && !$moveImage) {
             return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
@@ -86,7 +86,7 @@ class AdminUserController extends Controller
         $user = User::create($input);
         if (!$user) {
             // unlink(public_path('kegiatan/admin/foto_user/'.$customNameFile));
-            $this->fileService->removeSingleFileUpload($input['photo_user'], 'delete_user_img');
+            $this->fileService->removeSingleFile($input['photo_user'], 'delete_user_img');
             // Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
             return Response::json(['message' => 'saving data is error', 'errors' => ['Terjadi Kendala saat melakukan Penyimpanan, Silahkan coba kembali']],422);
         }
@@ -159,13 +159,13 @@ class AdminUserController extends Controller
         } else {
             $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
             if (!is_null($user->photo_user)) {
-                $exists = Storage::disk('public')->exists('photo_user_simppk/'.$customNameFile);
-                if ($exists) {
-                    $this->fileService->removeSingleFileUpload($customNameFile, 'delete_user_img');
-                    // Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
-                }  
+                $this->fileService->removeSingleFile($user->photo_user, 'delete_user_img');
+                // $exists = Storage::disk('public')->exists('photo_user_simppk/'.$user->user_photo);
+                // if ($exists) {
+                //     // Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
+                // }  
             }
-            $moveImage = $this->fileService->singleFileUpload($fileImage, $customNameFile, 'upload_img_user');
+            $moveImage = $this->fileService->storeSingleFile($fileImage, $customNameFile, 'upload_img_user');
             // $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
             if (gettype($moveImage) == 'boolean' && !$moveImage) {
                 return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
@@ -206,7 +206,7 @@ class AdminUserController extends Controller
         if (!is_null($user_photo)) {
             $exists = Storage::disk('public')->exists('photo_user_simppk/'.$user_photo);
             if ($exists) {
-                $this->fileService->removeSingleFileUpload($user_photo, 'delete_user_img');
+                $this->fileService->removeSingleFile($user_photo, 'delete_user_img');
                 // Storage::disk('public')->delete('photo_user_simppk/'.$user_photo);
             }
         }
