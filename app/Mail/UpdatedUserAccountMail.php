@@ -35,7 +35,8 @@ class UpdatedUserAccountMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('users.account.updated')
+        return $this->subject('Update Akun Pengguna SIMPPK')
+                    ->markdown('users.account.updated')
                     ->with([
                         'nama_user' => $this->user_data->name,
                         'username' => $this->user_data->username_id,

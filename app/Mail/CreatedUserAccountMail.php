@@ -35,7 +35,8 @@ class CreatedUserAccountMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('users.account.created')
+        return $this->subject('Pembuatan Akun Pengguna SIMPPK')
+                    ->markdown('users.account.created')
                     ->with([
                         'nama_user' => $this->user_data->name,
                         'username' => $this->user_data->username_id,

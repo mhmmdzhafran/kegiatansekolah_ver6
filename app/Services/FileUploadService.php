@@ -219,12 +219,6 @@ class FileUploadService {
                     if ($optData == 'all') {
                         $data->dokumenAsesmen()->where('nama_dokumen_asesmen', $files)->delete();
                     } 
-                    // else {
-                    //     $data->dokumenAsesmen()->where([
-                    //         ['nama_dokumen_asesmen' , '=', $files],
-                    //         ['body_indikator_dokumen', '=' , $optData]
-                    //     ])->delete();
-                    // }
                 }
             }
         }

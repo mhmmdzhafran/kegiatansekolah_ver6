@@ -52,6 +52,7 @@ class AjukanDokumentasiKegiatanNotifyKepalaSekolahNotification extends Notificat
     {
         $url = url('/kepala-sekolah/dokumentasi-kegiatan');
         return (new MailMessage)
+                    ->subject('Unggah Laporan Kegiatan SIMPPK')
                     ->greeting('Hello, '.$this->user->name)
                     ->line('Laporan Kegiatan dengan Nama Kegiatan: '.$this->dokumentasiKegiatan->nama_kegiatan
                     .' Telah Diunggah oleh: '.$this->dokumentasiKegiatan->user->name)

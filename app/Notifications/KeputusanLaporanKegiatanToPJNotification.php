@@ -52,6 +52,7 @@ class KeputusanLaporanKegiatanToPJNotification extends Notification
             $nama_status = 'Mengajukan Ulang Kembali';
         }
         return (new MailMessage)
+                    ->subject('Pemberian Keputusan Laporan Kegiatan SIMPPK')
                     ->greeting('Hello, '.$user_pj)
                     ->line('Laporan Kegiatan dengan Nama Kegiatan: '.$this->dokumentasiKegiatan->nama_kegiatan
                     .' Telah Diberikan Keputusan: '.$nama_status)

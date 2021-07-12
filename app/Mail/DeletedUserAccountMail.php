@@ -35,7 +35,7 @@ class DeletedUserAccountMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('users.account.deleted')
+        return $this->subject('Informasi Penghapusan Akun Pengguna SIMPPK')->markdown('users.account.deleted')
                     ->with([
                         'username' => $this->username,
                         'nama_user' => $this->name,

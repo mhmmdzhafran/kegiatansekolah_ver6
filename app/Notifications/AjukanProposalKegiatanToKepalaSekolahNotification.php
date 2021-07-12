@@ -62,6 +62,7 @@ class AjukanProposalKegiatanToKepalaSekolahNotification extends Notification
                     // ])
         $url = url('/kepala-sekolah/mengelola-kegiatan');
         return (new MailMessage)
+                    ->subject('Unggah Proposal Kegiatan SIMPPK')
                     ->greeting('Hello, '.$this->user->name)
                     ->line('Proposal Kegiatan dengan Nama Kegiatan: '.$this->pengajuan_kegiatan->PJ_nama_kegiatan
                     .' Telah Diunggah oleh: '.$this->pengajuan_kegiatan->user->name)

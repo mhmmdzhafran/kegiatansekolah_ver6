@@ -41,12 +41,10 @@ class AdminUserController extends Controller
             return datatables()->of($user)->addColumn('Aksi', function($data){
                 if (Auth::user()->username_id == $data->username_id) {
                     $aksi = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-warning rounded-pill btn-sm mb-2">Edit</button>';
-                    // $aksi.= '&nbsp;&nbsp;';
                     $aksi.= '<button type="button" data-toggle="modal" id="'.$data->id.'" 
                     data-target="#DeleteModal" class="btn btn-sm btn-danger rounded-pill delete mb-2" disabled>Delete</button>';    
                 } else {
                     $aksi = '<button type="button" name="Edit" id="'.$data->id.'" class="edit btn btn-warning rounded-pill btn-sm mb-2">Edit</button>';
-                    // $aksi.= '&nbsp;&nbsp;';
                     $aksi.= '<button type="button" data-toggle="modal" id="'.$data->id.'" 
                     data-target="#DeleteModal" class="btn btn-sm btn-danger rounded-pill delete" mb-2>Delete</button>';    
                 }
@@ -77,7 +75,6 @@ class AdminUserController extends Controller
         $fileImage = $request->file('photo_user');
         $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
         $moveImage = $this->fileService->storeSingleFile($fileImage, $customNameFile, 'upload_img_user');
-        // $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
         if (gettype($moveImage) == 'boolean' && !$moveImage) {
             return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
         }
@@ -85,9 +82,7 @@ class AdminUserController extends Controller
         $input['password'] = bcrypt($request->password);
         $user = User::create($input);
         if (!$user) {
-            // unlink(public_path('kegiatan/admin/foto_user/'.$customNameFile));
             $this->fileService->removeSingleFile($input['photo_user'], 'delete_user_img');
-            // Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
             return Response::json(['message' => 'saving data is error', 'errors' => ['Terjadi Kendala saat melakukan Penyimpanan, Silahkan coba kembali']],422);
         }
         $getUser = User::where([
@@ -160,13 +155,8 @@ class AdminUserController extends Controller
             $customNameFile = "USER-ACC-".$request->username_id."-".$fileImage->getClientOriginalName();
             if (!is_null($user->photo_user)) {
                 $this->fileService->removeSingleFile($user->photo_user, 'delete_user_img');
-                // $exists = Storage::disk('public')->exists('photo_user_simppk/'.$user->user_photo);
-                // if ($exists) {
-                //     // Storage::disk('public')->delete('photo_user_simppk/'.$customNameFile);
-                // }  
             }
             $moveImage = $this->fileService->storeSingleFile($fileImage, $customNameFile, 'upload_img_user');
-            // $moveImage = $fileImage->storeAs('photo_user_simppk', $customNameFile, 'public');
             if (gettype($moveImage) == 'boolean' && !$moveImage) {
                 return response()->json(['errors' => ['Sistem Tidak Dapat Menyimpan Foto User, Silahkan Coba Kembali']], 422);
             }
@@ -204,11 +194,7 @@ class AdminUserController extends Controller
         }
         $user_photo = $user->photo_user;
         if (!is_null($user_photo)) {
-            $exists = Storage::disk('public')->exists('photo_user_simppk/'.$user_photo);
-            if ($exists) {
-                $this->fileService->removeSingleFile($user_photo, 'delete_user_img');
-                // Storage::disk('public')->delete('photo_user_simppk/'.$user_photo);
-            }
+            $this->fileService->removeSingleFile($user_photo, 'delete_user_img');
         }
         
         Mail::to($user->email_user)->send(new DeletedUserAccountMail($user->username_id, $user->Role->role_title, $user->name));
@@ -218,10 +204,4 @@ class AdminUserController extends Controller
         }
         return Response::json(['message' => 'data is deleted', 'notification' => "Berhasil Menghapus Data Pengguna!"], 200);
     }
-
-    // private function photoUserNamingScheme($photo, $username){
-    //     $customNameFile = "USER-ACC-".$username."-".$photo;
-    //     return $customNameFile;
-    // }
-
 }

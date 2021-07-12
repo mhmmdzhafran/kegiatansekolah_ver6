@@ -66,7 +66,6 @@ class KepalaSekolahAssessmenController extends Controller
     public function store(InformasiAssessmenInternalRequest $request)
     {
         //
-        // return $request->all();
         $input['user_id'] = Auth::user()->id;
         $input['nama_sekolah'] = $request->nama_sekolah;
         $input['alamat_sekolah'] = $request->alamat_sekolah;
@@ -110,11 +109,8 @@ class KepalaSekolahAssessmenController extends Controller
         }
 
         $assessment_json = json_decode($assessmen_internal->indikator_skor_penilaian_ppk);
-        // $dokumen = $assessmen_internal->dokumenAsesmen()->get();
         $id_asesmen = $id;
         $kategori_asesmen = KategoriAsesmen::withCount('PenjelasanAsesmen')->get();
-        // $get_kategori = KategoriAsesmen::all();
-        // return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json', 'dokumen' , 'id_asesmen' , 'get_kategori'));
         return view('kepsek.asesmen.show', compact('assessmen_internal', 'assessment_json',  'id_asesmen', 'kategori_asesmen'));
     }
 
@@ -163,7 +159,6 @@ class KepalaSekolahAssessmenController extends Controller
     public function ambil_data_detail_asesmen($id_asesmen, $body_indikator_dokumen){
         //ambil dokumen terkait asesmen
         if (request()->ajax()) {
-            // if (Auth::check()) {
                 $assessmen_internal =  $this->findData->findDataModel($id_asesmen, 'Asesmen');
                 $data_penjelasan_asesmen = $this->findData->findDataModel($body_indikator_dokumen, 'Penjelasan');
                 if (gettype($assessmen_internal) == 'string') {
@@ -314,10 +309,7 @@ class KepalaSekolahAssessmenController extends Controller
         if (gettype($documentCheck) == 'object') {
             return $documentCheck;
         }
-        
-        
-        //strictly for storing skor dan upload dokumen
-        /** Revision Code Here */
+
         $kumpulan_dokumen = $this->fileService->multipleStoreDataFileKegiatan($file, $assessmen_internal, 'Asesmen', 'dokumenAsesmen', $request->indikator_assessment);
         if (gettype($kumpulan_dokumen) == 'object') {
             return $kumpulan_dokumen;
@@ -345,7 +337,6 @@ class KepalaSekolahAssessmenController extends Controller
         ])->get();
 
         if ($file = $request->file('ubah_dokumen')) {
-            // $nama_dokumen_baru = $this->dokumenAsesmenNamingScheme($body_indikator_asesmen, $asesmen_internal, $file->getClientOriginalName());
             $nama_dokumen_baru = "Poin_Indikator_".$body_indikator_asesmen."_".$asesmen_internal->nama_sekolah."_".$asesmen_internal->id."_Internal Asesmen_".$file->getClientOriginalName();
             foreach ($dokumenSimpan as $docs) {
                 $checker  = $asesmen_internal->dokumenAsesmen()->where([
@@ -360,7 +351,6 @@ class KepalaSekolahAssessmenController extends Controller
                    
                     if ($dokumenUpdate) {
                         $this->fileService->storeSingleFile($file,$nama_dokumen_baru,'update_single_dokumen_asesmen');
-                        // $file->move('kegiatan/asesmen_internal/', $nama_dokumen_baru);
                         return Response::json(['message' => 'data is valid'], 200);
                     }
                     return Response::json(['message' => 'data error', 'errors' => ['Terjadi Kegagalan Saat Melakukan Penyimpanan Dokumen, Silahkan Coba Kembali lalu kontak Admin jika masih terdapat kendala']], 422);
@@ -385,9 +375,7 @@ class KepalaSekolahAssessmenController extends Controller
                
                 if ($save_new_dokumen) {
                     $this->fileService->removeSingleFile($dokumen_lama, 'delete_single_asesmen_file');
-                    // unlink(public_path('kegiatan/asesmen_internal/'.$dokumen_lama));
                     $this->fileService->storeSingleFile($file, $nama_dokumen_baru, 'update_single_dokumen_asesmen');
-                    // $file->move('kegiatan/asesmen_internal', $nama_dokumen_baru);
                     return Response::json(['data'=> 'data is valid'], 200);
                 } else{
                     return Response::json(['errors' => ['Terjadi Kegagalan Saat Melakukan Penyimpanan Dokumen, Silahkan Coba Kembali']], 422);
@@ -432,7 +420,7 @@ class KepalaSekolahAssessmenController extends Controller
         if (gettype($assessmen_internal) == 'string') {
             return response()->json(['message' => 'Data Asesmen Tidak Ditemukan, Silahkan Coba Kontak Admin, untuk disesuaikan, ID yang diberikan: '.$id_asesmen.', System Error Message: '. $assessmen_internal], 404);
         }
-            // if (file_exists(public_path('kegiatan/asesmen_internal/'.$file_name))) {
+        
         $getDataDokumen = $assessmen_internal->dokumenAsesmen()->where([
             ['nama_dokumen_asesmen', '=', $file_name],
             ['body_indikator_dokumen' ,'=' , $indikator_asesmen]
@@ -440,7 +428,7 @@ class KepalaSekolahAssessmenController extends Controller
         if (is_null($getDataDokumen)) {
             return response()->json(['errors' => ['Dokumen Asesmen Tidak Dapat Ditemukan, Silahkan Coba Kembali!']], 422);
         }
-        // $dokumen [] = $getDataDokumen->nama_dokumen_asesmen;
+        
         $delete_dokumen_asesmen = $getDataDokumen->delete();
         if ($delete_dokumen_asesmen) {
             $this->fileService->removeSingleFile($getDataDokumen->nama_dokumen_asesmen, 'delete_asesmen_file');

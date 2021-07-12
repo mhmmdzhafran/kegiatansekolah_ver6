@@ -35,7 +35,8 @@ class SendForgetPasswordDataMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('users.forgetPassword.send')
+        return $this->subject('Pembuatan Password Sementara Akun Pengguna SIMPPK')
+            ->markdown('users.forgetPassword.send')
             ->with([
                 'username' => $this->userName,
                 'data'=> $this->passwordData,

@@ -52,6 +52,7 @@ class KeputusanProposalKegiatanToPJNotification extends Notification
             $nama_status = 'Mengajukan Ulang Kembali';
         }
         return (new MailMessage)
+                    ->subject('Pemberian Keputusan Proposal Kegiatan SIMPPK')
                     ->greeting('Hello, '.$user_pj)
                     ->line('Proposal Kegiatan Dengan Nama Kegiatan: '.$this->pengajuan_kegiatan->PJ_nama_kegiatan
                     .' Telah Diberikan Keputusan: '.$nama_status)
