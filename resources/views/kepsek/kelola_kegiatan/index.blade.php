@@ -154,7 +154,7 @@
                         $("#nama_pj").attr('value' , res.username);
                         $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
                     } else {
-                        let file_loc = '{{asset("kegiatan/admin/foto_user/users")}}';
+                        let file_loc = '{{asset("storage/photo_user_simppk/users")}}';
                         file_loc = file_loc.replace('users' , res.user.photo_user);
                         $("#nama_pj").attr('value' , res.user.name);
                         $('.image_user').append('<img class="rounded-circle" src="'+file_loc+'" width="300" height="300">');
@@ -250,7 +250,7 @@
                     //untuk status dokumen => res.status_dokumen
                     if (res.status_dokumen) {
                         // var dokumen = $.parseJSON(res.data.dokumen_kegiatan);
-                        var asset = '{{asset("kegiatan/pengajuan_kegiatan/asset_kegiatan")}}';
+                        var asset = '{{asset("storage/pengajuan_kegiatan/asset_kegiatan")}}';
                         asset = asset.replace('asset_kegiatan', res.data.dokumen_kegiatan);
                         $("#lihat-file").append('<iframe src="'+asset+'" height="500" width="1100"></iframe>');
                         // $.each(dokumen, function(key,value){

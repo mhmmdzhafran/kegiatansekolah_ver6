@@ -17,79 +17,42 @@
   <h4>Nama Sekolah:</h4>
   <input type="text" value="{{$assessmen_internal->nama_sekolah}}" class="form-control form-control-user" disabled autofocus style="border-radius: 20px">
 </div>
+
 <div class="card shadow-sm">
-    <table class="table table-bordered">
-        <thead>
-            <th>Penjelasan</th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-            <th>6</th>
-            <th>7</th>
-            <th>8</th>
-            <th>9</th>
-            <th>Rerata</th>
-        </thead>
+  <table class="table table-bordered">
+      <thead>
+        <th>Penjelasan</th>
         @php
-          $assessment_limit_kategori_1 = 5;
-          $counter_limit_asesment_2 = 6;
-          $assessment_limit_kategori_2 = 8;
-          $counter_limit_asesment_3 = 9;
-          $assessment_limit_kategori_3 = 11;
-          $counter_limit_asesment_4 = 12;
-          $assessment_limit_kategori_4 = 14;
-          $counter_limit_asesment_5 = 15;
-          $assessment_limit_kategori_5 = 21;
-          $counter_limit_asesment_6 = 22;
-          $assessment_limit_kategori_6 = 25;
-          $counter_limit_asesment_7 = 26;
-          $assessment_limit_kategori_7 = 29;
-          $counter_limit_asesment_8 = 30;
-          $assessment_limit_kategori_8 = 35;
-          $counter_limit_asesment_9 = 36;
-          $assessment_limit_kategori_9 = 40;
-          $counter_limit_asesment_10 = 41;
-          $assessment_limit_kategori_10 = 49;
+            $count = 0;
+            $count_grey_row = 0;
         @endphp
+        @foreach ($kategori_asesmen as $item)
+          @if ($kategori_asesmen->count() - 1 == $count)
+            @continue
+          @else
+            <th>{{ ++$count }}</th>
+          @endif
+        @endforeach
+          <th>Rerata</th>
+      </thead>
 
-        {{-- @include('_partials/skor/skor_akhir_1')
-
-        @include('_partials/skor/skor_akhir_2')
-
-        @include('_partials/skor/skor_akhir_3')
-        
-        @include('_partials/skor/skor_akhir_4')
-
-        @include('_partials/skor/skor_akhir_5')
-
-        @include('_partials/skor/skor_akhir_6')
-        
-        @include('_partials/skor/skor_akhir_7')
-        
-        @include('_partials/skor/skor_akhir_8')
-        
-        @include('_partials/skor/skor_akhir_9')
-
-        @include('_partials/skor/skor_akhir_10') --}}
-
-        @include('_partials/skor/testing_skor')
-        
-        <tbody>
-            <td class="font-weight-bold text-center">Hasil Akhir</td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td style="background-color: grey"></td>
-            <td>{{ $assessmen_internal->skor_penilaian_kegiatan_akhir }}</td>
-        </tbody>
-    </table>
+      @include('_partials/skor/testing_skor')
+     
+      <tbody>
+          <td class="font-weight-bold text-center">Hasil Akhir</td>
+          @foreach ($kategori_asesmen as $item)
+            @if ($kategori_asesmen->count() - 1 == $count_grey_row)
+              @continue
+            @else
+              <td style="background-color: grey"></td>
+              @php
+                  ++$count_grey_row;
+              @endphp
+          @endif
+          @endforeach
+          <td>{{ $assessmen_internal->skor_penilaian_kegiatan_akhir }}</td>
+      </tbody>
+  </table>
 </div>
 <!-- Modal for melihat detail assessmen -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalTitle" aria-hidden="true">

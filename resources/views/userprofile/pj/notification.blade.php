@@ -40,23 +40,23 @@
                           </div>
                           @if ($item['read_at'] === null)
                           <div class="col-auto">
-                            <a href="#" class="mr-2 notificationRead" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" title="Baca Notifikasi">
+                            <a href="#" class="mr-2 notificationRead" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" >
                                 <i class="fa fa-check fa-2x"></i>
                             </a>
-                            <a href="{{ $item->data['link'] }}" class="notificationLink" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" title="Akses Notifikasi">
+                            <a href="{{ $item->data['link'] }}" class="notificationLink" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" >
                                 <i class="fa fa-arrow-right fa-2x"></i>
                             </a>
-                            <a href="#"  class="ml-2 deleteNotification" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" title="Hapus Notifikasi"><i class="fa fa-trash fa-2x text-danger"></i></a>
+                            <a href="#"  class="ml-2 deleteNotification" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" ><i class="fa fa-trash fa-2x text-danger"></i></a>
                           </div>
                           @else
                           <div class="col-auto">
                             <a href="javascript:void(0)" class="mr-2" style="pointer-events: none;">
                                 <i class="fa fa-thumbs-up fa-2x text-gray-500"></i>
                             </a>
-                            <a href="{{ $item->data['link'] }}" class="notificationLink" id="alreadyRead" data-toggle="tooltip" data-placement="bottom" title="Akses Notifikasi">
+                            <a href="{{ $item->data['link'] }}" class="notificationLink" id="alreadyRead" data-toggle="tooltip" data-placement="bottom" >
                                 <i class="fa fa-arrow-right fa-2x"></i>
                             </a>
-                            <a href="#" class="ml-2 deleteNotification" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" title="Hapus Notifikasi"><i class="fa fa-trash fa-2x text-danger"></i></a>
+                            <a href="#" class="ml-2 deleteNotification" id="{{ $item->id }}" data-toggle="tooltip" data-placement="bottom" ><i class="fa fa-trash fa-2x text-danger"></i></a>
                           </div>
                           @endif
                         </div>
