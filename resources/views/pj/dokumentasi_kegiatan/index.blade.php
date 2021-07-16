@@ -709,51 +709,14 @@
             modalState = "#unggah_dokumentasi_baru";
             $("#unggah_dokumentasi_baru").modal();
         });
-        // document.getElementById('add_new_dokumentasi').addEventListener('click', function(){
-        //     doc_added_dokumentasi_baru++;
-        //     $(".show_added_dokumentasi").append('<input type="file" name="dokumen_dokumentasi_baru[]" id="row_doc_baru'+doc_added_dokumentasi_baru+'" placeholder="Enter your Name" /><button type="button" name="remove" id="'+doc_added_dokumentasi_baru+'" class="btn btn-danger btn_remove_doc_baru mb-2">X</button>')
-        // });
+        
 
         $(document).on('click', '.lihat_file', function(){
             let asset_val = $(this).val();  
             window.open(asset_val);
         });
 
-        // $(document).on('click' , '.edit_file' , function(){
-        //     $(".modal_edit").modal();
-        //     $(modalState).modal('hide');
-        //     let fileAsset = $(this).attr('value');
-        //     let fileName = $(this).attr('data-target');
-        //     let fileStatus = $(this).attr('data-target2');
-        //     let fileID = $(this).attr('data-target3');
-        //     document.querySelector('.show_dokumen_edit').innerHTML = "<i class='fa fa-file-alt mr-2'></i>"+fileName+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+fileAsset+"'>Lihat File</button><a href='"+fileAsset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+fileName+"'>Unduh Dokumen</a></li>";
-        
-        //     url_edit_file = url_edit_file.replace('status_docs' , fileStatus);
-        //     url_edit_file = url_edit_file.replace('ids' , id);
-        //     url_edit_file = url_edit_file.replace('id_docs' , fileID);
-        //     $(".edited-dokumen-form").attr('action' , url_edit_file);
-        // });
-
-
-        // $(document).on('click' , '.delete_dokumen', function(){
-        //     $(".modal_delete").modal();
-        //     $(modalState).modal('hide');
-        //     modalState = ".modal_delete";
-        //     //add file name serta link asset
-        //     let fileAsset = $(this).attr('value');
-        //     let fileName = $(this).attr('data-target');
-        //     let fileStatus = $(this).attr('data-target2');
-        //     let fileID = $(this).attr('data-target3');
-        //     document.querySelector('.show_dokumen_delete').innerHTML = "<i class='fa fa-file-alt mr-2'></i>"+fileName+"<button class='btn btn-primary btn-sm lihat_file ml-2 mr-2 mb-2' value='"+fileAsset+"'>Lihat File</button><a href='"+fileAsset+"'class='btn btn-info btn-sm lihat_file ml-2 mr-2 mb-2' download='"+fileName+"'>Unduh Dokumen</a></li>";
-        //     //add form action
-        //     //{status_dokumen}/{id}/{id_dokumen}
-        
-        //     url_delete_form = url_delete_form.replace('status' , fileStatus);
-        //     url_delete_form = url_delete_form.replace('id_dokumentasi' , id);
-        //     url_delete_form = url_delete_form.replace('id_docs' , fileID);
-        //     let url_form = $('.delete-dokumen-dokumentasi').attr('action' , url_delete_form);
-        // });
-
+      
         $(".add").click(function(){
             let btn_value = $(this).attr('id');
             if (btn_value === "add") {
@@ -882,8 +845,8 @@
             $(".img-file").empty();
             $(".laporan_kegiatan_unggah").empty();
             $(".foto_kegiatan_unggah").empty();
-            $(".links-video").empty();
-            $(".links-article").empty();
+            $(".links-video-unggah").empty();
+            $(".links-article-unggah").empty();
         });
 
         // $(".unggah_dokumentasi_baru").on('hidden.bs.modal' , function(){
