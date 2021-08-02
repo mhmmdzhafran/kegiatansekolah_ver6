@@ -28,7 +28,7 @@ class LoginController extends Controller
      */
     // protected $redirectTo = '/home';
 
-    //custom redirectTo => thanks to medium.com
+    
     public function redirectTo(){
         $roles = Auth::user()->Role->role_title;
 

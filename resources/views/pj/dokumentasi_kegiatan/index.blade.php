@@ -115,20 +115,7 @@
                             <ol class="link-article">
 
                             </ol>
-                            {{-- <ul class="error_notification_upload_baru" style="background-color: #e53e3e; color: white; border-radius: 10px;"></ul>                            
-                            <button class="btn btn-success btn-sm rounded-pill float float-right mb-3" id="add_new_dokumentasi">Tambah Dokumen</button>                            
-                                <form action="" method="POST" class="form-pengelolaan-kegiatan">
-                                    {{ csrf_field() }}
-                                    <label for="dokumentasi_baru" style="font-size: 1.25rem" class="font-weight-bolder">Dokumentasi Baru Yang Ingin diupload</label>
-                                    <div class="col-sm-6 col-lg-6">
-                                        <input type="file"  name="dokumen_dokumentasi_baru[]">
-                                        <div class="show_added_dokumentasi"></div>
-                                    </div>
-                                    <div class="progress mb-3 mt-3" hidden>
-                                        <div class="progress-bar progress-bar-striped progress-bar-animated myProgress" role="progressbar" style="width: 0%">0%</div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary submit_dokumentasi rounded-pill float float-left mb-3 mt-3">Submit Dokumen Baru</button>
-                                </form> --}}
+                            
                           </div>
                         </div>
                       </div>
@@ -168,11 +155,7 @@
                     <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
 
                     </ul>
-                    {{-- <div class="form-group">
-                        <ul class="waktu_status_unggah" style="color:white; border-radius: 10px;">
-
-                        </ul>
-                    </div> --}}
+                  
                     
                     <div class="form-group">
                         {!! Form::label('nama_kegiatan', 'Nama Kegiatan:') !!}
@@ -376,11 +359,7 @@
                     <ul class="error_notification d-none" style="background-color: #e53e3e; color: white; border-radius: 10px">
 
                     </ul>
-                    {{-- <div class="form-group">
-                        <ul class="waktu_status_unggah" style="color:white; border-radius: 10px;">
-
-                        </ul>
-                    </div> --}}
+                   
                     {!!Form::label('record_keterangan','Record Keterangan Laporan Kegiatan: ', ['class' => 'font-weight-bolder' ])!!}
                     <div class="status_laporan_kegiatan" style="background-color: #36b9cc; color: white; border-radius: 10px; font-weight: bold"></div>
                     <hr>
@@ -759,22 +738,7 @@
             }
         });  
         
-        // $(document).on('click', '.btn_remove_doc_baru', function(){
-        //     let button_remove_doc_baru_id = $(this).attr("id");
-        //     $(this).remove();
-        //     $("#row_doc_baru"+button_remove_doc_baru_id+"").remove();
-        // });
-
-        // Hidden bootstrap Modals
-
-        // $(".modal_edit").on('hidden.bs.modal', function(){
-        //     //add get request
-        //     getDataDokumentasiModal(id , btn_value);
-        // });
-
-        // $(".modal_delete").on('hidden.bs.modal', function(){
-        //     getDataDokumentasiModal(id , btn_value);
-        // });
+     
 
         $("#unggah_dokumentasi_baru").on('hidden.bs.modal', function(){
             $(".unggah_form_dokumentasi")[0].reset();
@@ -848,10 +812,6 @@
             $(".links-video-unggah").empty();
             $(".links-article-unggah").empty();
         });
-
-        // $(".unggah_dokumentasi_baru").on('hidden.bs.modal' , function(){
-        //     $(".form_unggah_baru")[0].reset();
-        // });
 
         $(".lihat_dokumentasi").on('hidden.bs.modal', function(){
             $(".nama_kegiatan_terlaksana").removeAttr('value');
