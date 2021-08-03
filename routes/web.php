@@ -1,4 +1,8 @@
 <?php
+/**
+ * Nama: Muhammad Zhafran Auristianto
+ * Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+ */
 
 /*
 |--------------------------------------------------------------------------
@@ -101,28 +105,7 @@ Route::group(['middleware' => 'PenanggungJawab'], function(){
     Route::get('/penanggung-jawab/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UsersNotificationController@orderByTwoChoiceNotifications')->name('pj.userprofile.orderTwoConditionNotify');
     // Route::put('/penanggung-jawab/read-notification/', 'UserProfileController@readNotification')->name('pj.userprofile.readNotificationFromProfile');
     Route::get('/penanggung-jawab/redirect', 'UsersNotificationController@linkAccessNotification')->name('pj.userprofile.links');
-    /**
-     * Commented Routes => For uses later
-     */
-
-    // Route::post('/penanggung-jawab/mengelola-kegiatan/delete', 'PJMengelolaKegiatanController@destroy');
-
-    // Route::resource('/penanggung-jawab/dokumentasi-kegiatan', 'PJDokumentasiController', ['names' => [
-    //     'index' => 'pj.kelola_dokumentasi.index',
-    //     'show' => 'pj.kelola_dokumentasi.show',
-    // ]]);
-
-    // Route::delete('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{id_documentation}', 'PJDokumentasiController@destroy')->name('pj.kelola_dokumentasi.destroy');
-    
-    // Route::get('/penanggung-jawab/dokumentasi-kegiatan/dokumen/{id_doc}/edit/{id_documentation}', 'PJDokumentasiController@edit')->name('pj.kelola_dokumentasi.edit');
-
-    // Route::put('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{dokumen_id}', 'PJDokumentasiController@update')->name('pj.kelola_dokumentasi.update');
-
-    // Route::get('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/create', 'PJDokumentasiController@create')->name('pj.kelola_dokumentasi.create');
-
-    // Route::post('/penanggung-jawab/dokumentasi-kegiatan/{date_now}/{id_doc}', 'PJDokumentasiController@store')->name('pj.kelola_dokumentasi.store');
-
-    // Route::post('/penanggung-jawab/dokumentasi-kegiatan/{id_doc}/{file_name}/delete', 'PJDokumentasiController@delete_file');
+   
 });
 
 Route::group(['middleware' => 'KepalaSekolah'], function(){
@@ -137,13 +120,7 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     Route::get('/kepala-sekolah/specific-notification/{notification}' , 'UsersNotificationController@getSpecificNotification')->name('kepsek.notification.specificNotification');
     Route::put('/kepala-sekolah/mark-as-read/', 'UsersNotificationController@markAsReadNotification')->name('kepsek.notification.markAsRead');
     Route::delete('/kepala-sekolah/notification/delete-notifications' , 'UsersNotificationController@deleteNotification')->name('kepsek.notification.deleteNotification');
-    // Route::resource('/kepala-sekolah/mengelola-dokumentasi-kegiatan/mengelola-kegiatan', 'KepalaSekolahDokumentasiController', ['names' => [
-    //     'index' => 'kepsek.kelola_dokumentasi.index',
-    //     'show' => 'kepsek.kelola_dokumentasi.show',
-    //     'store' => 'kepsek.kelola_dokumentasi.store',
-    //     'edit' => 'kepsek.kelola_dokumentasi.edit',
-    //     'destroy' => 'kepsek.kelola_dokumentasi.destroy'
-    // ]]);
+   
 
     Route::resource('/kepala-sekolah/mengelola-kegiatan', 'KepalaSekolahMengelolaKegiatanController', ['names' => [
         'index' => 'kepsek.kelola_kegiatan.index',
@@ -151,8 +128,7 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
         'show' => 'kepsek.kelola_kegiatan.show',
         'update' => 'kepsek.kelola_kegiatan.update'
     ]]);
-    // Route::get('/kepala-sekolah/mengelola-kegiatan/get-data/{id}', 'KepalaSekolahMengelolaKegiatanController@get_data_dan_dokumen_pengajuan')->name('pj.kelola_kegiatan.data_kegiatan');
-
+   
     //route for showdokumentasi => alias sudahnya Acc/Not dokumentasi kegiatan, menunggu keputusan dari pj
     Route::get('/kepala-sekolah/dokumentasi-kegiatan/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@showDokumentasi')
     ->name('kepsek.pengajuan_dokumentasi_kegiatan.show');
@@ -163,8 +139,6 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     Route::put('/kepala-sekolah/dokumentasi-kegiatan/{dokumentasi_kegiatan}/keputusan', 'KepalaSekolahMengelolaKegiatanController@updateDokumentasi')
     ->name('kepsek.pengajuan_dokumentasi_kegiatan.update');
 
-    // Route::get('/kepala-sekolah/dokumentasi-kegiatan/getDataDokumen/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@getDokumenDokumentasiPJ')
-    // ->name('kepsek.pengajuan_dokumentasi_kegiatan.getDataDokumen');
     
     Route::resource('/kepala-sekolah/asesmen-ppk', 'KepalaSekolahAssessmenController' , ['names' => [
         'index' => 'kepsek.asesmen.index',
@@ -184,7 +158,7 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
 
     Route::resource('/kepala-sekolah/user-profile', 'UserProfileController', ['names' => [
         'index' => 'userprofile.kepsek.index',
-        // 'edit' => 'userprofile.kepsek.edit',
+       
     ]]);
 
     Route::post('/kepala-sekolah/user-profile/checkPass' , 'UserProfileController@checkerPass')->name('kepsek.userprofile.check');
@@ -193,37 +167,8 @@ Route::group(['middleware' => 'KepalaSekolah'], function(){
     Route::get('/kepala-sekolah/notifications', 'UsersNotificationController@getAllNotifications')->name('kepsek.userprofile.getAllNotify');
     Route::get('/kepala-sekolah/filter-notifications/{filterChoice}' , 'UsersNotificationController@orderByNotification')->name('kepsek.userprofile.orderNotify');
     Route::get('/kepala-sekolah/filter-notifications-by/{filterChoiceOne}/{filterChoiceTwo}', 'UsersNotificationController@orderByTwoChoiceNotifications')->name('kepsek.userprofile.orderTwoConditionNotify');
-    // Route::put('/kepala-sekolah/read-notification/', 'UsersNotificationController@readNotification')->name('kepsek.userprofile.readNotificationFromProfile');
+    
     Route::get('/kepala-sekolah/redirect', 'UsersNotificationController@linkAccessNotification')->name('kepsek.userprofile.links');
-    /**
-     * Commented Routes => For uses later
-     */
-
-    //route for editdokumentasi => alias mengajukan acc/pengajuan ulang dokumentasi kegiatan dari pj
-    
-
-    //for editdokumentasiulang => alias untuk pengajuan ulang dokumentasi kegiatan
-    // Route::get('/kepala-sekolah/mengelola-kegiatan/dokumentasi-kegiatan-ulang/{dokumentasi_kegiatan}/edit', 'KepalaSekolahMengelolaKegiatanController@editDokumentasiUlang')
-    // ->name('kepsek.pengajuan_dokumentasi_kegiatan.edit_ulang');
-
-    // Route::put('/kepala-sekolah/mengelola-kegiatan/dokumentasi-kegiatan/{dokumentasi_kegiatan}', 'KepalaSekolahMengelolaKegiatanController@updateDokumentasi');
-
-    // Route::resource('/kepala-sekolah/mengelola-dokumentasi-kegiatan', 'KepalaSekolahDokumentasiController', ['names' => [
-    //     'index' => 'kepsek.dokumentasi_kegiatan.index',
-    //     'show' => 'kepsek.dokumentasi_kegiatan.show',
-    // ]]);
-
-    // Route::get('/kepala-sekolah/mengelola-dokumentasi-kegiatan/{id_docs}/edit/{id_documentation}', 'KepalaSekolahDokumentasiController@edit')->name('kepsek.dokumentasi_kegiatan.edit');
-    
-    // Route::put('/kepala-sekolah/mengelola-dokumentasi-kegiatan/{id_docs}/{id_documentation}', 'KepalaSekolahDokumentasiController@update')->name('kepsek.dokumentasi_kegiatan.update');
-
-    // Route::get('/kepala-sekolah/mengelola-dokumentasi-kegiatan/{id_docs}/create', 'KepalaSekolahDokumentasiController@create')->name('kepsek.dokumentasi_kegiatan.create');
-
-    // Route::post('/kepala-sekolah/mengelola-dokumentasi-kegiatan/{date_now}/{id_doc}', 'KepalaSekolahDokumentasiController@store')->name('kepsek.dokumentasi_kegiatan.store');
-
-    // Route::delete('/kepala-sekolah/mengelola-dokumentasi-kegiatan/{id_docs}/{id_documentation}/delete', 'KepalaSekolahDokumentasiController@destroy')->name('kepsek.dokumentasi_kegiatan.destroy');
-
-    // Route::post('/kepala-sekolah/mengelola-dokumentasi-kegiatan/{id_doc}/{file_name}/delete', 'KepalaSekolahDokumentasiController@delete_file');
     
 });
 
@@ -231,7 +176,7 @@ Route::get('/404', function(){
     return view("errors.404");
 });
 
-//thanks github
+
 Route::fallback(function(){ 
     return response()->view('errors.404', [], 404); 
 });

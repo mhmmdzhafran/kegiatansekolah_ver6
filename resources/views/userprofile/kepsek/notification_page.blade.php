@@ -1,3 +1,7 @@
+{{--   
+    Nama: Muhammad Zhafran Auristianto
+    Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+  --}}
 @extends('layouts.template_kepsek')
 
 @section('title')

@@ -1,5 +1,8 @@
+{{--   
+    Nama: Muhammad Zhafran Auristianto
+    Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+  --}}
 <div class="card shadow-sm">
-    {{-- TODO: FIX THIS --}}
       @php
         $max_column = $kategori_asesmen->count() - 1;
         $item_number = 0;

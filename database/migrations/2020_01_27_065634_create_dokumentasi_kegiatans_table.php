@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Nama: Muhammad Zhafran Auristianto
+ * Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+ */
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
@@ -15,12 +18,12 @@ class CreateDokumentasiKegiatansTable extends Migration
     {
         Schema::create('dokumentasi_kegiatans', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('folder_dokumentasi_id')->unsigned()->nullable();
+            
             $table->integer('user_id')->unsigned()->index();
             $table->string('nama_kegiatan');
-            // $table->longText('dokumentasi_kegiatan_ppk')->nullable();
+           
             $table->longText('keterangan_dokumentasi');
-            // $table->longText('keterangan_json');
+           
             $table->timestamps();
         });
     }

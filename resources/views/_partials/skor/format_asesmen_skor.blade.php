@@ -1,3 +1,7 @@
+{{--   
+    Nama: Muhammad Zhafran Auristianto
+    Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+  --}}
 @php
     $max_column = $kategori_asesmen->count() - 1;
     $item_score_number = 0;

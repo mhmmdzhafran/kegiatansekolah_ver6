@@ -1,11 +1,13 @@
 <?php
-
+/**
+ * Nama: Muhammad Zhafran Auristianto
+ * Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+ */
 namespace App\Http\Controllers;
 
 use App\DokumentasiKegiatan;
 use App\Events\KeputusanLaporanKegiatanToPJEvent;
 use App\Events\KeputusanProposalKegiatanToPJEvent;
-use App\FolderDokumentasi;
 use App\Http\Requests\KepalaSekolahKegiatanValidatorRequest;
 use App\PengajuanKegiatan;
 use App\Repository\FindDataRepository;

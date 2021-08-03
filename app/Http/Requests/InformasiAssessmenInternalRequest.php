@@ -1,5 +1,8 @@
 <?php
-
+/**
+ * Nama: Muhammad Zhafran Auristianto
+ * Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+ */
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;

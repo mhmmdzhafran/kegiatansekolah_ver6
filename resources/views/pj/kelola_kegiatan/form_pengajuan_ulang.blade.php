@@ -1,3 +1,7 @@
+{{--   
+    Nama: Muhammad Zhafran Auristianto
+    Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+  --}}
 <div class="modal fade" id="pengajuanUlangModal" tabindex="-1" role="dialog" aria-labelledby="pengajuanUlangModal" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content">

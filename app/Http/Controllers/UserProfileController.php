@@ -1,15 +1,13 @@
 <?php
-
+/**
+ * Nama: Muhammad Zhafran Auristianto
+ * Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+ */
 namespace App\Http\Controllers;
 
-use App\DokumentasiKegiatan;
 use App\Http\Requests\CheckerPassValidationRequest;
 use App\Http\Requests\UpdatePassValidationRequest;
-use App\PengajuanKegiatan;
 use App\Repository\FindDataRepository;
-use App\User;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;

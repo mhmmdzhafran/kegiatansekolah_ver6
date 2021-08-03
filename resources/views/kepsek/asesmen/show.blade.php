@@ -1,3 +1,7 @@
+{{--   
+    Nama: Muhammad Zhafran Auristianto
+    Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+  --}}
 @extends('layouts.template_kepsek')
 
 @section('title')
@@ -36,7 +40,7 @@
           <th>Rerata</th>
       </thead>
 
-      @include('_partials/skor/testing_skor')
+      @include('_partials/skor/format_asesmen_skor')
      
       <tbody>
           <td class="font-weight-bold text-center">Hasil Akhir</td>

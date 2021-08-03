@@ -1,3 +1,7 @@
+{{--   
+    Nama: Muhammad Zhafran Auristianto
+    Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+  --}}
 @component('mail::message')
 Hello, {{ $username }}
 

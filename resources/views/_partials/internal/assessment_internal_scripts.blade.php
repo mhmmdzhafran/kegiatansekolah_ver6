@@ -1,4 +1,8 @@
 <script>
+    /*
+        Nama: Muhammad Zhafran Auristianto
+        Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+    */
     let indikator_asesmen = "";
     $(".lihat_form").on('click', function(){
             $("#form_indikator")[0].reset();

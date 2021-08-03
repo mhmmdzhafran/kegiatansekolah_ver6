@@ -1,3 +1,9 @@
+/* 
+    
+    Nama: Muhammad Zhafran Auristianto
+    Tim Pengembang: Tim Pengembang untuk SMP Islam Sabilurrosyad Malang
+ 
+*/
 const userID = document.querySelector('meta[name="user-authorization"]').getAttribute('content');
 const getUserNotificationsElement = document.querySelector('.notification-items');
 let badgeCounterElement = document.querySelector('.badge-counter');
